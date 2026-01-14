@@ -17,9 +17,13 @@
 class FileHandler {
 public:
     
-    TextFile openFile(std::string file_path);
+    TextFile openFile(const std::string& file_path);
     
-    void saveFile(const TextFile& file);
+    /// @brief writes the contents of file to the filename specified
+    /// @param file the file to write
+    void saveFile(TextFile& file);
+
+    void renameFile(TextFile& file, std::string new_name);
 };
 
 

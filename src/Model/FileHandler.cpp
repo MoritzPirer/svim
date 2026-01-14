@@ -3,7 +3,7 @@
 
 #include "../../inc/Model/FileHandler.hpp"
 
-TextFile FileHandler::openFile(std::string file_path) {
+TextFile FileHandler::openFile(const std::string& file_path) {
     TextFile file(file_path);
 
     if (!std::filesystem::exists(file_path)) {
@@ -21,27 +21,55 @@ TextFile FileHandler::openFile(std::string file_path) {
     while (getline(input_file, line)) {
         file.writeToEnd(line);
     }
+    file.calculateMetadata();
 
     input_file.close();
     return file;
 }
 
-void FileHandler::saveFile(const TextFile& file) {
-    std::ofstream output_file(file.getFilePath());
+void FileHandler::saveFile(TextFile& file) {
+    std::filesystem::path file_path = file.getFilepath();
+    std::filesystem::path parent_directory = file_path.parent_path();
 
-    if (!output_file.is_open()) {
+    try {
+        if (!parent_directory.empty()) {
+            std::filesystem::create_directories(parent_directory);
+        }
+
+        std::ofstream output_file(file.getFilepath().string());
+    
+        if (!output_file.is_open()) {
+            //MODO HANDLE THIS
+            return;
+        }
+    
+        for (size_t i = 0; i < file.getLineCount(); i++) {
+            const std::string& line = file.getLine(i);
+            output_file << line; 
+    
+            if (!line.ends_with("\n") && i < file.getLineCount() - 1) {
+                output_file << "\n";
+            }
+        }
+
+        file.setHasUnsavedChanges(false);
+
+        output_file.close();
+    }
+    catch (const std::filesystem::filesystem_error& e) {
         //MODO HANDLE THIS
         return;
     }
+}
 
-    for (size_t i = 0; i < file.getLineCount(); i++) {
-        const std::string& line = file.getLine(i);
-        output_file << line; 
+void FileHandler::renameFile(TextFile& file, std::string new_path) {
+    std::filesystem::path new_file_path(new_path);
 
-        if (!line.ends_with("\n") && i < file.getLineCount() - 1) {
-            output_file << "\n";
-        }
+    if (new_file_path.is_absolute()) {
+        file.setFilepath(new_file_path);
     }
-
-    output_file.close();
+    else {
+        std::filesystem::path base_directory = file.getFilepath().parent_path();
+        file.setFilepath(base_directory/new_path); // '/' operater is concatination here
+    }
 }
