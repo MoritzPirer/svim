@@ -6,7 +6,9 @@ TextFile::TextFile(const std::string& file_path):
     m_file_content{},
     m_has_unsaved_changes{false},
     m_word_count{0},
-    m_character_count{0} {}
+    m_character_count{0} {
+        fprintf(stderr, "initializing TextFile");
+        fflush(stderr);}
 
 void TextFile::setFilepath(std::filesystem::path new_absolute_file_path) {
     m_absolute_file_path = new_absolute_file_path;

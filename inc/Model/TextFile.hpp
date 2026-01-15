@@ -25,9 +25,9 @@ private:
     size_t m_character_count;
 
 public:
+    TextFile() = default;
     TextFile(const std::string& file_name);
 
-    const std::string& getName() const;
     void setFilepath(std::filesystem::path new_absolute_file_path);
     const std::filesystem::path& getFilepath() const;
     void setHasUnsavedChanges(bool has_unsaved_changes);

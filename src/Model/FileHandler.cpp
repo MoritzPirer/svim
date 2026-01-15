@@ -21,6 +21,8 @@ TextFile FileHandler::openFile(const std::string& file_path) {
     while (getline(input_file, line)) {
         file.writeToEnd(line);
     }
+    fprintf(stderr, "read file");
+    fflush(stderr);
     file.calculateMetadata();
 
     input_file.close();
