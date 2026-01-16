@@ -17,6 +17,12 @@ private:
     NcursesSession m_ncurses_session;
     EditorController m_controller;
 
+    int screenHeight();
+    int screenWidth();
+
+    int visualRowsNeeded(size_t line_length);
+    
+    void renderCursor(size_t visual_row_of_cursor);
 
     void render();
 

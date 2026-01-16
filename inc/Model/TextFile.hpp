@@ -39,6 +39,8 @@ public:
 
     void calculateMetadata();
 
+    size_t visualLinesOfLine(size_t line_index, int screen_width);
+    
     inline void printMetadata() const {
         std::cout << "Char count: " <<m_character_count << "\nWord count: " << m_word_count << std::endl;
     }

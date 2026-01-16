@@ -25,6 +25,7 @@ public:
     bool processInput(int input);
     
     size_t getLineCount() const;
+    size_t getFirstVisibleLine(int screen_width, int screen_height);
     const std::string& getLine(size_t row) const;
 };
 

@@ -47,3 +47,11 @@ void TextFile::calculateMetadata() {
         m_word_count += std::ranges::count(line, ' ');
     }
 }
+
+size_t TextFile::visualLinesOfLine(size_t line_index, int screen_width) {
+    //MODO bounds checking?
+    size_t line_length = m_file_content.at(line_index).length();
+    bool has_partial_line = line_length % screen_width != 0;
+
+    return line_length / screen_width + (has_partial_line? 1 : 0);
+}

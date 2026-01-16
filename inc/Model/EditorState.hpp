@@ -34,6 +34,7 @@ public:
     void moveCursorDown();
     void moveCursorRight();
 
+    size_t getFirstVisibleLine(int screen_width, int screen_height);
     size_t getLineCount() const { return m_current_file.getLineCount(); }
     const std::string& getLine(size_t row) const { return m_current_file.getLine(row); }
 };

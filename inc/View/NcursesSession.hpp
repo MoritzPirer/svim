@@ -10,6 +10,8 @@
 #define NCURSES_SESSION_HPP
 
 class NcursesSession {
+private: 
+    bool initialized;
 public:
     NcursesSession();
     NcursesSession(const NcursesSession&) = delete;

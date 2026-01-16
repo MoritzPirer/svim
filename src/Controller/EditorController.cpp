@@ -1,11 +1,11 @@
 #include "../../inc/Controller/EditorController.hpp"
 
 size_t EditorController::getCursorRow() const {
-    return m_state.getCursor().getRow();
+    return m_state.getCursor().getPosition().row;
 }
 
 size_t EditorController::getCursorColumn() const {
-    return m_state.getCursor().getColumn();
+    return m_state.getCursor().getPosition().column;
 }
 
 bool EditorController::processInput(int input) {
@@ -22,12 +22,22 @@ bool EditorController::processInput(int input) {
         case 'l':
             m_state.moveCursorRight();
             break;
-        
-        default:
+        case 'w':
+            for (size_t _ = 0; _ < 10; _++) {
+                m_state.moveCursorRight();
+            }
+            break;
+        case 'q':
             return true;
+        default:
+            break;
     }
     
     return false;
+}
+
+size_t EditorController::getFirstVisibleLine(int screen_width, int screen_height) {
+    return m_state.getFirstVisibleLine(screen_width, screen_height);
 }
 
 size_t EditorController::getLineCount() const {

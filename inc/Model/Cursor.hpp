@@ -12,13 +12,12 @@
 #include <stddef.h>
 
 #include "../../inc/Model/TextFile.hpp"
+#include "../../inc/Controller/Position.hpp"
 
 class Cursor {
 private:
-    size_t m_row;
-    size_t m_actual_column;
-    size_t m_desired_column;
-
+    Position m_actual_position;
+    Position m_desired_position;
     void adjustActualColumn(size_t new_line_length);
 
 public:
@@ -26,8 +25,7 @@ public:
     Cursor(const Cursor&) = default;
     ~Cursor() = default;
 
-    size_t getRow() const { return m_row; }
-    size_t getColumn() const { return m_actual_column; }
+    Position getPosition() const { return m_actual_position; }
 
     void moveUp(size_t new_line_length);
     void moveDown(size_t new_line_length);
