@@ -29,9 +29,14 @@ void TextFile::writeToEnd(const std::string& line) {
     calculateMetadata();
 }
 
-size_t TextFile::getLineCount() const {
+int TextFile::getLineCount() const {
     return m_file_content.size();
 }
+
+int TextFile::getLineLength(size_t line_index) const {
+    return m_file_content.at(line_index).length();
+}
+
 const std::string& TextFile::getLine(size_t line_index) const {
     //MODO bounds checking?
     return m_file_content.at(line_index); 

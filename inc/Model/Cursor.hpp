@@ -16,19 +16,24 @@
 
 class Cursor {
 private:
-    Position m_actual_position;
-    Position m_desired_position;
-    void adjustActualColumn(size_t new_line_length);
-
+    Position m_position;
+    
 public:
     Cursor();
     Cursor(const Cursor&) = default;
     ~Cursor() = default;
 
-    Position getPosition() const { return m_actual_position; }
+    Position getPosition() const { return m_position; }
+    int getRow() const { return m_position.row; }
+    int getColumn() const { return m_position.column; }
 
-    void moveUp(size_t new_line_length);
-    void moveDown(size_t new_line_length);
+    void setRow(int row);
+    void setColumn(int column);
+
+    void moveUpLogical();
+    void moveUpVisual(int screen_width);
+    void moveDownLogical();
+    void moveDownVisual(int screen_width);
     void moveLeft();
     void moveRight();
 };

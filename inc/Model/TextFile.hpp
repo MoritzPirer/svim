@@ -16,6 +16,8 @@
 #include <string>
 #include <vector>
 
+#include "../Controller/Position.hpp"
+
 class TextFile {
 private:
     std::filesystem::path m_absolute_file_path;
@@ -34,7 +36,8 @@ public:
 
     void writeToEnd(const std::string& line);
     
-    size_t getLineCount() const;
+    int getLineCount() const;
+    int getLineLength(size_t line_index) const;
     const std::string& getLine(size_t line_index) const;
 
     void calculateMetadata();

@@ -19,19 +19,21 @@ private:
     TextFile m_current_file;
     Cursor m_cursor;
     
+    void adjustCursor(int screen_width);
 public:
     EditorState() {
-            FileHandler f;
-            m_current_file = f.openFile("test.txt");
-        }
+        FileHandler f;
+        m_current_file = f.openFile("test.txt");
+    }
+
     EditorState(const EditorState&) = default;
     ~EditorState() = default;
 
     const Cursor& getCursor() const { return m_cursor; }
 
-    void moveCursorUp();
+    void moveCursorUp(int screen_width);
     void moveCursorLeft();
-    void moveCursorDown();
+    void moveCursorDown(int screen_width);
     void moveCursorRight();
 
     size_t getFirstVisibleLine(int screen_width, int screen_height);

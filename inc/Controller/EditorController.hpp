@@ -22,7 +22,7 @@ public:
     size_t getCursorRow() const;
     size_t getCursorColumn() const;
 
-    bool processInput(int input);
+    bool processInput(int input, int screen_width);
     
     size_t getLineCount() const;
     size_t getFirstVisibleLine(int screen_width, int screen_height);

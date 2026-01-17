@@ -35,7 +35,6 @@ void Display::renderCursor(size_t visual_row_of_cursor) {
         cursor_row++;
     }
     
-    mvprintw(screenHeight() - 1, 0, "vroc = %zu", visual_row_of_cursor);
 
     
     move(visual_row_of_cursor, cursor_column);
@@ -48,7 +47,7 @@ void Display::render() {
 
     size_t visual_row_of_cursor = 0;
 
-    for (int visual_row = 0; visual_row < screenHeight();) {
+    for (int visual_row = 0; visual_row < screenHeight() - 2;) {
         if (logical_line_index >= m_controller.getLineCount()) {
             mvprintw(visual_row, 0, "~");
             visual_row++;
@@ -78,6 +77,6 @@ void Display::mainLoop() {
         render();
 
         int input = getch();
-        quit = m_controller.processInput(input);
+        quit = m_controller.processInput(input, screenWidth());
     }
 }

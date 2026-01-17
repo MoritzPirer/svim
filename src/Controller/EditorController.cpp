@@ -8,16 +8,16 @@ size_t EditorController::getCursorColumn() const {
     return m_state.getCursor().getPosition().column;
 }
 
-bool EditorController::processInput(int input) {
+bool EditorController::processInput(int input, int screen_width) {
     switch (input) {
         case 'h':
             m_state.moveCursorLeft();
             break;
         case 'j':
-            m_state.moveCursorDown();
+            m_state.moveCursorDown(screen_width);
             break;
         case 'k':
-            m_state.moveCursorUp();
+            m_state.moveCursorUp(screen_width);
             break;
         case 'l':
             m_state.moveCursorRight();

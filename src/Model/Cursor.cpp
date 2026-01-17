@@ -1,37 +1,36 @@
 #include "../../inc/Model/Cursor.hpp"
 
 Cursor::Cursor():
-    m_actual_position{0, 0},
-    m_desired_position{0, 0}
-    {}
+    m_position{0, 0} {}
 
-void Cursor::adjustActualColumn(size_t new_line_length) {
-    if (new_line_length > m_desired_position.column) { // new line is long enough
-        m_actual_position.column = m_desired_position.column;
-    }
-    else {
-        m_actual_position.column = new_line_length == 0? 0 : new_line_length - 1;
-    }
+void Cursor::setRow(int row) {
+    m_position.row = row;
 }
 
-void Cursor::moveUp(size_t new_line_length) {
-    m_actual_position.row--;
-    m_desired_position.row--;
-    adjustActualColumn(new_line_length);
+void Cursor::setColumn(int column) {
+    m_position.column = column;
 }
 
-void Cursor::moveDown(size_t new_line_length) {
-    m_actual_position.row++;
-    m_desired_position.row++;
-    adjustActualColumn(new_line_length);
+void Cursor::moveUpLogical() {
+    m_position.row--;
+}
+
+void Cursor::moveUpVisual(int screen_with) {
+    m_position.column -= screen_with;
+}
+
+void Cursor::moveDownLogical() {
+    m_position.row++;
+}
+
+void Cursor::moveDownVisual(int screen_with) {
+    m_position.column += screen_with;
 }
 
 void Cursor::moveLeft() {
-    m_actual_position.column--;
-    m_desired_position.column = m_actual_position.column;
+    m_position.column--;
 }
 
 void Cursor::moveRight() {
-    m_actual_position.column++;
-    m_desired_position.column = m_actual_position.column;
+    m_position.column++;
 }

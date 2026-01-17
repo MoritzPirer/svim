@@ -45,7 +45,7 @@ void FileHandler::saveFile(TextFile& file) {
             return;
         }
     
-        for (size_t i = 0; i < file.getLineCount(); i++) {
+        for (int i = 0; i < file.getLineCount(); i++) {
             const std::string& line = file.getLine(i);
             output_file << line; 
     
