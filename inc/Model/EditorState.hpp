@@ -16,14 +16,14 @@
 
 class EditorState {
 private:
-    TextFile m_current_file;
+    TextFile m_file;
     Cursor m_cursor;
     
-    void adjustCursor(int screen_width);
+    bool isLastVisualLineOfLine(int screen_width);
 public:
     EditorState() {
         FileHandler f;
-        m_current_file = f.openFile("test.txt");
+        m_file = f.openFile("test.txt");
     }
 
     EditorState(const EditorState&) = default;
@@ -37,8 +37,8 @@ public:
     void moveCursorRight();
 
     size_t getFirstVisibleLine(int screen_width, int screen_height);
-    size_t getLineCount() const { return m_current_file.getLineCount(); }
-    const std::string& getLine(size_t row) const { return m_current_file.getLine(row); }
+    size_t getLineCount() const { return m_file.getLineCount(); }
+    const std::string& getLine(size_t row) const { return m_file.getLine(row); }
 };
 
 #endif //EDITOR_STATE_HPP
