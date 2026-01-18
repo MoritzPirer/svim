@@ -42,7 +42,8 @@ public:
 
     void calculateMetadata();
 
-    size_t visualLinesOfLine(size_t line_index, int screen_width);
+    static int visualLinesNeeded(int line_length, int screen_width);
+    size_t visualLinesOfLine(size_t line_index, int screen_width) const;
 };
 
 #endif //TEXT_FILE_HPP

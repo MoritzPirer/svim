@@ -1,4 +1,5 @@
 #include "inc/View/Display.hpp"
+
 int main() { //int arguments_count, char* arguments_list[]) {
     // FileHandler fh;
     // TextFile file = fh.openFile("test.txt");
@@ -7,7 +8,8 @@ int main() { //int arguments_count, char* arguments_list[]) {
     // file.printMetadata();
     // fh.renameFile(file, "renamed.txt");
     // fh.saveFile(file);
-    Display d;
-    d.mainLoop();
-    return 0;
+
+        Display d;
+        d.mainLoop();
+        return 0;
 }

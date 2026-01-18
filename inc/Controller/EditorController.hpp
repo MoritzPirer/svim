@@ -19,13 +19,14 @@ public:
     EditorController(const EditorController&) = default;
     ~EditorController() = default;
 
-    size_t getCursorRow() const;
-    size_t getCursorColumn() const;
+    int getCursorRow() const;
+    int getCursorColumn() const;
 
     bool processInput(int input, int screen_width);
     
-    size_t getLineCount() const;
-    size_t getFirstVisibleLine(int screen_width, int screen_height);
+    int getLineCount() const;
+    Position getFirstVisibleChar(int screen_width, int screen_height);
+    std::string getPartialLine(Position start);
     const std::string& getLine(size_t row) const;
 };
 

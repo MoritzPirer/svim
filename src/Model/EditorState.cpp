@@ -1,5 +1,4 @@
 #include "../../inc/Model/EditorState.hpp"
-#include <ncurses.h>
 
 bool EditorState::isLastVisualLineOfLine(int screen_width) {
     int line_length = m_file.getLineLength(m_cursor.getRow());
@@ -63,51 +62,81 @@ void EditorState::moveCursorDown(int screen_width) {
 
     int new_line_length = m_file.getLineLength(m_cursor.getRow());
 
-    m_cursor.setColumn(std::min(
-        m_cursor.getColumn(),
-        new_line_length == 0? 0 : new_line_length - 1
-    ));
+    if (m_cursor.getColumn() >= new_line_length) {
+        m_cursor.setColumn(std::max(new_line_length - 1, 0));
+    }
 }
 
 void EditorState::moveCursorLeft() {
-    if (m_cursor.getPosition().column > 0) { // normal move left
+    // normal move left
+    if (m_cursor.getPosition().column > 0) { 
         m_cursor.moveLeft();
     }
-    else if (m_cursor.getPosition().row > 0) { // start of line -> jump to end of previous
+    // start of line -> jump to end of previous
+    else if (m_cursor.getPosition().row > 0) { 
         m_cursor.moveUpLogical();
         
         int new_line_length = m_file.getLineLength(m_cursor.getRow());
-        m_cursor.setColumn(new_line_length == 0? 0 : new_line_length - 1);
+        m_cursor.setColumn(std::max(new_line_length - 1, 0));
     }
 }
 
 void EditorState::moveCursorRight() {
     int line_length = m_file.getLine(m_cursor.getRow()).length();
 
-    if (m_cursor.getPosition().column + 1 < line_length) { // normal move right
+    // normal move right
+    if (m_cursor.getPosition().column + 1 < line_length) { 
         m_cursor.moveRight();
     }
-    else if (m_cursor.getRow() + 1 < m_file.getLineCount()) { // end of line -> jump to start of next
+    // end of line -> jump to start of next
+    else if (m_cursor.getRow() + 1 < m_file.getLineCount()) { 
         m_cursor.moveDownLogical();
         m_cursor.setColumn(0);
     }
 }
 
-size_t EditorState::getFirstVisibleLine(int screen_width, int screen_height) {
-    /*
-        from the cursor upwards, calculate visual rows from logical rows.
-        if visual rows = screen height / 2 before we run out of rows, return the last line needed
-        otherwise, return first line
-    */
-    // int visual_lines_above_cursor = 0;
-    // for (int i = 0; i < m_cursor.getRow(); i++) {
-    //     int logical_line = m_cursor.getRow() - i - 1; //this avoids underflow in loop condition
+int EditorState::calculateVisualLineOfCursor(int screen_width) const {
+    int visual_line_of_cursor = TextFile::visualLinesNeeded(m_cursor.getColumn(), screen_width);
+    
+    for (int logical_line_index = 0; logical_line_index < m_cursor.getRow(); logical_line_index++) {
+        visual_line_of_cursor += m_file.visualLinesOfLine(logical_line_index, screen_width);
+    }
 
-    //     visual_lines_above_cursor += m_file.visualLinesOfLine(logical_line, screen_width);
-    //     if (visual_lines_above_cursor * 2 >= screen_height) {
-    //         return i;
-    //     }
-    // }
+    return visual_line_of_cursor;
+}
 
-    return 0 * screen_height * screen_width;
+Position EditorState::skipOffscreenLines(int offscreen_visual_lines, int screen_width) const {
+    for (int logical_line_index = 0; logical_line_index < m_cursor.getRow(); logical_line_index++) {
+        int line_length = m_file.getLineLength(logical_line_index);
+        int visual_rows = TextFile::visualLinesNeeded(line_length, screen_width);
+
+        // still more to skip
+        if (visual_rows <= offscreen_visual_lines) {
+            offscreen_visual_lines -= visual_rows;
+            continue;
+        }
+
+        return {logical_line_index, offscreen_visual_lines * screen_width};
+    }
+
+    // should be unreachable if offscreen_visual_lines is correct
+    throw std::runtime_error("something went wrong in getFirstVisibleChar()");
+}
+
+Position EditorState::getFirstVisibleChar(int screen_width, int screen_height) {
+    int visual_line_of_cursor = calculateVisualLineOfCursor(screen_width);
+
+    // too far up to place cursor in the middle
+    if (visual_line_of_cursor <= screen_height / 2) {
+        return {0,0};
+    }
+
+    // skip some lines to keep cursor in the middle
+    int offscreen_visual_lines = visual_line_of_cursor - (screen_height / 2);
+    
+    return skipOffscreenLines(offscreen_visual_lines, screen_width);
+}
+
+std::string EditorState::getPartialLine(Position start) {
+    return m_file.getLine(start.row).substr(start.column);
 }

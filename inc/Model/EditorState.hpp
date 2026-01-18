@@ -20,6 +20,9 @@ private:
     Cursor m_cursor;
     
     bool isLastVisualLineOfLine(int screen_width);
+    int calculateVisualLineOfCursor(int screen_width) const;
+
+    Position skipOffscreenLines(int offscreen_visual_lines, int screen_width) const;
 public:
     EditorState() {
         FileHandler f;
@@ -36,8 +39,11 @@ public:
     void moveCursorDown(int screen_width);
     void moveCursorRight();
 
-    size_t getFirstVisibleLine(int screen_width, int screen_height);
+    Position getFirstVisibleChar(int screen_width, int screen_height);
+
     size_t getLineCount() const { return m_file.getLineCount(); }
+
+    std::string getPartialLine(Position start);
     const std::string& getLine(size_t row) const { return m_file.getLine(row); }
 };
 

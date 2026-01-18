@@ -1,6 +1,7 @@
 #include <ncurses.h>
 
 #include "../../inc/View/Display.hpp"
+#include "../../inc/Model/TextFile.hpp"
 
 int Display::screenHeight() {
     return getmaxy(stdscr);
@@ -28,7 +29,7 @@ void Display::renderCursor(size_t visual_row_of_cursor) {
 
     size_t screen_width = static_cast<size_t>(getmaxx(stdscr));
     // DEBUG HELPER
-    mvprintw(screenHeight() - 2, 0, "cursor at (%zu/%zu) (sw = %zu)", cursor_row, cursor_column, screen_width);
+    //mvprintw(screenHeight() - 2, 0, "cursor at (%zu/%zu) (sw = %zu)", cursor_row, cursor_column, screen_width);
     
     while (cursor_column >= screen_width) {
         cursor_column -= screen_width;
@@ -43,11 +44,20 @@ void Display::renderCursor(size_t visual_row_of_cursor) {
 
 void Display::render() {
     clear();
-    size_t logical_line_index = m_controller.getFirstVisibleLine(screenWidth(), screenHeight());
+    Position first_visible_char = m_controller.getFirstVisibleChar(screenWidth(), screenHeight());
 
+    const std::string& first_visible_line = m_controller.getPartialLine(first_visible_char);
+    mvprintw(0, 0, "%s", first_visible_line.c_str());
+    
     size_t visual_row_of_cursor = 0;
+    if (m_controller.getCursorRow() == 0) {
+        visual_row_of_cursor = visualRowsNeeded(m_controller.getCursorColumn()) - 1;
+    }
 
-    for (int visual_row = 0; visual_row < screenHeight() - 2;) {
+    int logical_line_index = first_visible_char.row + 1;
+    for (int visual_row = visualRowsNeeded(first_visible_line.length());
+        visual_row < screenHeight();) {
+
         if (logical_line_index >= m_controller.getLineCount()) {
             mvprintw(visual_row, 0, "~");
             visual_row++;
@@ -62,8 +72,25 @@ void Display::render() {
             visual_row += visualRowsNeeded(line.length());
             logical_line_index++;
         }
-
     }
+
+    // for (int visual_row = 0; visual_row < screenHeight();) {
+    //     if (logical_line_index >= m_controller.getLineCount()) {
+    //         mvprintw(visual_row, 0, "~");
+    //         visual_row++;
+    //     }
+    //     else {
+    //         const std::string& line = m_controller.getLine(logical_line_index);
+    //         mvprintw(visual_row, 0, "%s", line.c_str());
+    //         if (m_controller.getCursorRow() == logical_line_index) {
+    //             visual_row_of_cursor = visual_row + visualRowsNeeded(m_controller.getCursorColumn()) - 1;
+    //         }
+            
+    //         visual_row += visualRowsNeeded(line.length());
+    //         logical_line_index++;
+    //     }
+
+    // }
 
     renderCursor(visual_row_of_cursor);
 

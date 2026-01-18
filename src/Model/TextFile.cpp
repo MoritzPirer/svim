@@ -53,10 +53,16 @@ void TextFile::calculateMetadata() {
     }
 }
 
-size_t TextFile::visualLinesOfLine(size_t line_index, int screen_width) {
-    //MODO bounds checking?
-    size_t line_length = m_file_content.at(line_index).length();
+int TextFile::visualLinesNeeded(int line_length, int screen_width) {
+    if (line_length == 0) return 1;
+                
     bool has_partial_line = line_length % screen_width != 0;
 
     return line_length / screen_width + (has_partial_line? 1 : 0);
 }
+
+size_t TextFile::visualLinesOfLine(size_t line_index, int screen_width) const {
+    size_t line_length = m_file_content.at(line_index).length();
+    return visualLinesNeeded(line_length, screen_width);
+}
+
