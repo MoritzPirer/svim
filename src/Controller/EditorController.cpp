@@ -5,14 +5,17 @@
 EditorController::EditorController(std::optional<std::string> file_path) {
     FileHandler file_handler;
     TextFile file;
-    if (file_path.has_value()) {
-        file = file_handler.openFile(file_path.value());        
+    if (!file_path.has_value() || file_path->empty()) {
+        std::filesystem::path name = file_handler.getDefaultName(); 
+        file = file_handler.createFile(name);
+        file.writeToEnd("!" + static_cast<std::string>(name));
     }
     else {
-        std::filesystem::path name = file_handler.getDefaultName(); 
-        file = TextFile(name);
+        file = file_handler.openFile(file_path.value());      
+        file.writeToEnd(file_path.value());
+
     }
-    
+    m_state = EditorState(file);
 }
 
 int EditorController::getCursorRow() const {

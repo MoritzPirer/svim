@@ -12,14 +12,14 @@
 #include <string>
 #include <optional>
 
-#include "TextFile.hpp"
+#include "../Model/TextFile.hpp"
 
 class FileHandler {
     std::string constructDefaultFilename(int counter);
 public:
     
     TextFile openFile(const std::string& file_path);
-    
+    TextFile createFile(std::filesystem::path file_path); 
     /// @brief writes the contents of file to the filename specified
     /// @param file the file to write
     void saveFile(TextFile& file);

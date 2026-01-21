@@ -22,13 +22,16 @@ void Display::renderEmptyLine(int& visual_row) {
 
 void Display::renderText() {
     // first visible line
-    Position first_visible_char = m_controller.getFirstVisibleChar(screenWidth(), screenHeight());
-    const std::string& first_visible_line = m_controller.getPartialLine(first_visible_char);
     int visual_row = 0;    
-    renderLine(visual_row, first_visible_line);
+    int logical_line_index = 0;
+    if (m_controller.getLineCount() > 0) {
+        Position first_visible_char = m_controller.getFirstVisibleChar(screenWidth(), screenHeight());
+        const std::string& first_visible_line = m_controller.getPartialLine(first_visible_char);
+        renderLine(visual_row, first_visible_line);
+        logical_line_index = first_visible_char.row + 1;
+    }
 
     // rest of screen
-    int logical_line_index = first_visible_char.row + 1;
     while (visual_row < screenHeight()) {
         if (logical_line_index >= m_controller.getLineCount()) {
             renderEmptyLine(visual_row);
@@ -67,9 +70,15 @@ void Display::render() {
     refresh();
 }
 
-Display::Display(std::string& file_path) {
-    
-}
+Display::Display(const std::string& file_path):
+    m_ncurses_session{},
+    m_controller{file_path}
+    {}
+
+Display::Display():
+    m_ncurses_session{},
+    m_controller{std::nullopt}
+    {}
 
 void Display::mainLoop() {
     bool quit = false;

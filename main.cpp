@@ -9,7 +9,7 @@ int main() { //int arguments_count, char* arguments_list[]) {
     // fh.renameFile(file, "renamed.txt");
     // fh.saveFile(file);
 
-        Display d;
+        Display d("");
         d.mainLoop();
         return 0;
 }

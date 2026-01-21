@@ -29,8 +29,8 @@ private:
     void render();
 
 public:
-    Display(std::string& file_path);
-    Display() = default;
+    Display(const std::string& file_path);
+    Display();
     ~Display() = default;
 
     void mainLoop();

@@ -7,6 +7,7 @@ TextFile FileHandler::openFile(const std::string& file_path) {
     TextFile file(file_path);
 
     if (!std::filesystem::exists(file_path)) {
+        file.writeToEnd("");
         return file;
     }
 
@@ -27,6 +28,13 @@ TextFile FileHandler::openFile(const std::string& file_path) {
     input_file.close();
     return file;
 }
+
+TextFile FileHandler::createFile(std::filesystem::path file_path) {
+    TextFile file(file_path);
+    file.writeToEnd("");
+    return file;
+}
+
 
 void FileHandler::saveFile(TextFile& file) {
     std::filesystem::path file_path = file.getFilepath();

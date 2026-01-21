@@ -29,6 +29,7 @@ private:
 public:
     TextFile() = default;
     TextFile(const std::string& file_name);
+    TextFile(std::filesystem::path file_path);
 
     void setFilepath(std::filesystem::path new_absolute_file_path);
     const std::filesystem::path& getFilepath() const;

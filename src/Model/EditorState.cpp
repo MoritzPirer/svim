@@ -41,7 +41,7 @@ void EditorState::moveCursorUp(int screen_width) {
 
 
 void EditorState::moveCursorDown(int screen_width) {
-    bool is_last_logical_line = m_cursor.getRow() == m_file.getLineCount() - 1;
+    bool is_last_logical_line = (m_cursor.getRow() == m_file.getLineCount() - 1);
     bool is_last_visual_line = isLastVisualLineOfLine(screen_width);
     
     // case 1: already in last visual line of file
