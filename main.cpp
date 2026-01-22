@@ -1,15 +1,18 @@
 #include "inc/View/Display.hpp"
 
-int main() { //int arguments_count, char* arguments_list[]) {
-    // FileHandler fh;
-    // TextFile file = fh.openFile("test.txt");
-    // file.printMetadata();
-    // file.writeToEnd("THIS WAS WRITTEN BY THE PROGRAM!");
-    // file.printMetadata();
-    // fh.renameFile(file, "renamed.txt");
-    // fh.saveFile(file);
+int main(int argument_count, char* argument_values[]) { 
+    switch (argument_count) {
+        case 1: {
+            Display d;
+            d.mainLoop();
+            break;
+        }
+        case 2: {
+            Display d(argument_values[1]);
+            d.mainLoop();
+            break;
+        }
+    }
 
-        Display d("");
-        d.mainLoop();
-        return 0;
+    return 0;
 }

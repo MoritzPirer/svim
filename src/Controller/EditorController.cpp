@@ -8,12 +8,9 @@ EditorController::EditorController(std::optional<std::string> file_path) {
     if (!file_path.has_value() || file_path->empty()) {
         std::filesystem::path name = file_handler.getDefaultName(); 
         file = file_handler.createFile(name);
-        file.writeToEnd("!" + static_cast<std::string>(name));
     }
     else {
         file = file_handler.openFile(file_path.value());      
-        file.writeToEnd(file_path.value());
-
     }
     m_state = EditorState(file);
 }
