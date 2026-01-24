@@ -6,8 +6,13 @@
 int Display::screenHeight() {
     return getmaxy(stdscr);
 }
+
 int Display::screenWidth() {
     return getmaxx(stdscr);
+}
+
+ScreenSize Display::screenSize() {
+    return {screenHeight(), screenWidth()};
 }
 
 void Display::renderLine(int& visual_row, const std::string& line) {
@@ -46,7 +51,7 @@ void Display::renderText() {
  
 void Display::renderCursor() {
     int cursor_column = m_controller.getCursorColumn();
-    int screen_row_of_cursor = m_controller.screenLineOfCursor(screenWidth(), screenHeight());
+    int screen_row_of_cursor = m_controller.screenLineOfCursor(screenSize());
 
     // DEBUG HELPER
     //size_t cursor_row = m_controller.getCursorRow();
@@ -60,12 +65,17 @@ void Display::renderCursor() {
     curs_set(2);
 }
 
+void Display::renderMetadata() {
+    std::string mode_label = m_controller.getModeLabel();
+    mvprintw(screenHeight() - 1, 0, "--%s--", mode_label.c_str());
+}
+
 void Display::render() {
     clear();
 
     renderText();
+    renderMetadata();
     renderCursor();
-    // renderMetadata() here, file numbers probably in renderText() or hidden from display if possible
 
     refresh();
 }
@@ -87,6 +97,6 @@ void Display::mainLoop() {
         render();
 
         int input = getch();
-        quit = m_controller.processInput(input, screenWidth());
+        quit = m_controller.processInput(input, screenSize());
     }
 }

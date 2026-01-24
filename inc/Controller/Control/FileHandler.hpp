@@ -12,7 +12,7 @@
 #include <string>
 #include <optional>
 
-#include "../Model/TextFile.hpp"
+#include "../../Model/TextFile.hpp"
 
 class FileHandler {
     std::string constructDefaultFilename(int counter);

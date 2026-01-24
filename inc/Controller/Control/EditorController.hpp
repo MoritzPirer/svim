@@ -11,27 +11,31 @@
 
 #include <optional>
 
-#include "../Model/EditorState.hpp"
+#include "../../Model/EditorState.hpp"
+#include "../Mode/ModeManager.hpp"
 
 class EditorController {
 private:
     EditorState m_state;
+    ModeManager m_mode_manager;
+    
 public:
     EditorController(std::optional<std::string> file_path);
-    EditorController(const EditorController&) = default;
-    ~EditorController() = default;
+    virtual ~EditorController() = default;
 
     int getCursorRow() const;
     int getCursorColumn() const;
 
-    bool processInput(int input, int screen_width);
+    std::string getModeLabel() const;
+
+    bool processInput(int input, ScreenSize size);
     
     int getLineCount() const;
     Position getFirstVisibleChar(int screen_width, int screen_height);
     std::string getPartialLine(Position start);
     const std::string& getLine(size_t row) const;
 
-    int screenLineOfCursor(int screen_width, int screen_height);
+    int screenLineOfCursor(ScreenSize size);
 };
 
 #endif //EDITOR_CONTROLLER_HPP

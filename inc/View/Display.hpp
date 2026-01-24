@@ -10,7 +10,7 @@
 #define DISPLAY_HPP
 
 #include "NcursesSession.hpp"
-#include "../Controller/EditorController.hpp"
+#include "../Controller/Control/EditorController.hpp"
 
 class Display {
 private:
@@ -20,11 +20,13 @@ private:
     int screenHeight();
     int screenWidth();
 
+    ScreenSize screenSize();
     
     void renderEmptyLine(int& visual_row);
     void renderLine(int& visual_row, const std::string& line_to_render);
     void renderText();
     void renderCursor();
+    void renderMetadata();
 
     void render();
 
