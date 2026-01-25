@@ -11,6 +11,7 @@
 
 #include "../../inc/Model/TextFile.hpp"
 #include "../../inc/Model/Cursor.hpp"
+#include "../../inc/Controller/ScreenSize.hpp"
 
 class EditorState {
 private:
@@ -34,8 +35,10 @@ public:
     void moveCursorLeft();
     void moveCursorDown(int screen_width);
     void moveCursorRight();
+
+    void insertCharacter(char character_to_add);
     
-    Position getFirstVisibleChar(int screen_width, int screen_height);
+    Position getFirstVisibleChar(ScreenSize size);
     
     size_t getLineCount() const { return m_file.getLineCount(); }
     

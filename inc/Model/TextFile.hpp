@@ -36,6 +36,7 @@ public:
     void setHasUnsavedChanges(bool has_unsaved_changes);
 
     void writeToEnd(const std::string& line);
+    void insertCharacterAt(char character_to_add, Position position);
     
     int getLineCount() const;
     int getLineLength(size_t line_index) const;

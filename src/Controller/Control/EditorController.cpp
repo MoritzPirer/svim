@@ -39,8 +39,8 @@ bool EditorController::processInput(int input, ScreenSize size) {
     return false;
 }
 
-Position EditorController::getFirstVisibleChar(int screen_width, int screen_height) {
-    return m_state.getFirstVisibleChar(screen_width, screen_height);
+Position EditorController::getFirstVisibleChar(ScreenSize size) {
+    return m_state.getFirstVisibleChar(size);
 }
 
 int EditorController::getLineCount() const {

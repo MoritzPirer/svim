@@ -23,6 +23,7 @@ void Display::renderLine(int& visual_row, const std::string& line) {
 void Display::renderEmptyLine(int& visual_row) {
     std::string empty_line = "~"; // FUTURE: READ THIS FROM SETTINGS VIA CONTROLLER
     renderLine(visual_row, empty_line);
+    
 }
 
 void Display::renderText() {
@@ -30,7 +31,7 @@ void Display::renderText() {
     int visual_row = 0;    
     int logical_line_index = 0;
     if (m_controller.getLineCount() > 0) {
-        Position first_visible_char = m_controller.getFirstVisibleChar(screenWidth(), screenHeight());
+        Position first_visible_char = m_controller.getFirstVisibleChar(screenSize());
         const std::string& first_visible_line = m_controller.getPartialLine(first_visible_char);
         renderLine(visual_row, first_visible_line);
         logical_line_index = first_visible_char.row + 1;

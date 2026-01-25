@@ -123,18 +123,24 @@ Position EditorState::skipOffscreenLines(int offscreen_visual_lines, int screen_
     throw std::runtime_error("something went wrong in getFirstVisibleChar()");
 }
 
-Position EditorState::getFirstVisibleChar(int screen_width, int screen_height) {
-    int visual_line_of_cursor = calculateVisualLineOfCursor(screen_width);
+void EditorState::insertCharacter(char character_to_add) {
+    m_file.insertCharacterAt(character_to_add, m_cursor.getPosition());
+    m_cursor.moveRight();
+}
+
+
+Position EditorState::getFirstVisibleChar(ScreenSize size) {
+    int visual_line_of_cursor = calculateVisualLineOfCursor(size.width);
 
     // too far up to place cursor in the middle
-    if (visual_line_of_cursor <= screen_height / 2) {
+    if (visual_line_of_cursor <= size.height / 2) {
         return {0,0};
     }
 
     // skip some lines to keep cursor in the middle
-    int offscreen_visual_lines = visual_line_of_cursor - (screen_height / 2);
+    int offscreen_visual_lines = visual_line_of_cursor - (size.height / 2);
     
-    return skipOffscreenLines(offscreen_visual_lines, screen_width);
+    return skipOffscreenLines(offscreen_visual_lines, size.width);
 }
 
 std::string EditorState::getPartialLine(Position start) {

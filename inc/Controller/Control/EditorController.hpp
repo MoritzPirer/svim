@@ -31,7 +31,7 @@ public:
     bool processInput(int input, ScreenSize size);
     
     int getLineCount() const;
-    Position getFirstVisibleChar(int screen_width, int screen_height);
+    Position getFirstVisibleChar(ScreenSize size);
     std::string getPartialLine(Position start);
     const std::string& getLine(size_t row) const;
 

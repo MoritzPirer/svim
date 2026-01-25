@@ -14,6 +14,14 @@ struct Position {
     int column;    
 
     Position(int r = 0, int c = 0): row{r}, column{c} {}
+
+    std::string format() const {
+        return "("
+            + std::to_string(row)
+            + "/"
+            + std::to_string(column)
+            + ")";
+        }
 };
 
 #endif //POSITION_HPP

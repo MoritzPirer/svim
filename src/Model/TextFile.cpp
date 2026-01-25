@@ -34,6 +34,17 @@ void TextFile::writeToEnd(const std::string& line) {
     calculateMetadata();
 }
 
+void TextFile::insertCharacterAt(char character_to_add, Position position) {
+    if (static_cast<size_t>(position.row) >= m_file_content.size()
+        || static_cast<size_t>(position.column) > m_file_content.at(position.row).length()) {
+            
+        throw std::out_of_range("Cannot insert at position" + position.format());
+    }
+
+    std::string& line = m_file_content.at(position.row);
+    line.insert(line.begin() + position.column, character_to_add);
+}
+
 int TextFile::getLineCount() const {
     return m_file_content.size();
 }
