@@ -95,7 +95,7 @@ void TextFile::splitAt(Position first_of_new_paragraph) {
 }
 
 void TextFile::joinToPrevious(int line) {
-    if (line == 0 || line >= m_file_content.size()) {
+    if (line == 0 || static_cast<size_t>(line) >= m_file_content.size()) {
         return;
     }
 
