@@ -11,6 +11,7 @@ NcursesSession::NcursesSession() {
     raw();
     keypad(stdscr, TRUE);
     noecho();
+    set_escdelay(25);
     curs_set(0);
     mousemask(ALL_MOUSE_EVENTS | REPORT_MOUSE_POSITION, nullptr);
 }

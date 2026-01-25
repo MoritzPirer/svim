@@ -26,6 +26,8 @@ private:
     size_t m_word_count;
     size_t m_character_count;
 
+    void validatePosition(Position position);
+
 public:
     TextFile() = default;
     TextFile(const std::string& file_name);
@@ -37,6 +39,7 @@ public:
 
     void writeToEnd(const std::string& line);
     void insertCharacterAt(char character_to_add, Position position);
+    void deleteRange(Position start, Position end);
     
     int getLineCount() const;
     int getLineLength(size_t line_index) const;

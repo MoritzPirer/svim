@@ -1,6 +1,6 @@
 #include "../../../inc/Controller/Mode/ModeManager.hpp"
 #include "../../../inc/Controller/Mode/ToolMode.hpp"
-#include "../../../inc/Controller/Mode/TypeMode.hpp"
+#include "../../../inc/Controller/Mode/TypingMode.hpp"
 
 ModeManager::ModeManager(ModeType initial_mode) {
     changeState(initial_mode);
@@ -11,8 +11,8 @@ void ModeManager::changeState(ModeType new_mode) {
     case ModeType::TOOL_MODE:
         m_current_mode = std::make_unique<ToolMode>();
         break;
-    case ModeType::TYPE_MODE:
-        m_current_mode = std::make_unique<TypeMode>();
+    case ModeType::TYPING_MODE:
+        m_current_mode = std::make_unique<TypingMode>();
         break;
     
     default:

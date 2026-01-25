@@ -2,11 +2,12 @@
 #include "../../../inc/Controller/Mode/ToolMode.hpp"
 #include "../../../inc/Controller/Action/NullAction.hpp"
 #include "../../../inc/Controller/Action/CharwiseMoveAction.hpp"
+#include "../../../inc/Controller/Action/DeleteAction.hpp"
 
 std::pair<ModeType, std::shared_ptr<Action>>  ToolMode::parseInput(int input) {
     switch (input) {
     case 'a':
-        return {ModeType::TYPE_MODE, std::make_shared<NullAction>()};
+        return {ModeType::TYPING_MODE, std::make_shared<NullAction>()};
     case 'h':
         return {ModeType::TOOL_MODE, std::make_shared<CharwiseMoveAction>(Direction::BACKWARD)};
     case 'j':

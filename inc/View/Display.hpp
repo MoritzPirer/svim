@@ -30,6 +30,7 @@ private:
 
     void render();
 
+    int translateInput(int input);
 public:
     Display(const std::string& file_path);
     Display();

@@ -11,7 +11,7 @@
 
 enum class ModeType {
     TOOL_MODE,
-    TYPE_MODE
+    TYPING_MODE
 };
 
 #endif //MODE_TYPE_HPP

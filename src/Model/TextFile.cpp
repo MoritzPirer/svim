@@ -15,6 +15,15 @@ TextFile::TextFile(const std::string& file_path):
     m_word_count{0},
     m_character_count{0} {}
 
+void TextFile::validatePosition(Position position) {
+    if (static_cast<size_t>(position.row) >= m_file_content.size()
+        || static_cast<size_t>(position.column) > m_file_content.at(position.row).length()) {
+            
+        throw std::out_of_range("Invalid position: " + position.format());
+    }
+}
+
+
 void TextFile::setFilepath(std::filesystem::path new_absolute_file_path) {
     m_absolute_file_path = new_absolute_file_path;
 }
@@ -35,15 +44,46 @@ void TextFile::writeToEnd(const std::string& line) {
 }
 
 void TextFile::insertCharacterAt(char character_to_add, Position position) {
-    if (static_cast<size_t>(position.row) >= m_file_content.size()
-        || static_cast<size_t>(position.column) > m_file_content.at(position.row).length()) {
-            
-        throw std::out_of_range("Cannot insert at position" + position.format());
-    }
+    validatePosition(position);
 
     std::string& line = m_file_content.at(position.row);
     line.insert(line.begin() + position.column, character_to_add);
 }
+
+void TextFile::deleteRange(Position start, Position end) {
+    validatePosition(start);
+    validatePosition(end);
+
+    if (start.row > end.row
+        || (start.row == end.row && start.column > end.column)) {
+        throw std::invalid_argument("End before Start!");
+    }
+
+    // delete empty line (update logic for full line delete)
+    if (start.row == end.row 
+        && m_file_content.at(start.row).length() == 0) {
+        
+        if (m_file_content.size() > 1) { // always leave at least one empty line
+            m_file_content.erase(m_file_content.begin() + start.row);
+        } 
+        
+        return;
+    }
+
+    for (int row = start.row; row <= end.row; row++) {
+        if (row != start.row && row != end.row) { // entire line deleted
+            m_file_content.erase(m_file_content.begin() + row);
+            continue;
+        }
+        // partial line deleted
+        std::string& line = m_file_content.at(row);
+        int start_of_erase = (row == start.row? start.column : 0);
+        int end_of_erase = (row == end.row? end.column : line.length()) + 1; 
+
+        line.erase(line.begin() + start_of_erase, line.begin() + end_of_erase);
+    }
+}
+
 
 int TextFile::getLineCount() const {
     return m_file_content.size();

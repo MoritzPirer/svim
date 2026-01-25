@@ -2,6 +2,8 @@
 
 #include "../../inc/View/Display.hpp"
 #include "../../inc/Model/TextFile.hpp"
+#include "../../inc/Controller/Control/SpecialInputs.hpp"
+
 
 int Display::screenHeight() {
     return getmaxy(stdscr);
@@ -63,7 +65,7 @@ void Display::renderCursor() {
     }
     
     move(screen_row_of_cursor, cursor_column);
-    curs_set(2);
+    curs_set(1);
 }
 
 void Display::renderMetadata() {
@@ -97,7 +99,27 @@ void Display::mainLoop() {
     while (!quit) {
         render();
 
-        int input = getch();
+        int input = translateInput(getch());
         quit = m_controller.processInput(input, screenSize());
+    }
+}
+
+int Display::translateInput(int input) {
+    switch (input) {
+    case '\n':
+    case '\r':
+    case KEY_ENTER:
+        return INPUT_ENTER;
+    
+    case 27:
+        return INPUT_ESCAPE;
+    
+    case KEY_BACKSPACE:
+    case 127:
+    case '\b':
+        return INPUT_BACKSPACE;
+
+    default:
+        return input;
     }
 }

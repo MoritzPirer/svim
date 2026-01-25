@@ -1,5 +1,7 @@
 #include "../../inc/Model/EditorState.hpp"
 
+#include <ncurses.h>
+
 bool EditorState::isLastVisualLineOfLine(int screen_width) {
     int line_length = m_file.getLineLength(m_cursor.getRow());
     
@@ -126,6 +128,12 @@ Position EditorState::skipOffscreenLines(int offscreen_visual_lines, int screen_
 void EditorState::insertCharacter(char character_to_add) {
     m_file.insertCharacterAt(character_to_add, m_cursor.getPosition());
     m_cursor.moveRight();
+}
+
+void EditorState::deleteRange(Position start, Position end) {
+    m_file.deleteRange(start, end);
+
+    // MODO NEED TO CHANGE CURSOR POS
 }
 
 

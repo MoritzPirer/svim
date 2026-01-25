@@ -37,6 +37,7 @@ public:
     void moveCursorRight();
 
     void insertCharacter(char character_to_add);
+    void deleteRange(Position start, Position end);
     
     Position getFirstVisibleChar(ScreenSize size);
     
