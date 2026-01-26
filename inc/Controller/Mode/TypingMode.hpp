@@ -19,7 +19,7 @@ public:
     TypingMode(const TypingMode&) = default;
     ~TypingMode() = default;
 
-    std::pair<ModeType, std::shared_ptr<Action>>  parseInput(int input) override;
+    std::pair<ModeType, std::shared_ptr<Action>> parseInput(int input, ScreenSize size) override;
     std::string getModeLabel() const override { return "TYPING"; }
 };
 

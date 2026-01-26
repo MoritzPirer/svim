@@ -23,7 +23,7 @@ public:
     EditorMode(const EditorMode&) = default;
     virtual ~EditorMode() = default;
 
-    virtual std::pair<ModeType, std::shared_ptr<Action>> parseInput(int input) = 0;
+    virtual std::pair<ModeType, std::shared_ptr<Action>> parseInput(int input, ScreenSize size) = 0;
 
     virtual std::string getModeLabel() const = 0;
 };

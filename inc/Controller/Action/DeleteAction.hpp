@@ -21,7 +21,7 @@ public:
     DeleteAction(const DeleteAction&) = default;
     ~DeleteAction() = default;
 
-    virtual void applyTo(EditorState& state, ScreenSize size) override;
+    virtual void applyTo(EditorState& state) override;
 };
 
 #endif //DELETE_ACTION_HPP

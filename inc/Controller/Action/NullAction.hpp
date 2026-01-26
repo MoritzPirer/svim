@@ -17,9 +17,8 @@ public:
     NullAction(const NullAction&) = default;
     ~NullAction() = default;
 
-    void applyTo(EditorState& state, ScreenSize size) override {
+    void applyTo(EditorState& state) override {
         (void) state;
-        (void) size;
     }
 };
 

@@ -25,7 +25,7 @@ public:
     RangedAction(const RangedAction&) = default;
     virtual ~RangedAction() = default;
 
-    virtual void applyTo(EditorState& state, ScreenSize size) override = 0;
+    virtual void applyTo(EditorState& state) override = 0;
 };
 
 #endif //RANGED_ACTION_HPP

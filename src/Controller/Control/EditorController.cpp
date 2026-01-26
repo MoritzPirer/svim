@@ -33,8 +33,8 @@ bool EditorController::processInput(int input, ScreenSize size) {
         return true;
     }
     
-    std::shared_ptr<Action> action = m_mode_manager.convertToAction(input);
-    action->applyTo(m_state, size);
+    std::shared_ptr<Action> action = m_mode_manager.convertToAction(input, size);
+    action->applyTo(m_state);
 
     return false;
 }

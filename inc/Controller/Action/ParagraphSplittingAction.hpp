@@ -17,7 +17,7 @@ public:
     ParagraphSplittingAction(const ParagraphSplittingAction &) = default;
     ~ParagraphSplittingAction() = default;
 
-    void applyTo(EditorState& state, ScreenSize size);
+    void applyTo(EditorState& state);
 };
 
 #endif //PARAGRAPH_SPLITTING_ACTION_HPP

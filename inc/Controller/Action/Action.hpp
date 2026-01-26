@@ -18,7 +18,7 @@ public:
     Action(const Action&) = default;
     virtual ~Action() = default;
 
-    virtual void applyTo(EditorState& state, ScreenSize size) = 0;
+    virtual void applyTo(EditorState& state) = 0;
 };
 
 #endif //ACTION_HPP

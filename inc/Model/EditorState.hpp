@@ -30,6 +30,7 @@ public:
     ~EditorState() = default;
     
     const Cursor& getCursor() const { return m_cursor; }
+    TextFile& getFile() { return m_file; }
     
     void moveCursorUp(int screen_width);
     void moveCursorLeft();
@@ -40,6 +41,7 @@ public:
     void deleteRange(Position start, Position end);
     void splitAtCursor();
     void joinLineToPrevious(int line);
+
     
     Position getFirstVisibleChar(ScreenSize size);
     

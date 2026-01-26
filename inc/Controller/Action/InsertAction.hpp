@@ -19,7 +19,7 @@ public:
     InsertAction(const InsertAction&) = default;
     ~InsertAction() = default;
 
-    void applyTo(EditorState& state, ScreenSize size) override;
+    void applyTo(EditorState& state) override;
 };
 
 #endif //INSERT_ACTION_HPP

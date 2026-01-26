@@ -1,6 +1,6 @@
 #include "../../../inc/Controller/Action/ParagraphSplittingAction.hpp"
 
-void ParagraphSplittingAction::applyTo(EditorState& state, ScreenSize size) {
-    (void) size;
+void ParagraphSplittingAction::applyTo(EditorState& state) {
     state.splitAtCursor();
+    state.getFile().setHasUnsavedChanges(true);
 }

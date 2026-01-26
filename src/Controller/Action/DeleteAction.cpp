@@ -1,7 +1,6 @@
 #include "../../../inc/Controller/Action/DeleteAction.hpp"
 
-void DeleteAction::applyTo(EditorState& state, ScreenSize size) {
-    (void) size;
+void DeleteAction::applyTo(EditorState& state) {
     Position start = (m_start.has_value()? m_start.value() : state.getCursor().getPosition());
     Position end = (m_end.has_value()? m_end.value() : state.getCursor().getPosition());
 
@@ -15,4 +14,6 @@ void DeleteAction::applyTo(EditorState& state, ScreenSize size) {
 
     state.deleteRange(start, end);
     state.moveCursorLeft();
+
+    state.getFile().setHasUnsavedChanges(true);
 }

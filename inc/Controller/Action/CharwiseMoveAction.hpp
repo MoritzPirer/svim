@@ -9,18 +9,18 @@
 #ifndef CHARACTERWISE_MOVE_ACTION_HPP
 #define CHARACTERWISE_MOVE_ACTION_HPP
 
-#include "Action.hpp"
+#include "SizeDependantAction.hpp"
 #include "../Direction.hpp"
 
-class CharwiseMoveAction: public Action {
+class CharwiseMoveAction: public SizeDependantAction {
 private:
     Direction m_direction;
 public:
-    CharwiseMoveAction(Direction direction);
+    CharwiseMoveAction(ScreenSize size, Direction direction);
     CharwiseMoveAction(const CharwiseMoveAction&) = default;
     ~CharwiseMoveAction() = default;
 
-    void applyTo(EditorState& state, ScreenSize size) override;
+    void applyTo(EditorState& state) override;
 };
 
 #endif //CHARACTERWISE_MOVE_ACTION_HPP

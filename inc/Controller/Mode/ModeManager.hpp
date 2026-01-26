@@ -23,7 +23,7 @@ public:
     ModeManager(ModeType initial_mode);
     ~ModeManager() = default;
     
-    std::shared_ptr<Action> convertToAction(int input);
+    std::shared_ptr<Action> convertToAction(int input, ScreenSize size);
     std::string getModeLabel() const;
 };
 

@@ -1,9 +1,10 @@
 #include "../../../inc/Controller/Action/CharwiseMoveAction.hpp"
 
-CharwiseMoveAction::CharwiseMoveAction(Direction direction):
+CharwiseMoveAction::CharwiseMoveAction(ScreenSize size, Direction direction):
+    SizeDependantAction{size},
     m_direction{direction} {}
 
-void CharwiseMoveAction::applyTo(EditorState& state, ScreenSize size) {
+void CharwiseMoveAction::applyTo(EditorState& state) {
     switch (m_direction) {
     case Direction::FORWARD: {
         state.moveCursorRight();
@@ -14,11 +15,11 @@ void CharwiseMoveAction::applyTo(EditorState& state, ScreenSize size) {
         break;
     }
     case Direction::UP: {
-        state.moveCursorUp(size.width);
+        state.moveCursorUp(m_size.width);
         break;
     }
     case Direction::DOWN: {
-        state.moveCursorDown(size.width);
+        state.moveCursorDown(m_size.width);
         break;
     }
     default:

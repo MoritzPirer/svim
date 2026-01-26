@@ -6,7 +6,9 @@
 
 #include "../../../inc/Controller/Control/SpecialInputs.hpp"
 
-std::pair<ModeType, std::shared_ptr<Action>> TypingMode::parseInput(int input) {
+std::pair<ModeType, std::shared_ptr<Action>> TypingMode::parseInput(int input, ScreenSize size) {
+    (void) size;
+    
     switch (input) {
     case INPUT_ESCAPE: {
         return {ModeType::TOOL_MODE, std::make_shared<NullAction>()};
