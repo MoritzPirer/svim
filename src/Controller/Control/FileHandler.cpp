@@ -79,7 +79,7 @@ void FileHandler::renameFile(TextFile& file, std::string new_path) {
     }
     else {
         std::filesystem::path base_directory = file.getFilepath().parent_path();
-        file.setFilepath(base_directory/new_path); // '/' operater is concatination here
+        file.setFilepath(base_directory/new_path); // '/' operator is concatination here
     }
 }
 
@@ -92,7 +92,7 @@ std::string FileHandler::constructDefaultFilename(int counter) {
         return default_file_name + default_file_ending;
     }
     
-    return default_file_name + " (" + std::to_string(counter) + ")" + default_file_ending;
+    return default_file_name + "_(" + std::to_string(counter) + ")" + default_file_ending;
 }
 
 std::filesystem::path FileHandler::getDefaultName() {

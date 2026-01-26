@@ -9,6 +9,8 @@
 #ifndef SPECIAL_INPUTS_HPP
 #define SPECIAL_INPUTS_HPP
 
+// MODO: find a nicer way to do this
+
 #define INPUT_ESCAPE -1
 #define INPUT_BACKSPACE -2
 #define INPUT_ENTER '\n'

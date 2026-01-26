@@ -19,6 +19,10 @@ public:
     ToolMode(const ToolMode&) = default;
     ~ToolMode() = default;
 
+    /// @brief generates the next mode and the resulting action of the input.
+    /// @param input the user input 
+    /// @param size the current size of the writing area 
+    /// @return the next mode and the action to execute 
     std::pair<ModeType, std::shared_ptr<Action>> parseInput(int input, ScreenSize size) override;
 
     std::string getModeLabel() const override { return "TOOL"; }

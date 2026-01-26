@@ -1,5 +1,8 @@
 #include "../../../inc/Controller/Action/DeleteAction.hpp"
 
+DeleteAction::DeleteAction(std::optional<Position> start, std::optional<Position> end):
+    RangedAction(start, end) {}
+
 void DeleteAction::applyTo(EditorState& state) {
     Position start = (m_start.has_value()? m_start.value() : state.getCursor().getPosition());
     Position end = (m_end.has_value()? m_end.value() : state.getCursor().getPosition());

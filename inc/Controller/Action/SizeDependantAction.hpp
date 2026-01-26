@@ -19,7 +19,7 @@ public:
     SizeDependantAction(const SizeDependantAction&) = default;
     ~SizeDependantAction() = default;
 
-    void applyTo(EditorState& state) override = 0;
+    virtual void applyTo(EditorState& state) override = 0;
 };
 
 #endif //SIZE_DEPENDANT_ACTION_HPP

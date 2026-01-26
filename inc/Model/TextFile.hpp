@@ -37,8 +37,12 @@ public:
     const std::filesystem::path& getFilepath() const;
     void setHasUnsavedChanges(bool has_unsaved_changes);
 
+    /// @brief add a new line at the end of the file
+    /// @param line the line to add
     void writeToEnd(const std::string& line);
+
     void insertCharacterAt(char character_to_add, Position position);
+    
     void deleteRange(Position start, Position end);
     void splitAt(Position first_of_new_paragraph);
     void joinToPrevious(int line);
