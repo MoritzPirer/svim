@@ -27,8 +27,8 @@ public:
     ///     May change the current mode
     /// @param input the user input
     /// @param size the current size of the text area
-    /// @return an action to execute
-    std::shared_ptr<Action> convertToAction(int input, ScreenSize size);
+    /// @return a set of actions to execute
+    std::vector<std::shared_ptr<Action>> convertToAction(int input, ScreenSize size);
     
     /// @return the name of the current mode
     std::string getModeLabel() const;

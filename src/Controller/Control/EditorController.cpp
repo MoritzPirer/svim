@@ -30,8 +30,10 @@ std::string EditorController::getModeLabel() const {
 }
 
 void EditorController::processInput(int input, ScreenSize size) {
-    std::shared_ptr<Action> action = m_mode_manager.convertToAction(input, size);
-    action->applyTo(m_state);
+    std::vector<std::shared_ptr<Action>> actions = m_mode_manager.convertToAction(input, size);
+    for (std::shared_ptr action : actions) {
+        action->applyTo(m_state);
+    }
 }
 
 Position EditorController::getFirstVisibleChar(ScreenSize size) {

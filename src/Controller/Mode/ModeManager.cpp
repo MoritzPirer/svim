@@ -20,11 +20,11 @@ void ModeManager::changeState(ModeType new_mode) {
     }
 }
 
-std::shared_ptr<Action> ModeManager::convertToAction(int input, ScreenSize size) {
-    auto [new_mode, action] = m_current_mode->parseInput(input, size);
+std::vector<std::shared_ptr<Action>> ModeManager::convertToAction(int input, ScreenSize size) {
+    auto [new_mode, actions] = m_current_mode->parseInput(input, size);
     changeState(new_mode);
 
-    return action;
+    return actions;
 }
 
 std::string ModeManager::getModeLabel() const {

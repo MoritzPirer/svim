@@ -15,7 +15,7 @@ class DeleteAction: public RangedAction {
 private:
 
 public:
-    DeleteAction(std::optional<Position> start, std::optional<Position> end);
+    DeleteAction(std::optional<Position> start = std::nullopt, std::optional<Position> end = std::nullopt);
     DeleteAction(const DeleteAction&) = default;
     ~DeleteAction() = default;
 

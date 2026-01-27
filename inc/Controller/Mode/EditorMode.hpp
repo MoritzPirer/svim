@@ -11,6 +11,7 @@
 
 #include <string>
 #include <memory>
+#include <vector>
 
 #include "../Action/Action.hpp"
 #include "ModeType.hpp"
@@ -23,7 +24,7 @@ public:
     EditorMode(const EditorMode&) = default;
     virtual ~EditorMode() = default;
 
-    virtual std::pair<ModeType, std::shared_ptr<Action>> parseInput(int input, ScreenSize size) = 0;
+    virtual std::pair<ModeType, std::vector<std::shared_ptr<Action>>> parseInput(int input, ScreenSize size) = 0;
 
     virtual std::string getModeLabel() const = 0;
 };
