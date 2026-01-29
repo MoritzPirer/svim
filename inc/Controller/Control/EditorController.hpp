@@ -20,49 +20,35 @@ private:
     EditorState m_state;
     ModeManager m_mode_manager;
     UiHandler m_ui_handler;
-    
-    std::vector<std::string> splitIntoRows(const std::string& paragraph, int start_column) const;
-
-    RenderInfo calculateRenderInfo();
-public:
-    EditorController(std::optional<std::string> file_path = std::nullopt);
-    virtual ~EditorController() = default;
-
-
-    int getCursorRow() const;
-    int getCursorColumn() const;
-    std::string getModeLabel() const;
-    const std::string& getLine(size_t row) const;
-    
-    /// @return true if the program should end, false otherwise
-    bool isQuit() const;
-
-    /// @brief processes the given input with respet to the current mode and applies
-    ///     any changes to the internal state of the file.
-    /// @param input the input given by the user. Characters can be passed as-is, special characters
-    ///     e.g. backspace, escape, should be passed using the constants defined in SpecialInputs.hpp 
-    /// @param size the current size of the text area (needed for some actions, e.g. cursor movement) 
-    void processInput(int input, ScreenSize size);
-
-    /// @return returns the number of logical lines in the opened file
-    int getLineCount() const;
-
+      
     /// @brief calculates the position of the first character that should be visible on screen.
     ///     the calculation ensures that the cursor is always on the upper half of the screen
     /// @param size the current size of the text area 
     /// @return the position of the first visible character 
-    Position getFirstVisibleChar(ScreenSize size);
+    Position getFirstVisibleChar(ScreenSize size);  
 
-    /// @param start the first character to be part of the partial line
-    /// @return the rest of start's logical line (including start itself)
-    std::string getPartialLine(Position start);
+    /// @brief splits the given paragraph into a vector of chunks that are at
+    ///     most as long as the text area is wide (i.e that don't need to wrap)
+    /// @param paragraph the paragraph to split 
+    /// @param start_column where in the paragraph to start (before that column is ignored) 
+    /// @return the split vector
+    std::vector<std::string> splitIntoRows(const std::string& paragraph, int start_column) const;
 
-    /// returns the visual line the cursor should be rendered in (not necessarily the visual line
-    ///     it actually is in)
-    /// @param size the current size of te text area
-    /// @return the visual lie of the cursor 
-    int screenLineOfCursor(ScreenSize size);
+    /// @brief calculates the lines that are visible based on the position of the cursor
+    std::vector<std::string> calculateVisibleRows();
+    
+    /// @brief calculates the position on the screen the cursor should be drawn to
+    ///     accounting for off-screen lines and line wrapping
+    Position calculateScreenPositionOfCursor();
+    
+    /// @brief calculates what should be rendered to the screen
+    RenderInfo calculateRenderInfo();
 
+public:
+    EditorController(std::optional<std::string> file_path = std::nullopt);
+    virtual ~EditorController() = default;
+
+    /// @brief the main entry point for the editor
     void mainLoop();
 };
 

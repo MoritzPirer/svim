@@ -45,16 +45,16 @@ public:
     
     void deleteRange(Position start, Position end);
     void splitAt(Position first_of_new_paragraph);
-    void joinToPrevious(int line);
+    void joinToPrevious(int paragraph_index);
     
-    int getLineCount() const;
+    int getNumberOfParagrahps() const;
     int getLineLength(size_t line_index) const;
     const std::string& getLine(size_t line_index) const;
 
     void calculateMetadata();
 
     static int visualLinesNeeded(int line_length, int screen_width);
-    size_t visualLinesOfLine(size_t line_index, int screen_width) const;
+    size_t visualLinesOfParagraph(size_t line_index, int screen_width) const;
 };
 
 #endif //TEXT_FILE_HPP

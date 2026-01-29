@@ -94,17 +94,17 @@ void TextFile::splitAt(Position first_of_new_paragraph) {
     
 }
 
-void TextFile::joinToPrevious(int line) {
-    if (line == 0 || static_cast<size_t>(line) >= m_file_content.size()) {
+void TextFile::joinToPrevious(int paragraph_index) {
+    if (paragraph_index == 0 || static_cast<size_t>(paragraph_index) >= m_file_content.size()) {
         return;
     }
 
-    m_file_content.at(line - 1).append(m_file_content.at(line));
-    m_file_content.erase(m_file_content.begin() + line);
+    m_file_content.at(paragraph_index - 1).append(m_file_content.at(paragraph_index));
+    m_file_content.erase(m_file_content.begin() + paragraph_index);
 }
 
 
-int TextFile::getLineCount() const {
+int TextFile::getNumberOfParagrahps() const {
     return m_file_content.size();
 }
 
@@ -136,7 +136,7 @@ int TextFile::visualLinesNeeded(int line_length, int screen_width) {
     return line_length / screen_width + (has_partial_line? 1 : 0);
 }
 
-size_t TextFile::visualLinesOfLine(size_t line_index, int screen_width) const {
+size_t TextFile::visualLinesOfParagraph(size_t line_index, int screen_width) const {
     size_t line_length = m_file_content.at(line_index).length();
     return visualLinesNeeded(line_length, screen_width);
 }

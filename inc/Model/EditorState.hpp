@@ -64,7 +64,7 @@ public:
     
     Position getFirstVisibleChar(ScreenSize size);
     
-    size_t getLineCount() const { return m_file.getLineCount(); }
+    size_t getNumberOfParagrahps() const { return m_file.getNumberOfParagrahps(); }
     
     std::string getPartialLine(Position start);
     const std::string& getLine(size_t row) const { return m_file.getLine(row); }

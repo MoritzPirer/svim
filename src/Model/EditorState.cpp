@@ -43,7 +43,7 @@ void EditorState::moveCursorUp(int screen_width) {
 
 
 void EditorState::moveCursorDown(int screen_width) {
-    bool is_last_logical_line = (m_cursor.getRow() == m_file.getLineCount() - 1);
+    bool is_last_logical_line = (m_cursor.getRow() == m_file.getNumberOfParagrahps() - 1);
     bool is_last_visual_line = isLastVisualLineOfLine(screen_width);
     
     // case 1: already in last visual line of file
@@ -91,7 +91,7 @@ void EditorState::moveCursorRight() {
         m_cursor.moveRight();
     }
     // end of line -> jump to start of next
-    else if (m_cursor.getRow() + 1 < m_file.getLineCount()) { 
+    else if (m_cursor.getRow() + 1 < m_file.getNumberOfParagrahps()) { 
         m_cursor.moveDownLogical();
         m_cursor.setColumn(0);
     }
@@ -101,7 +101,7 @@ int EditorState::calculateVisualLineOfCursor(int screen_width) const {
     int visual_line_of_cursor = m_cursor.getColumn() / screen_width; //TextFile::visualLinesNeeded(m_cursor.getColumn(), screen_width);
     
     for (int logical_line_index = 0; logical_line_index < m_cursor.getRow(); logical_line_index++) {
-        visual_line_of_cursor += m_file.visualLinesOfLine(logical_line_index, screen_width);
+        visual_line_of_cursor += m_file.visualLinesOfParagraph(logical_line_index, screen_width);
     }
 
     return visual_line_of_cursor;

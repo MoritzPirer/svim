@@ -52,11 +52,11 @@ void FileHandler::saveFile(TextFile& file) {
             return;
         }
     
-        for (int i = 0; i < file.getLineCount(); i++) {
+        for (int i = 0; i < file.getNumberOfParagrahps(); i++) {
             const std::string& line = file.getLine(i);
             output_file << line; 
     
-            if (!line.ends_with("\n") && i < file.getLineCount() - 1) {
+            if (!line.ends_with("\n") && i < file.getNumberOfParagrahps() - 1) {
                 output_file << "\n";
             }
         }
