@@ -28,8 +28,10 @@ std::pair<ModeType, std::vector<std::shared_ptr<Action>>> ToolMode::parseInput(i
             return {ModeType::TOOL_MODE, {std::make_shared<ChunkwiseMoveAction>(Scope::PARAGRAPH, Destination::END)}};
 
         // mode switching actions
-        case 'a':
+        case 'i':
             return {ModeType::TYPING_MODE, {}};
+        case 'a':
+            return {ModeType::TYPING_MODE, {std::make_shared<CharwiseMoveAction>(size, Direction::FORWARD)}};
         case 'I':
             return {ModeType::TYPING_MODE, {std::make_shared<ChunkwiseMoveAction>(Scope::PARAGRAPH, Destination::START)}};
         case 'A':
