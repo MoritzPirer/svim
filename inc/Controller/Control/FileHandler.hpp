@@ -14,12 +14,8 @@
 
 #include "../../Model/TextFile.hpp"
 
-class FileHandler {
+namespace FileHandler {
 
-    std::string constructDefaultFilename(int counter);
-
-public:
-    
     /// @brief if a file exists at file_path, that file is read in and returned. Otherwise, an empty
     ///     TextFile is created.
     /// @param file_path the file path to use for the TextFile

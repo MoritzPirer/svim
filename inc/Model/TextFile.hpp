@@ -44,12 +44,19 @@ public:
     void insertCharacterAt(char character_to_add, Position position);
     
     void deleteRange(Position start, Position end);
+    
+    /// @brief splits the paragraph containing the given position into two, with the given position
+    ///     being the first character in the new paragraph
+    /// @param first_of_new_paragraph where to split 
     void splitAt(Position first_of_new_paragraph);
+
+    /// @brief joins the paragraph with the given index to the previous paragraph
+    /// @param paragraph_index index of the paragraph to join to the previous 
     void joinToPrevious(int paragraph_index);
     
     int getNumberOfParagrahps() const;
-    int getLineLength(size_t line_index) const;
-    const std::string& getParagraph(size_t line_index) const;
+    int getParagraphLength(size_t index) const;
+    const std::string& getParagraph(size_t index) const;
 
     void calculateMetadata();
 

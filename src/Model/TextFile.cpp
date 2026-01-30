@@ -108,13 +108,13 @@ int TextFile::getNumberOfParagrahps() const {
     return m_file_content.size();
 }
 
-int TextFile::getLineLength(size_t line_index) const {
-    return m_file_content.at(line_index).length();
+int TextFile::getParagraphLength(size_t index) const {
+    return m_file_content.at(index).length();
 }
 
-const std::string& TextFile::getParagraph(size_t line_index) const {
+const std::string& TextFile::getParagraph(size_t index) const {
     //MODO bounds checking?
-    return m_file_content.at(line_index); 
+    return m_file_content.at(index); 
 }
 
 void TextFile::calculateMetadata() {

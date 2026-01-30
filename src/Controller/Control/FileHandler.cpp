@@ -3,6 +3,23 @@
 
 #include "../../../inc/Controller/Control/FileHandler.hpp"
 
+namespace {
+
+    std::string constructDefaultFilename(int counter) {
+        std::string default_file_name = "new_file";
+        std::string default_file_ending = ".txt";
+
+        std::string numbered_name;
+        if (counter == 0) {
+            return default_file_name + default_file_ending;
+        }
+        
+        return default_file_name + "_(" + std::to_string(counter) + ")" + default_file_ending;
+    }
+
+}
+
+
 TextFile FileHandler::openFile(const std::string& file_path) {
     TextFile file(file_path);
 
@@ -81,18 +98,6 @@ void FileHandler::renameFile(TextFile& file, std::string new_path) {
         std::filesystem::path base_directory = file.getFilepath().parent_path();
         file.setFilepath(base_directory/new_path); // '/' operator is concatination here
     }
-}
-
-std::string FileHandler::constructDefaultFilename(int counter) {
-    std::string default_file_name = "new_file";
-    std::string default_file_ending = ".txt";
-
-    std::string numbered_name;
-    if (counter == 0) {
-        return default_file_name + default_file_ending;
-    }
-    
-    return default_file_name + "_(" + std::to_string(counter) + ")" + default_file_ending;
 }
 
 std::filesystem::path FileHandler::getDefaultName() {
