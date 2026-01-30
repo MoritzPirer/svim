@@ -22,11 +22,11 @@ public:
     EditorMode(const EditorMode&) = default;
     virtual ~EditorMode() = default;
 
-    /// @brief parses the input and converts it into an editor mode and one or more Actions
+    /// @brief parses the input and converts it into an editor mode and zero or more Actions
     /// @param input the input to process 
     /// @param size the current size of the screen area
     /// @return the mode the editor should transition to (may be the same as currently), one or more
-    ///     actions to apply to the editor state (which may be NullAction if nothing should be done) 
+    ///     actions to apply to the editor state (which may be empty if nothing should be done) 
     virtual std::pair<ModeType, std::vector<std::shared_ptr<Action>>>
         parseInput(int input, ScreenSize size) = 0;
 

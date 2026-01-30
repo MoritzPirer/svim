@@ -1,6 +1,5 @@
 #include <ncurses.h>
 #include "../../../inc/Controller/Mode/ToolMode.hpp"
-#include "../../../inc/Controller/Action/NullAction.hpp"
 #include "../../../inc/Controller/Action/CharwiseMoveAction.hpp"
 #include "../../../inc/Controller/Action/DeleteAction.hpp"
 #include "../../../inc/Controller/Action/SaveAction.hpp"
