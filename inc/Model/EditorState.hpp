@@ -49,7 +49,7 @@ public:
     void moveCursorRight();
 
     void insertCharacterAtCursor(char character_to_add);
-    
+    inline void debug(std::string line) {m_file.writeToEnd(line); } 
     /// @brief deletes from start to end, including both end points. if the range is 
     ///     an empty line, it is remnoved, not just cleared.
     /// @param start the inclusive start of deletion 

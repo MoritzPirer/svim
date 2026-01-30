@@ -1,7 +1,7 @@
 #include "../../../inc/Controller/Mode/TypingMode.hpp"
 #include "../../../inc/Controller/Action/InsertAction.hpp"
 #include "../../../inc/Controller/Action/NullAction.hpp"
-#include "../../../inc/Controller/Action/DeleteAction.hpp"
+#include "../../../inc/Controller/Action/EraseAction.hpp"
 #include "../../../inc/Controller/Action/ParagraphSplittingAction.hpp"
 
 #include "../../../inc/Shared/SpecialInputs.hpp"
@@ -11,11 +11,11 @@ std::pair<ModeType, std::vector<std::shared_ptr<Action>>> TypingMode::parseInput
     
     switch (input) {
         case INPUT_ESCAPE: {
-            return {ModeType::TOOL_MODE, {std::make_shared<NullAction>()}};
+            return {ModeType::TOOL_MODE, {}};
         }
 
         case INPUT_BACKSPACE: {
-            return {ModeType::TYPING_MODE, {std::make_shared<DeleteAction>(std::nullopt, std::nullopt)}};
+            return {ModeType::TYPING_MODE, {std::make_shared<EraseAction>(-1)}};
         }
 
         case INPUT_ENTER: {

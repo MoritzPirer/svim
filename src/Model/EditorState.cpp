@@ -47,7 +47,7 @@ void EditorState::moveCursorDown(int screen_width) {
     
     // case 1: already in last visual line of file
     if (is_last_logical_line && is_last_visual_line) { 
-        m_cursor.setColumn(std::max(m_file.getParagraphLength(m_cursor.getRow()) - 1, 0 )); 
+        m_cursor.setColumn(std::max(m_file.getParagraphLength(m_cursor.getRow()), 0 )); 
         return;
     }
 
