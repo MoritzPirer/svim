@@ -11,7 +11,7 @@
 
 #include "Action.hpp"
 
-class SizeDependantAction: public Action {
+class SizeDependantAction: public virtual Action {
 protected:
     ScreenSize m_size;
 public:

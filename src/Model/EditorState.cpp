@@ -96,6 +96,29 @@ void EditorState::moveCursorRight() {
     }
 }
 
+void EditorState::moveCursor(Direction direction, int screen_width) {
+    switch (direction) {
+        case Direction::UP: {
+            moveCursorUp(screen_width);
+            return;
+        }
+        case Direction::FORWARD: {
+            moveCursorRight();
+            return;
+        }
+        case Direction::DOWN: {
+            moveCursorDown(screen_width);
+            return;
+        }
+        case Direction::BACKWARD: {
+            moveCursorLeft();
+            return;
+        }
+        default:
+            break;
+    }
+}
+
 void EditorState::moveCursorTo(Position position) {
     if (!m_file.isValidPosition(position)) {
         throw new std::invalid_argument("Invalid move destination " + position.format() + "!");
@@ -105,8 +128,30 @@ void EditorState::moveCursorTo(Position position) {
     m_cursor.setRow(position.row);
 }
 
+bool EditorState::canCursorMove(Direction direction) const {
+    switch (direction) {
+        case Direction::UP: {
+            return (m_cursor.getRow() != 0); //TODO cover edge cases if needed
+        }
+        case Direction::DOWN: {
+            return (m_cursor.getRow() != m_file.getNumberOfParagrahps() - 1); //TODO cover edge cases if needed
+        }
+        case Direction::BACKWARD: {
+            return (m_cursor.getColumn() != 0 || m_cursor.getRow() != 0);
+        }
+        case Direction::FORWARD: {
+            return (m_cursor.getRow() != m_file.getNumberOfParagrahps() - 1
+                || static_cast<size_t>(m_cursor.getColumn())
+                < m_file.getParagraph(m_file.getNumberOfParagrahps() - 1).length());
+        }
+        
+        default:
+            break;
+    }
+}
+
 int EditorState::calculateVisualLineOfCursor(int screen_width) const {
-    int visual_line_of_cursor = m_cursor.getColumn() / screen_width; //TextFile::visualLinesNeeded(m_cursor.getColumn(), screen_width);
+    int visual_line_of_cursor = m_cursor.getColumn() / screen_width; 
     
     for (int logical_line_index = 0; logical_line_index < m_cursor.getRow(); logical_line_index++) {
         visual_line_of_cursor += m_file.visualLinesOfParagraph(logical_line_index, screen_width);
@@ -136,6 +181,19 @@ Position EditorState::skipOffscreenLines(int offscreen_visual_lines, int screen_
 void EditorState::insertCharacterAtCursor(char character_to_add) {
     m_file.insertCharacterAt(character_to_add, m_cursor.getPosition());
     m_cursor.moveRight();
+}
+
+std::optional<char> EditorState::readCharacterAt(Position position) {
+    if (m_file.getNumberOfParagrahps() <= position.row
+        || m_file.getParagraph(position.row).length() <= static_cast<size_t>(position.column)) {
+        return std::nullopt;
+    }
+
+    return m_file.getParagraph(position.row).at(position.column);
+}
+
+std::optional<char> EditorState::readCharacterAtCursor() {
+    return readCharacterAt(m_cursor.getPosition());
 }
 
 void EditorState::deleteRange(Position start, Position end) {

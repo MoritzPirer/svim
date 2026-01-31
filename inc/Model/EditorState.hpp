@@ -10,9 +10,12 @@
 #ifndef EDITOR_STATE_HPP
 #define EDITOR_STATE_HPP
 
+#include <optional>
+
 #include "../../inc/Model/TextFile.hpp"
 #include "../../inc/Model/Cursor.hpp"
 #include "../../inc/Shared/ScreenSize.hpp"
+#include "../../inc/Shared/Direction.hpp"
 
 class EditorState {
 private:
@@ -47,10 +50,17 @@ public:
     void moveCursorLeft();
     void moveCursorDown(int screen_width);
     void moveCursorRight();
+    void moveCursor(Direction direction, int screen_width);
     void moveCursorTo(Position position);
+    bool canCursorMove(Direction direction) const;
 
     void insertCharacterAtCursor(char character_to_add);
+
     inline void debug(std::string line) {m_file.writeToEnd(line); } 
+
+    std::optional<char> readCharacterAt(Position position);
+    std::optional<char> readCharacterAtCursor();
+
     /// @brief deletes from start to end, including both end points. if the range is 
     ///     an empty line, it is remnoved, not just cleared.
     /// @param start the inclusive start of deletion 

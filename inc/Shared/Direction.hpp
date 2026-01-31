@@ -16,4 +16,6 @@ enum class Direction {
     DOWN
 };
 
+Direction getOppositeDirection(Direction direction);
+
 #endif //DIRECTION_HPP

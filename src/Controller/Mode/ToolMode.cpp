@@ -6,6 +6,7 @@
 #include "../../../inc/Controller/Action/QuitAction.hpp"
 #include "../../../inc/Controller/Action/EraseAction.hpp"
 #include "../../../inc/Controller/Action/ChunkwiseMoveAction.hpp"
+#include "../../../inc/Controller/Action/DirectionalMoveAction.hpp"
 
 std::pair<ModeType, std::vector<std::shared_ptr<Action>>> ToolMode::parseInput(int input, ScreenSize size) {
     switch (input) {
@@ -26,6 +27,31 @@ std::pair<ModeType, std::vector<std::shared_ptr<Action>>> ToolMode::parseInput(i
             return {ModeType::TOOL_MODE, {std::make_shared<ChunkwiseMoveAction>(Scope::PARAGRAPH, Destination::START)}};
         case '$':
             return {ModeType::TOOL_MODE, {std::make_shared<ChunkwiseMoveAction>(Scope::PARAGRAPH, Destination::END)}};
+
+        case 'w':
+            return {ModeType::TOOL_MODE, {
+                std::make_shared<DirectionalMoveAction>(Scope::WORD, Destination::START, size, Direction::FORWARD)
+            }};
+        case 'W':
+            return {ModeType::TOOL_MODE, {
+                std::make_shared<DirectionalMoveAction>(Scope::PHRASE, Destination::START, size, Direction::FORWARD)
+            }};
+        case 'b':
+            return {ModeType::TOOL_MODE, {
+                std::make_shared<DirectionalMoveAction>(Scope::WORD, Destination::START, size, Direction::BACKWARD)
+            }};
+        case 'B':
+            return {ModeType::TOOL_MODE, {
+                std::make_shared<DirectionalMoveAction>(Scope::PHRASE, Destination::START, size, Direction::BACKWARD)
+            }};
+        case 'e':
+            return {ModeType::TOOL_MODE, {
+                std::make_shared<DirectionalMoveAction>(Scope::WORD, Destination::END, size, Direction::FORWARD)
+            }};
+        case 'E':
+            return {ModeType::TOOL_MODE, {
+                std::make_shared<DirectionalMoveAction>(Scope::PHRASE, Destination::END, size, Direction::FORWARD)
+            }};
 
         // mode switching actions
         case 'i':

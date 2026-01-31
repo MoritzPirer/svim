@@ -22,31 +22,17 @@ void ChunkwiseMoveAction::fileScopeMove(EditorState& state) {
 
 void ChunkwiseMoveAction::paragraphScopeMove(EditorState& state) {
     switch (m_destination) {
-            case Destination::START: {
-                state.moveCursorTo({state.getCursor().getRow(), 0});
-                break;
-            }
-            case Destination::END: {
-                state.moveCursorTo({
-                    state.getCursor().getRow(),
-                    static_cast<int>(state.getParagraph(state.getCursor().getRow()).length())
-                });
-            }
+        case Destination::START: {
+            state.moveCursorTo({state.getCursor().getRow(), 0});
+            break;
         }
-}
-
-void ChunkwiseMoveAction::phraseScopeMove(EditorState& state) {
-    /*
-    this and wordScope share function
-    - define characters that end seach
-    - write function to inspect single char
-    - while readChar(cursor) not in delimiters and cursor not at end of file
-        move cursor
-    */
-}
-
-void ChunkwiseMoveAction::wordScopeMove(EditorState& state) {
-
+        case Destination::END: {
+            state.moveCursorTo({
+                state.getCursor().getRow(),
+                static_cast<int>(state.getParagraph(state.getCursor().getRow()).length())
+            });
+        }
+    }
 }
 
 void ChunkwiseMoveAction::applyTo(EditorState& state) {
@@ -59,13 +45,8 @@ void ChunkwiseMoveAction::applyTo(EditorState& state) {
             paragraphScopeMove(state);
             break;
         }
-        case Scope::PHRASE: {
-            phraseScopeMove(state);
-            break;
-        }
-        case Scope::WORD: {
-            wordScopeMove(state);
-            break;
-        }
+        default:
+            throw std::invalid_argument(
+                "The provided scope is invalid! Did you mean to use DirectionalMoveAction?");
     }
 }
