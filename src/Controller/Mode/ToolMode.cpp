@@ -7,6 +7,7 @@
 #include "../../../inc/Controller/Action/EraseAction.hpp"
 #include "../../../inc/Controller/Action/ChunkwiseMoveAction.hpp"
 #include "../../../inc/Controller/Action/DirectionalMoveAction.hpp"
+#include "../../../inc/Controller/Action/ParagraphSplittingAction.hpp"
 
 std::pair<ModeType, std::vector<std::shared_ptr<Action>>> ToolMode::parseInput(int input, ScreenSize size) {
     switch (input) {
@@ -62,6 +63,17 @@ std::pair<ModeType, std::vector<std::shared_ptr<Action>>> ToolMode::parseInput(i
             return {ModeType::TYPING_MODE, {std::make_shared<ChunkwiseMoveAction>(Scope::PARAGRAPH, Destination::START)}};
         case 'A':
             return {ModeType::TYPING_MODE, {std::make_shared<ChunkwiseMoveAction>(Scope::PARAGRAPH, Destination::END)}};
+        case 'o':
+            return {ModeType::TYPING_MODE, {
+                std::make_shared<ChunkwiseMoveAction>(Scope::PARAGRAPH, Destination::END),
+                std::make_shared<ParagraphSplittingAction>()
+            }};
+        case 'O':
+            return {ModeType::TYPING_MODE, {
+                std::make_shared<ChunkwiseMoveAction>(Scope::PARAGRAPH, Destination::START),
+                std::make_shared<ParagraphSplittingAction>(),
+                std::make_shared<CharwiseMoveAction>(size, Direction::UP)
+            }};
 
         // file actions
         case 't': // temporary shortcut
