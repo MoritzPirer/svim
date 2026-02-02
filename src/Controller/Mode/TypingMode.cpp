@@ -2,13 +2,20 @@
 #include "../../../inc/Controller/Action/InsertAction.hpp"
 #include "../../../inc/Controller/Action/EraseAction.hpp"
 #include "../../../inc/Controller/Action/ParagraphSplittingAction.hpp"
+#include "../../../inc/Controller/Action/CharwiseMoveAction.hpp"
 
 #include "../../../inc/Shared/SpecialInputs.hpp"
 
 std::pair<ModeType, std::vector<std::shared_ptr<Action>>> TypingMode::parseInput(int input, ScreenSize size) {
-    (void) size;
-    
     switch (input) {
+        case ARROW_LEFT:
+            return {ModeType::TOOL_MODE, {std::make_shared<CharwiseMoveAction>(size, Direction::BACKWARD)}};
+        case ARROW_DOWN:
+            return {ModeType::TOOL_MODE, {std::make_shared<CharwiseMoveAction>(size, Direction::DOWN)}};
+        case ARROW_UP:
+            return {ModeType::TOOL_MODE, {std::make_shared<CharwiseMoveAction>(size, Direction::UP)}};
+        case ARROW_RIGHT:
+            return {ModeType::TOOL_MODE, {std::make_shared<CharwiseMoveAction>(size, Direction::FORWARD)}};
         case INPUT_ESCAPE: {
             return {ModeType::TOOL_MODE, {}};
         }

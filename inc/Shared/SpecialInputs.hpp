@@ -15,4 +15,9 @@
 #define INPUT_BACKSPACE -2
 #define INPUT_ENTER '\n'
 
+#define ARROW_LEFT -3
+#define ARROW_RIGHT -4
+#define ARROW_UP -5
+#define ARROW_DOWN -6
+
 #endif //SPECIAL_INPUTS_HPP

@@ -9,15 +9,21 @@
 #include "../../../inc/Controller/Action/DirectionalMoveAction.hpp"
 #include "../../../inc/Controller/Action/ParagraphSplittingAction.hpp"
 
+#include "../../../inc/Shared/SpecialInputs.hpp"
+
 std::pair<ModeType, std::vector<std::shared_ptr<Action>>> ToolMode::parseInput(int input, ScreenSize size) {
     switch (input) {
         // move actions
+        case ARROW_LEFT:
         case 'h':
             return {ModeType::TOOL_MODE, {std::make_shared<CharwiseMoveAction>(size, Direction::BACKWARD)}};
+        case ARROW_DOWN:
         case 'j':
             return {ModeType::TOOL_MODE, {std::make_shared<CharwiseMoveAction>(size, Direction::DOWN)}};
+        case ARROW_UP:
         case 'k':
             return {ModeType::TOOL_MODE, {std::make_shared<CharwiseMoveAction>(size, Direction::UP)}};
+        case ARROW_RIGHT:
         case 'l':
             return {ModeType::TOOL_MODE, {std::make_shared<CharwiseMoveAction>(size, Direction::FORWARD)}};
         case 'g':

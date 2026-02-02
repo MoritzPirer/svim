@@ -22,6 +22,14 @@ int InputHandler::translateInput(int original_input) {
         case '\b':
             return INPUT_BACKSPACE;
 
+        case KEY_LEFT:
+            return ARROW_LEFT;
+        case KEY_RIGHT:
+            return ARROW_RIGHT;
+        case KEY_UP:
+            return ARROW_UP;
+        case KEY_DOWN:
+            return ARROW_DOWN;
         default:
             return original_input;
     }
