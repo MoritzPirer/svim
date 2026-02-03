@@ -281,6 +281,7 @@ std::vector<std::vector<RenderChunk>> EditorController::calculateMetadataRows(Sc
             ordered_chunks.push_back({" | ", TextRole::TEXT_NORMAL});
         }
     };
+    
     addContent(getSeperatorChunks(actual_size), true);
     addContent(getTemporaryMessageChunks(actual_size), true);
     addContent(getEditorModeChunks());

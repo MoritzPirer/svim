@@ -17,18 +17,17 @@
 
 class RenderInfo {
 private:
-    std::vector<std::string> m_visual_rows;
+    std::vector<std::string> m_text_area_rows;
 
-    std::vector<std::vector<RenderChunk>> m_metadata_rows;
-    std::string m_mode_label;
+    std::vector<std::vector<RenderChunk>> m_panel_rows;
     Position m_cursor_position;
     
     bool m_render_colors;
 
 public:
     RenderInfo(
-        std::vector<std::string> visual_rows,
-        std::vector<std::vector<RenderChunk>> metadata_rows,
+        std::vector<std::string> text_area_rows,
+        std::vector<std::vector<RenderChunk>> panel_rows,
         Position cursor_position,
         bool render_in_color
     );
@@ -36,11 +35,11 @@ public:
     RenderInfo(const RenderInfo&) = default;
     ~RenderInfo() = default;
 
-    const std::string& getTextRow(int index) const;
-    int getTextRowCount() const;
+    const std::string& getTextAreaRow(int index) const;
+    int getTextAreaRowCount() const;
     
-    const std::vector<RenderChunk>& getMetadataRow(int index) const;
-    int getMetadataRowCount() const;
+    const std::vector<RenderChunk>& getPanelRow(int index) const;
+    int getPanelRowCount() const;
 
     bool shouldRenderColors() const;
 

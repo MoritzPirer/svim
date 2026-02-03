@@ -1,30 +1,30 @@
 #include "../../inc/Shared/RenderInfo.hpp"
 
 RenderInfo::RenderInfo(
-    std::vector<std::string> visual_rows,
-    std::vector<std::vector<RenderChunk>> metadata_rows,
+    std::vector<std::string> text_area_rows,
+    std::vector<std::vector<RenderChunk>> panel_rows,
     Position cursor_position,
     bool render_colors
 ):
-    m_visual_rows{visual_rows},
-    m_metadata_rows{metadata_rows},
+    m_text_area_rows{text_area_rows},
+    m_panel_rows{panel_rows},
     m_cursor_position{cursor_position},
     m_render_colors{render_colors} {}
 
-const std::string& RenderInfo::getTextRow(int index) const {
-    return m_visual_rows.at(index);
+const std::string& RenderInfo::getTextAreaRow(int index) const {
+    return m_text_area_rows.at(index);
 }
 
-int RenderInfo::getTextRowCount() const {
-    return m_visual_rows.size();
+int RenderInfo::getTextAreaRowCount() const {
+    return m_text_area_rows.size();
 }
 
-const std::vector<RenderChunk>& RenderInfo::getMetadataRow(int index) const {
-    return m_metadata_rows.at(index);
+const std::vector<RenderChunk>& RenderInfo::getPanelRow(int index) const {
+    return m_panel_rows.at(index);
 }
 
-int RenderInfo::getMetadataRowCount() const {
-    return m_metadata_rows.size();
+int RenderInfo::getPanelRowCount() const {
+    return m_panel_rows.size();
 }
 
 bool RenderInfo::shouldRenderColors() const {
