@@ -1,7 +1,7 @@
 #include "../../inc/Shared/RenderInfo.hpp"
 
 RenderInfo::RenderInfo(
-    std::vector<std::string> text_area_rows,
+    std::vector<std::vector<RenderChunk>> text_area_rows,
     std::vector<std::vector<RenderChunk>> panel_rows,
     Position cursor_position,
     bool render_colors
@@ -11,7 +11,7 @@ RenderInfo::RenderInfo(
     m_cursor_position{cursor_position},
     m_render_colors{render_colors} {}
 
-const std::string& RenderInfo::getTextAreaRow(int index) const {
+const std::vector<RenderChunk>& RenderInfo::getTextAreaRow(int index) const {
     return m_text_area_rows.at(index);
 }
 

@@ -41,7 +41,7 @@ std::pair<ModeType, std::vector<std::shared_ptr<Action>>> ToolMode::parseInput(i
             }};
         case 'W':
             return {ModeType::TOOL_MODE, {
-                std::make_shared<DirectionalMoveAction>(Scope::PHRASE, Destination::START, size, Direction::FORWARD)
+                std::make_shared<DirectionalMoveAction>(Scope::EXPRESSION, Destination::START, size, Direction::FORWARD)
             }};
         case 'b':
             return {ModeType::TOOL_MODE, {
@@ -49,7 +49,7 @@ std::pair<ModeType, std::vector<std::shared_ptr<Action>>> ToolMode::parseInput(i
             }};
         case 'B':
             return {ModeType::TOOL_MODE, {
-                std::make_shared<DirectionalMoveAction>(Scope::PHRASE, Destination::START, size, Direction::BACKWARD)
+                std::make_shared<DirectionalMoveAction>(Scope::EXPRESSION, Destination::START, size, Direction::BACKWARD)
             }};
         case 'e':
             return {ModeType::TOOL_MODE, {
@@ -57,7 +57,7 @@ std::pair<ModeType, std::vector<std::shared_ptr<Action>>> ToolMode::parseInput(i
             }};
         case 'E':
             return {ModeType::TOOL_MODE, {
-                std::make_shared<DirectionalMoveAction>(Scope::PHRASE, Destination::END, size, Direction::FORWARD)
+                std::make_shared<DirectionalMoveAction>(Scope::EXPRESSION, Destination::END, size, Direction::FORWARD)
             }};
 
         // mode switching actions

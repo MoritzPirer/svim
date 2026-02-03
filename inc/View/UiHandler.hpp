@@ -36,6 +36,7 @@ private:
     /// @brief translates special keys (e.g. escape, backspace) to the internal
     ///     standard defined in Shared/SpecialInputs.hpp. Normal keys are unaffected
     int translateInput(int original_input);
+
 public:
     UiHandler() = default;
     UiHandler(const UiHandler&) = delete;

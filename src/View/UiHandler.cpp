@@ -44,7 +44,18 @@ void UiHandler::setStyle(TextRole role) {
 
 void UiHandler::renderTextArea(const RenderInfo& render_info) {
     for (int i = 0; i < render_info.getTextAreaRowCount(); i++) {
-        renderLine(i, render_info.getTextAreaRow(i));
+        move(i, 0);
+
+        for (auto& [content, role] : render_info.getTextAreaRow(i)) {
+            if (render_info.shouldRenderColors()) {
+                setStyle(role);
+            }
+            else {
+                setStyle(TextRole::TEXT_NORMAL);
+            }
+            
+            writeString(content);
+        }  
     }
 }
 

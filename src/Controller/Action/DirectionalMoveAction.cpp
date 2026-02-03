@@ -28,7 +28,7 @@ std::string DirectionalMoveAction::getDelimiters() const {
         case Scope::WORD: {
             return " \t!\"§$%&/()=?`*+'#-_.:,;\\";
         }
-        case Scope::PHRASE: {
+        case Scope::EXPRESSION: {
             return " \t";
         }
         default:

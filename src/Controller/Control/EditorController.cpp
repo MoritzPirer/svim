@@ -37,40 +37,46 @@ std::vector<std::string> EditorController::splitIntoRows(const std::string& para
     return split;
 }
 
-std::vector<std::string> EditorController::calculateVisibleRows(ScreenSize text_area_size) {
+std::vector<std::vector<RenderChunk>> EditorController::calculateVisibleRows(ScreenSize text_area_size) {
     Position first_visible = getFirstVisibleChar(text_area_size);
 
     int current_paragraph = first_visible.row;
-    std::vector<std::string> visible_rows;    
+    std::vector<std::vector<RenderChunk>> visible_rows;    
     visible_rows.reserve(text_area_size.height);
 
     bool is_first_paragraph = true;
     for (int visual_row = 0; visual_row < text_area_size.height;) {
 
-        if (static_cast<size_t>(current_paragraph) < m_state.getNumberOfParagrahps()) { 
-            
-            std::vector<std::string> split = splitIntoRows(
-                m_state.getParagraph(current_paragraph),
-                (is_first_paragraph? first_visible.column : 0),
-                text_area_size.width 
-            );
-            is_first_paragraph = false;
+        if (static_cast<size_t>(current_paragraph) >= m_state.getNumberOfParagrahps()) { 
+            visible_rows.push_back({RenderChunk{
+                "~",
+                TextRole::TEXT_HIGHLIGHT
+            }}); // FUTURE: load placeholder line from settings
 
-
-            for (const std::string& line : split) {
-                if (visual_row < text_area_size.height) {
-                    visible_rows.emplace_back(line);
-                }
-
-                visual_row++;
-            }
-        
-            current_paragraph++;
-        }        
-        else {
-            visible_rows.emplace_back("~"); // FUTURE: load placeholder line from settings
             visual_row++;
+            continue;
         }
+
+        std::vector<std::string> split = splitIntoRows(
+            m_state.getParagraph(current_paragraph),
+            (is_first_paragraph? first_visible.column : 0),
+            text_area_size.width 
+        );
+        
+        is_first_paragraph = false;
+
+        for (const std::string& line : split) {
+            if (visual_row < text_area_size.height) {
+                visible_rows.push_back({RenderChunk{
+                    line,
+                    TextRole::TEXT_NORMAL
+                }});
+            }
+            visual_row++;
+
+        }
+    
+        current_paragraph++;
     }
     
     return visible_rows;

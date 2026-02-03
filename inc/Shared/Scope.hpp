@@ -11,7 +11,7 @@
 
 enum class Scope {
     WORD,
-    PHRASE,
+    EXPRESSION,
     PARAGRAPH,
     FILE
 };

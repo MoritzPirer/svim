@@ -40,7 +40,7 @@ private:
         int start_column, int max_length) const;
 
     /// @brief calculates the lines that are visible based on the position of the cursor
-    std::vector<std::string> calculateVisibleRows(ScreenSize text_are_size);
+    std::vector<std::vector<RenderChunk>> calculateVisibleRows(ScreenSize text_are_size);
     
     /// @brief calculates the position on the screen the cursor should be drawn to
     ///     accounting for off-screen lines and line wrapping
