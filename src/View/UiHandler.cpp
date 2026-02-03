@@ -18,7 +18,13 @@ void UiHandler::renderMetadata(const RenderInfo& render_info) {
 
     for (int i = 0; i < render_info.getMetadataRowCount(); i++) {
         for (auto& [content, role] : render_info.getMetadataRow(i)) {
-            m_display_handler.setStyle(role);
+            if (render_info.shouldRenderColors()) {
+                m_display_handler.setStyle(role);
+            }
+            else {
+                m_display_handler.setStyle(TextRole::TEXT_NORMAL);
+            }
+            
             m_display_handler.addContent(content);
         }  
         metadata_offset++;

@@ -274,10 +274,13 @@ RenderInfo EditorController::calculateRenderInfo(ScreenSize actual_size) {
     ScreenSize text_area_size = actual_size; //FUTURE: also account for line number width
     text_area_size.height -= metadata_rows.size();
 
+    bool should_render_color = true;
+
     return {
         calculateVisibleRows(text_area_size),
         metadata_rows,
         calculateScreenPositionOfCursor(text_area_size),
+        should_render_color
     };
 }
 

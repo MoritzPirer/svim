@@ -22,10 +22,16 @@ private:
     std::vector<std::vector<RenderChunk>> m_metadata_rows;
     std::string m_mode_label;
     Position m_cursor_position;
+    
+    bool m_render_colors;
 
 public:
-    RenderInfo(std::vector<std::string> visual_rows,
-        std::vector<std::vector<RenderChunk>> metadata_rows, Position cursor_position);
+    RenderInfo(
+        std::vector<std::string> visual_rows,
+        std::vector<std::vector<RenderChunk>> metadata_rows,
+        Position cursor_position,
+        bool render_in_color
+    );
 
     RenderInfo(const RenderInfo&) = default;
     ~RenderInfo() = default;
@@ -35,6 +41,8 @@ public:
     
     const std::vector<RenderChunk>& getMetadataRow(int index) const;
     int getMetadataRowCount() const;
+
+    bool shouldRenderColors() const;
 
     const Position& getCursorPosition() const;
 };
