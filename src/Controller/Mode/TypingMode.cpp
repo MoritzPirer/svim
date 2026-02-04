@@ -9,13 +9,14 @@
 std::pair<ModeType, std::vector<std::shared_ptr<Action>>> TypingMode::parseInput(int input, ScreenSize size) {
     switch (input) {
         case ARROW_LEFT:
-            return {ModeType::TOOL_MODE, {std::make_shared<CharwiseMoveAction>(size, Direction::BACKWARD)}};
+            return {ModeType::TYPING_MODE, {std::make_shared<CharwiseMoveAction>(size, Direction::BACKWARD)}};
         case ARROW_DOWN:
-            return {ModeType::TOOL_MODE, {std::make_shared<CharwiseMoveAction>(size, Direction::DOWN)}};
+            return {ModeType::TYPING_MODE, {std::make_shared<CharwiseMoveAction>(size, Direction::DOWN)}};
         case ARROW_UP:
-            return {ModeType::TOOL_MODE, {std::make_shared<CharwiseMoveAction>(size, Direction::UP)}};
+            return {ModeType::TYPING_MODE, {std::make_shared<CharwiseMoveAction>(size, Direction::UP)}};
         case ARROW_RIGHT:
-            return {ModeType::TOOL_MODE, {std::make_shared<CharwiseMoveAction>(size, Direction::FORWARD)}};
+            return {ModeType::TYPING_MODE, {std::make_shared<CharwiseMoveAction>(size, Direction::FORWARD)}};
+            
         case INPUT_ESCAPE: {
             return {ModeType::TOOL_MODE, {}};
         }
