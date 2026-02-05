@@ -6,7 +6,11 @@
 
 #include "../../../inc/Shared/SpecialInputs.hpp"
 
-std::pair<ModeType, std::vector<std::shared_ptr<Action>>> TypingMode::parseInput(int input, ScreenSize size) {
+std::pair<ModeType, std::vector<std::shared_ptr<Action>>> TypingMode::parseInput(
+    int input, ScreenSize size, Settings settings) {
+
+    (void) settings;
+    
     switch (input) {
         case ARROW_LEFT:
             return {ModeType::TYPING_MODE, {std::make_shared<CharwiseMoveAction>(size, Direction::BACKWARD)}};

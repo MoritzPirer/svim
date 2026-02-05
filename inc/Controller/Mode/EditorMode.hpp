@@ -15,6 +15,7 @@
 
 #include "../Action/Action.hpp"
 #include "ModeType.hpp"
+#include "../Settings/Settings.hpp"
 
 class EditorMode {
 public:
@@ -28,7 +29,7 @@ public:
     /// @return the mode the editor should transition to (may be the same as currently), one or more
     ///     actions to apply to the editor state (which may be empty if nothing should be done) 
     virtual std::pair<ModeType, std::vector<std::shared_ptr<Action>>>
-        parseInput(int input, ScreenSize size) = 0;
+        parseInput(int input, ScreenSize size, Settings settings) = 0;
 
     /// @brief returns the name of the mode for displaying
     virtual std::string getModeLabel() const = 0;

@@ -16,11 +16,14 @@
 #include "../Mode/ModeManager.hpp"
 #include "../../Shared/Scope.hpp"
 
+#include "../Settings/Settings.hpp"
+
 class EditorController {
 private:
     EditorState m_state;
     ModeManager m_mode_manager;
     UiHandler m_ui_handler;
+    Settings m_settings;
       
     /// @brief one true source for editor version
     std::string getVersion() const { return "version 0.2.1"; }

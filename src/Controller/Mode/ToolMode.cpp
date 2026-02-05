@@ -9,96 +9,102 @@
 #include "../../../inc/Controller/Action/DirectionalMoveAction.hpp"
 #include "../../../inc/Controller/Action/ParagraphSplittingAction.hpp"
 
+#include "../../../inc/Controller/Settings/Settings.hpp"
 #include "../../../inc/Shared/SpecialInputs.hpp"
 
-std::pair<ModeType, std::vector<std::shared_ptr<Action>>> ToolMode::parseInput(int input, ScreenSize size) {
+using std::make_shared;
+
+std::pair<ModeType, std::vector<std::shared_ptr<Action>>> ToolMode::parseInput(
+    int input, ScreenSize size, Settings settings) {
     switch (input) {
         // move actions
         case ARROW_LEFT:
         case 'h':
-            return {ModeType::TOOL_MODE, {std::make_shared<CharwiseMoveAction>(size, Direction::BACKWARD)}};
+            return {ModeType::TOOL_MODE, {make_shared<CharwiseMoveAction>(size, Direction::BACKWARD)}};
         case ARROW_DOWN:
         case 'j':
-            return {ModeType::TOOL_MODE, {std::make_shared<CharwiseMoveAction>(size, Direction::DOWN)}};
+            return {ModeType::TOOL_MODE, {make_shared<CharwiseMoveAction>(size, Direction::DOWN)}};
         case ARROW_UP:
         case 'k':
-            return {ModeType::TOOL_MODE, {std::make_shared<CharwiseMoveAction>(size, Direction::UP)}};
+            return {ModeType::TOOL_MODE, {make_shared<CharwiseMoveAction>(size, Direction::UP)}};
         case ARROW_RIGHT:
         case 'l':
-            return {ModeType::TOOL_MODE, {std::make_shared<CharwiseMoveAction>(size, Direction::FORWARD)}};
+            return {ModeType::TOOL_MODE, {make_shared<CharwiseMoveAction>(size, Direction::FORWARD)}};
         case 'g':
-            return {ModeType::TOOL_MODE, {std::make_shared<ChunkwiseMoveAction>(Scope::FILE, Destination::START)}};
+            return {ModeType::TOOL_MODE, {make_shared<ChunkwiseMoveAction>(Scope::FILE, Destination::START)}};
         case 'G':
-            return {ModeType::TOOL_MODE, {std::make_shared<ChunkwiseMoveAction>(Scope::FILE, Destination::END)}};
+            return {ModeType::TOOL_MODE, {make_shared<ChunkwiseMoveAction>(Scope::FILE, Destination::END)}};
         case '0':
-            return {ModeType::TOOL_MODE, {std::make_shared<ChunkwiseMoveAction>(Scope::PARAGRAPH, Destination::START)}};
+            return {ModeType::TOOL_MODE, {make_shared<ChunkwiseMoveAction>(Scope::PARAGRAPH, Destination::START)}};
         case '$':
-            return {ModeType::TOOL_MODE, {std::make_shared<ChunkwiseMoveAction>(Scope::PARAGRAPH, Destination::END)}};
+            return {ModeType::TOOL_MODE, {make_shared<ChunkwiseMoveAction>(Scope::PARAGRAPH, Destination::END)}};
 
         case 'w':
             return {ModeType::TOOL_MODE, {
-                std::make_shared<DirectionalMoveAction>(Scope::WORD, Destination::START, size, Direction::FORWARD)
+                make_shared<DirectionalMoveAction>(Scope::WORD, Destination::START, size, Direction::FORWARD)
             }};
         case 'W':
             return {ModeType::TOOL_MODE, {
-                std::make_shared<DirectionalMoveAction>(Scope::EXPRESSION, Destination::START, size, Direction::FORWARD)
+                make_shared<DirectionalMoveAction>(Scope::EXPRESSION, Destination::START, size, Direction::FORWARD)
             }};
         case 'b':
             return {ModeType::TOOL_MODE, {
-                std::make_shared<DirectionalMoveAction>(Scope::WORD, Destination::START, size, Direction::BACKWARD)
+                make_shared<DirectionalMoveAction>(Scope::WORD, Destination::START, size, Direction::BACKWARD)
             }};
         case 'B':
             return {ModeType::TOOL_MODE, {
-                std::make_shared<DirectionalMoveAction>(Scope::EXPRESSION, Destination::START, size, Direction::BACKWARD)
+                make_shared<DirectionalMoveAction>(Scope::EXPRESSION, Destination::START, size, Direction::BACKWARD)
             }};
         case 'e':
             return {ModeType::TOOL_MODE, {
-                std::make_shared<DirectionalMoveAction>(Scope::WORD, Destination::END, size, Direction::FORWARD)
+                make_shared<DirectionalMoveAction>(Scope::WORD, Destination::END, size, Direction::FORWARD)
             }};
         case 'E':
             return {ModeType::TOOL_MODE, {
-                std::make_shared<DirectionalMoveAction>(Scope::EXPRESSION, Destination::END, size, Direction::FORWARD)
+                make_shared<DirectionalMoveAction>(Scope::EXPRESSION, Destination::END, size, Direction::FORWARD)
             }};
 
         // mode switching actions
         case 'i':
             return {ModeType::TYPING_MODE, {}};
         case 'a':
-            return {ModeType::TYPING_MODE, {std::make_shared<CharwiseMoveAction>(size, Direction::FORWARD)}};
+            return {ModeType::TYPING_MODE, {make_shared<CharwiseMoveAction>(size, Direction::FORWARD)}};
         case 'I':
-            return {ModeType::TYPING_MODE, {std::make_shared<ChunkwiseMoveAction>(Scope::PARAGRAPH, Destination::START)}};
+            return {ModeType::TYPING_MODE, {make_shared<ChunkwiseMoveAction>(Scope::PARAGRAPH, Destination::START)}};
         case 'A':
-            return {ModeType::TYPING_MODE, {std::make_shared<ChunkwiseMoveAction>(Scope::PARAGRAPH, Destination::END)}};
+            return {ModeType::TYPING_MODE, {make_shared<ChunkwiseMoveAction>(Scope::PARAGRAPH, Destination::END)}};
         case 'o':
             return {ModeType::TYPING_MODE, {
-                std::make_shared<ChunkwiseMoveAction>(Scope::PARAGRAPH, Destination::END),
-                std::make_shared<ParagraphSplittingAction>()
+                make_shared<ChunkwiseMoveAction>(Scope::PARAGRAPH, Destination::END),
+                make_shared<ParagraphSplittingAction>()
             }};
         case 'O':
             return {ModeType::TYPING_MODE, {
-                std::make_shared<ChunkwiseMoveAction>(Scope::PARAGRAPH, Destination::START),
-                std::make_shared<ParagraphSplittingAction>(),
-                std::make_shared<CharwiseMoveAction>(size, Direction::UP)
+                make_shared<ChunkwiseMoveAction>(Scope::PARAGRAPH, Destination::START),
+                make_shared<ParagraphSplittingAction>(),
+                make_shared<CharwiseMoveAction>(size, Direction::UP)
             }};
 
         // file actions
         case 't': // temporary shortcut
-            return {ModeType::TOOL_MODE, {std::make_shared<SaveAction>()}};
+            return {ModeType::TOOL_MODE, {
+                make_shared<SaveAction>(settings.isEnabled("confirm_save"))
+            }};
         case 'q':
-            return {ModeType::TOOL_MODE, {std::make_shared<QuitAction>(false)}};
+            return {ModeType::TOOL_MODE, {make_shared<QuitAction>(false)}};
         case 'Q': // temporary, force quit
-            return {ModeType::TOOL_MODE, {std::make_shared<QuitAction>(true)}};
+            return {ModeType::TOOL_MODE, {make_shared<QuitAction>(true)}};
         case 'T': // temporary, save& quit
             return {ModeType::TOOL_MODE, {
-                std::make_shared<SaveAction>(),
-                std::make_shared<QuitAction>(true)
+                make_shared<SaveAction>(settings.isEnabled("confirm_save")),
+                make_shared<QuitAction>(true)
             }};
 
         // deletion actions
         case 'x':
-            return {ModeType::TOOL_MODE, {std::make_shared<EraseAction>(0)}};
+            return {ModeType::TOOL_MODE, {make_shared<EraseAction>(0)}};
         case 's':
-            return {ModeType::TYPING_MODE, {std::make_shared<EraseAction>(0)}};
+            return {ModeType::TYPING_MODE, {make_shared<EraseAction>(0)}};
 
         default:
             return {ModeType::TOOL_MODE, {}};

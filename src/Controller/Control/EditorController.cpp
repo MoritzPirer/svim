@@ -2,8 +2,11 @@
 #include "../../../inc/Controller/Control/FileHandler.hpp"
 #include "../../../inc/Shared/StringHelpers.hpp"
 
-EditorController::EditorController(std::optional<std::string> file_path):
-    m_mode_manager{ModeType::TOOL_MODE} {
+using std::vector, std::string;
+
+EditorController::EditorController(std::optional<string> file_path):
+    m_mode_manager{ModeType::TOOL_MODE},
+    m_settings{} {
 
     TextFile file;
     if (!file_path.has_value() || file_path->empty()) {
@@ -20,14 +23,14 @@ Position EditorController::getFirstVisibleChar(ScreenSize size) {
     return m_state.getFirstVisibleChar(size);
 }
 
-std::vector<std::string> EditorController::splitIntoRows(const std::string& paragraph,
+vector<string> EditorController::splitIntoRows(const string& paragraph,
     int start_column, int max_length) const {
 
     if (paragraph.length() == 0) {
         return {""};
     }
 
-    std::vector<std::string> split;
+    vector<string> split;
     //split.reserve((paragraph.length() - start_column) / width);
 
     for (int i = start_column; static_cast<size_t>(i) < paragraph.length(); i += max_length) {
@@ -37,11 +40,11 @@ std::vector<std::string> EditorController::splitIntoRows(const std::string& para
     return split;
 }
 
-std::vector<std::vector<RenderChunk>> EditorController::calculateVisibleRows(ScreenSize text_area_size) {
+vector<vector<RenderChunk>> EditorController::calculateVisibleRows(ScreenSize text_area_size) {
     Position first_visible = getFirstVisibleChar(text_area_size);
 
     int current_paragraph = first_visible.row;
-    std::vector<std::vector<RenderChunk>> visible_rows;    
+    vector<vector<RenderChunk>> visible_rows;    
     visible_rows.reserve(text_area_size.height);
 
     bool is_first_paragraph = true;
@@ -57,7 +60,7 @@ std::vector<std::vector<RenderChunk>> EditorController::calculateVisibleRows(Scr
             continue;
         }
 
-        std::vector<std::string> split = splitIntoRows(
+        vector<string> split = splitIntoRows(
             m_state.getParagraph(current_paragraph),
             (is_first_paragraph? first_visible.column : 0),
             text_area_size.width 
@@ -65,7 +68,7 @@ std::vector<std::vector<RenderChunk>> EditorController::calculateVisibleRows(Scr
         
         is_first_paragraph = false;
 
-        for (const std::string& line : split) {
+        for (const string& line : split) {
             if (visual_row < text_area_size.height) {
                 visible_rows.push_back({RenderChunk{
                     line,
@@ -93,21 +96,20 @@ Position EditorController::calculateScreenPositionOfCursor(ScreenSize text_area_
     return {screen_row, screen_column};
 }
 
-std::vector<RenderChunk> EditorController::getSeperatorChunks(ScreenSize actual_size) {
-    bool show_seperator = true;
+vector<RenderChunk> EditorController::getSeperatorChunks(ScreenSize actual_size) {
 
     return { RenderChunk{
-        std::string(actual_size.width - 1, (show_seperator ? '-' : ' ')),
+        string(actual_size.width - 1, (m_settings.isEnabled("show_seperator") ? '-' : ' ')),
         TextRole::UI_ELEMENT
     }};
 }
 
-std::vector<RenderChunk> EditorController::getTemporaryMessageChunks(ScreenSize actual_size) {
-    std::vector<RenderChunk> chunks;
+vector<RenderChunk> EditorController::getTemporaryMessageChunks(ScreenSize actual_size) {
+    vector<RenderChunk> chunks;
 
     bool has_message = false;
-    for (const std::string& message : m_state.getTemporaryMessages()) {
-        for (const std::string& message_row : splitIntoRows(message, 0, actual_size.width - 1)) {
+    for (const string& message : m_state.getTemporaryMessages()) {
+        for (const string& message_row : splitIntoRows(message, 0, actual_size.width - 1)) {
             chunks.push_back({
                 StringHelpers::leftAlign(message_row, actual_size.width),
                 TextRole::TEXT_HIGHLIGHT
@@ -120,16 +122,15 @@ std::vector<RenderChunk> EditorController::getTemporaryMessageChunks(ScreenSize 
     }
 
     if (has_message == true) {
-        std::vector<RenderChunk> seperator_chunks = getSeperatorChunks(actual_size);
+        vector<RenderChunk> seperator_chunks = getSeperatorChunks(actual_size);
         chunks.insert(chunks.end(), seperator_chunks.begin(), seperator_chunks.end());
     }
 
     return chunks;
 }
 
-std::vector<RenderChunk> EditorController::getCharacterCountChunks() {
-    bool show_character_count = true;
-    if (!show_character_count) {
+vector<RenderChunk> EditorController::getCharacterCountChunks() {
+    if (!m_settings.isEnabled("show_character_count")) {
         return {};
     }
 
@@ -140,9 +141,8 @@ std::vector<RenderChunk> EditorController::getCharacterCountChunks() {
     };
 }
 
-std::vector<RenderChunk> EditorController::getWordCountChunks() {
-    bool show_word_count = true;
-    if (!show_word_count) {
+vector<RenderChunk> EditorController::getWordCountChunks() {
+    if (!m_settings.isEnabled("show_word_count")) {
         return {};
     }
 
@@ -153,9 +153,8 @@ std::vector<RenderChunk> EditorController::getWordCountChunks() {
     };
 }
 
-std::vector<RenderChunk> EditorController::getParagraphCountChunks() {
-    bool show_paragraph_count = true;
-    if (!show_paragraph_count) {
+vector<RenderChunk> EditorController::getParagraphCountChunks() {
+    if (!m_settings.isEnabled("show_paragraph_count")) {
         return {};
     }
 
@@ -166,10 +165,8 @@ std::vector<RenderChunk> EditorController::getParagraphCountChunks() {
     };
 }
 
-std::vector<RenderChunk> EditorController::getCursorPositionChunks() {
-    bool show_cursor_position = true;
-
-    if (!show_cursor_position) {
+vector<RenderChunk> EditorController::getCursorPositionChunks() {
+    if (!m_settings.isEnabled("show_cursor_position")) {
         return {};
     }
 
@@ -179,26 +176,24 @@ std::vector<RenderChunk> EditorController::getCursorPositionChunks() {
     };
 }
 
-std::vector<RenderChunk> EditorController::getFileNameChunks() {
-    bool show_file_name = true;
-
-    if (!show_file_name) {
+vector<RenderChunk> EditorController::getFileNameChunks() {
+    if (!m_settings.isEnabled("show_file_name")) {
         return {};
     }
 
     return {{"Currently editing " + m_state.getFileName(), TextRole::TEXT_NORMAL}};
 }
 
-std::vector<RenderChunk> EditorController::getSaveIconChunks() {
-    bool show_save_icon = true;
-    bool show_save_text = true;
+vector<RenderChunk> EditorController::getSaveIconChunks() {
+    bool show_save_icon = m_settings.isEnabled("show_save_icon");
+    bool show_save_text = m_settings.isEnabled("show_save_text");
 
     if (!show_save_icon && !show_save_text) {
         return {};
     }
     
-    std::string icon = "";
-    std::string text = "";
+    string icon = "";
+    string text = "";
     TextRole role;    
 
     switch (m_state.getSaveState()) {
@@ -221,14 +216,13 @@ std::vector<RenderChunk> EditorController::getSaveIconChunks() {
         };
     }
 
-    std::string message = icon + (show_save_icon && show_save_text? " " : "") + text;
+    string message = icon + (show_save_icon && show_save_text? " " : "") + text;
 
     return {{message, role}};
 }
 
-std::vector<RenderChunk> EditorController::getVersionChunks() {
-    bool show_version = true;
-    if (!show_version) {
+vector<RenderChunk> EditorController::getVersionChunks() {
+    if (!m_settings.isEnabled("show_version")) {
         return {};
     }
 
@@ -236,22 +230,21 @@ std::vector<RenderChunk> EditorController::getVersionChunks() {
 }
 
 
-std::vector<RenderChunk> EditorController::getEditorModeChunks() {
-    bool show_editor_mode = true;
-    if (!show_editor_mode) {
+vector<RenderChunk> EditorController::getEditorModeChunks() {
+    if (!m_settings.isEnabled("show_editor_mode")) {
         return {};
     }
 
     return {{m_mode_manager.getModeLabel(), TextRole::TEXT_HIGHLIGHT}};
 }
 
-std::vector<std::vector<RenderChunk>> EditorController::reorganizeMetadataRows(
-    std::vector<RenderChunk> ordered_chunks, ScreenSize actual_size) {
+vector<vector<RenderChunk>> EditorController::reorganizeMetadataRows(
+    vector<RenderChunk> ordered_chunks, ScreenSize actual_size) {
     
     int row_length = 0;
     int chunks_in_row = 0;
-    std::vector<std::vector<RenderChunk>> rows;
-    std::vector<RenderChunk> current_row;
+    vector<vector<RenderChunk>> rows;
+    vector<RenderChunk> current_row;
 
     int max_used_width = actual_size.width - 1;
     int max_chunks_in_row = 900;
@@ -278,10 +271,10 @@ std::vector<std::vector<RenderChunk>> EditorController::reorganizeMetadataRows(
     return rows; 
 }
 
-std::vector<std::vector<RenderChunk>> EditorController::calculateMetadataRows(ScreenSize actual_size) {
-    std::vector<RenderChunk> ordered_chunks; 
+vector<vector<RenderChunk>> EditorController::calculateMetadataRows(ScreenSize actual_size) {
+    vector<RenderChunk> ordered_chunks; 
 
-    auto addContent = [&](const std::vector<RenderChunk>& chunks, bool supress_divider = false) {
+    auto addContent = [&](const vector<RenderChunk>& chunks, bool supress_divider = false) {
         ordered_chunks.insert(ordered_chunks.end(), chunks.begin(), chunks.end());
         if (chunks.size() != 0 && !supress_divider) {
             ordered_chunks.push_back({" | ", TextRole::TEXT_NORMAL});
@@ -303,17 +296,15 @@ std::vector<std::vector<RenderChunk>> EditorController::calculateMetadataRows(Sc
 }
 
 RenderInfo EditorController::calculateRenderInfo(ScreenSize actual_size) {
-    std::vector<std::vector<RenderChunk>> metadata_rows = calculateMetadataRows(actual_size);
+    vector<vector<RenderChunk>> metadata_rows = calculateMetadataRows(actual_size);
     ScreenSize text_area_size = actual_size; //FUTURE: also account for line number width
     text_area_size.height -= metadata_rows.size();
-
-    bool should_render_color = true;
 
     return {
         calculateVisibleRows(text_area_size),
         metadata_rows,
         calculateScreenPositionOfCursor(text_area_size),
-        should_render_color
+        m_settings.isEnabled("render_color")
     };
 }
 
@@ -324,9 +315,10 @@ void EditorController::mainLoop() {
         int input = m_ui_handler.getInput();
 
         m_state.clearTemporaryMessages();
-        std::vector<std::shared_ptr<Action>> actions = m_mode_manager.convertToAction(
+        vector<std::shared_ptr<Action>> actions = m_mode_manager.convertToAction(
             input,
-            m_ui_handler.screenSize()
+            m_ui_handler.screenSize(), // FUTURE: this needs to account for narrower rows once line numbers are in
+            m_settings
         );
 
         for (std::shared_ptr action : actions) {

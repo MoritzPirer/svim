@@ -23,7 +23,8 @@ public:
     /// @param input the user input 
     /// @param size the current size of the writing area 
     /// @return the next mode and the action to execute 
-    std::pair<ModeType, std::vector<std::shared_ptr<Action>>> parseInput(int input, ScreenSize size) override;
+    std::pair<ModeType, std::vector<std::shared_ptr<Action>>> parseInput(int input,
+        ScreenSize size, Settings settings) override;
 
     std::string getModeLabel() const override { return "TYPING MODE"; }
 };

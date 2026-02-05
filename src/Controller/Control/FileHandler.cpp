@@ -3,13 +3,14 @@
 
 #include "../../../inc/Controller/Control/FileHandler.hpp"
 
+using std::string;
 namespace {
 
-    std::string constructDefaultFilename(int counter) {
-        std::string default_file_name = "new_file";
-        std::string default_file_ending = ".txt";
+    string constructDefaultFilename(int counter) {
+        string default_file_name = "new_file";
+        string default_file_ending = ".txt";
 
-        std::string numbered_name;
+        string numbered_name;
         if (counter == 0) {
             return default_file_name + default_file_ending;
         }
@@ -20,7 +21,7 @@ namespace {
 }
 
 
-TextFile FileHandler::openFile(const std::string& file_path) {
+TextFile FileHandler::openFile(const string& file_path) {
     
     if (!std::filesystem::exists(file_path)) {
         return createFile(file_path);
@@ -33,7 +34,7 @@ TextFile FileHandler::openFile(const std::string& file_path) {
         return file;
     }
 
-    std::string line;
+    string line;
 
     while (getline(input_file, line)) {
         file.writeToEnd(line);
@@ -70,7 +71,7 @@ void FileHandler::saveFile(TextFile& file) {
         }
     
         for (int i = 0; i < file.getNumberOfParagrahps(); i++) {
-            const std::string& line = file.getParagraph(i);
+            const string& line = file.getParagraph(i);
             output_file << line; 
     
             if (!line.ends_with("\n") && i < file.getNumberOfParagrahps() - 1) {
@@ -88,7 +89,7 @@ void FileHandler::saveFile(TextFile& file) {
     }
 }
 
-void FileHandler::renameFile(TextFile& file, std::string new_path) {
+void FileHandler::renameFile(TextFile& file, string new_path) {
     std::filesystem::path new_file_path(new_path);
 
     if (new_file_path.is_absolute()) {
@@ -104,7 +105,7 @@ std::filesystem::path FileHandler::getDefaultName() {
     int counter = 0;
 
     while (true) {
-        std::string default_name = constructDefaultFilename(counter);
+        string default_name = constructDefaultFilename(counter);
         std::filesystem::path default_path = std::filesystem::absolute(default_name);
 
         if (!std::filesystem::exists(default_path)) {
