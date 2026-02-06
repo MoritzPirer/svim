@@ -25,23 +25,6 @@ private:
     UiHandler m_ui_handler;
     Settings m_settings;
       
-    /// @brief one true source for editor version
-    std::string getVersion() const { return "version 0.2.1"; }
-
-    /// @brief calculates the position of the first character that should be visible on screen.
-    ///     the calculation ensures that the cursor is always on the upper half of the screen
-    /// @param size the current size of the text area 
-    /// @return the position of the first visible character 
-    Position getFirstVisibleChar(ScreenSize size);  
-
-    /// @brief splits the given paragraph into a vector of chunks that are at
-    ///     most as long as the text area is wide (i.e that don't need to wrap)
-    /// @param paragraph the paragraph to split 
-    /// @param start_column where in the paragraph to start (before that column is ignored) 
-    /// @return the split vector
-    std::vector<std::string> splitIntoRows(const std::string& paragraph,
-        int start_column, int max_length) const;
-
     /// @brief calculates the lines that are visible based on the position of the cursor
     std::vector<std::vector<RenderChunk>> calculateVisibleRows(ScreenSize text_are_size);
     
@@ -49,26 +32,6 @@ private:
     ///     accounting for off-screen lines and line wrapping
     Position calculateScreenPositionOfCursor(ScreenSize text_area_size);
    
-    std::vector<RenderChunk> getSeperatorChunks(ScreenSize actual_size);
-    std::vector<RenderChunk> getTemporaryMessageChunks(ScreenSize actual_size);
-    std::vector<RenderChunk> getCharacterCountChunks();
-    std::vector<RenderChunk> getWordCountChunks();
-    std::vector<RenderChunk> getParagraphCountChunks();
-    std::vector<RenderChunk> getCursorPositionChunks();
-    std::vector<RenderChunk> getEditorModeChunks();
-    std::vector<RenderChunk> getFileNameChunks();
-    std::vector<RenderChunk> getSaveIconChunks();
-    std::vector<RenderChunk> getVersionChunks();
-
-    std::vector<std::vector<RenderChunk>> reorganizeMetadataRows(
-        std::vector<RenderChunk> ordered_chunks, ScreenSize actual_size);
-
-    std::vector<std::vector<RenderChunk>> calculateMetadataRows(ScreenSize actual_size);
-
-    int calculateLineNumberWidth();
-    std::vector<RenderChunk> calculateAbsoluteLineNumbers(ScreenSize text_area_size);
-    std::vector<RenderChunk> calculateLineNumbers(ScreenSize text_area_size);
-
     /// @brief calculates what should be rendered to the screen
     RenderInfo calculateRenderInfo(ScreenSize actual_size);
 

@@ -211,7 +211,7 @@ void EditorState::joinLineToPrevious(int line) {
     // moveCursorRight();
 }
 
-Position EditorState::getFirstVisibleChar(ScreenSize text_area_size) {
+Position EditorState::getFirstVisibleChar(ScreenSize text_area_size) const {
     int visual_line_of_cursor = calculateVisualLineOfCursor(text_area_size.width);
 
     // too far up to place cursor in the middle

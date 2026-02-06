@@ -27,7 +27,14 @@ namespace StringHelpers {
     std::string join(const std::vector<std::string>& to_join, const std::string& join_with = ", ");
 
     std::string padToMulitple(const std::string& to_pad, int width, const char& pad_with = ' ');
-
+    
+    /// @brief splits the given paragraph into a vector of chunks that are at
+    ///     most as long as the text area is wide (i.e that don't need to wrap)
+    /// @param paragraph the paragraph to split 
+    /// @param start_column where in the paragraph to start (before that column is ignored) 
+    /// @return the split vector   
+    std::vector<std::string> splitIntoRows(const std::string& paragraph,
+        int start_column, int max_length);
 }; //namespace StringHelpers
 
 #endif //STRING_HELPERS_HPP

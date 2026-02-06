@@ -77,7 +77,7 @@ public:
     /// @param line the index of the line to join to the previous 
     void joinLineToPrevious(int line);
 
-    Position getFirstVisibleChar(ScreenSize size);
+    Position getFirstVisibleChar(ScreenSize size) const;
     
     /// @return the number of paragraphs in the file
     size_t getNumberOfParagrahps() const { return m_file.getNumberOfParagrahps(); }

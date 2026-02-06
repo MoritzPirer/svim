@@ -68,6 +68,19 @@ Settings::Settings() {
             true,
             "Confirm save",
             {"Display a confirmation message when changes were saved successfully."}
+        }},
+        {"do_numbering", {
+            true,
+            "Display paragraph numbers",
+            {"Display the numbers of the paragraphs along the left edge of the text area."}
+        }},
+        {"do_relative_numbers", {
+            false,
+            "Relative Numbers",
+            {
+                "Use the distance to the cursor as the paragraph number for all paragraphs except the one containing the cursor.",
+                "Only has an effect if 'Display paragraph numbers' is enabled."
+            }
         }}
     };
 }
