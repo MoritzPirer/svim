@@ -211,18 +211,18 @@ void EditorState::joinLineToPrevious(int line) {
     // moveCursorRight();
 }
 
-Position EditorState::getFirstVisibleChar(ScreenSize size) {
-    int visual_line_of_cursor = calculateVisualLineOfCursor(size.width);
+Position EditorState::getFirstVisibleChar(ScreenSize text_area_size) {
+    int visual_line_of_cursor = calculateVisualLineOfCursor(text_area_size.width);
 
     // too far up to place cursor in the middle
-    if (visual_line_of_cursor <= size.height / 2) {
+    if (visual_line_of_cursor <= text_area_size.height / 2) {
         return {0,0};
     }
 
     // skip some lines to keep cursor in the middle
-    int offscreen_visual_lines = visual_line_of_cursor - (size.height / 2);
+    int offscreen_visual_lines = visual_line_of_cursor - (text_area_size.height / 2);
     
-    return skipOffscreenLines(offscreen_visual_lines, size.width);
+    return skipOffscreenLines(offscreen_visual_lines, text_area_size.width);
 }
 
 void EditorState::addTemporaryMessage(std::string message) {

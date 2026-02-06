@@ -15,7 +15,7 @@ enum class TextRole {
     FILE_NEW,
     FILE_CHANGED,
     FILE_SAVED,
-    UI_ELEMENT
+    UI_ELEMENT,
 };
 
 #endif // TEXT_ROLE_HPP

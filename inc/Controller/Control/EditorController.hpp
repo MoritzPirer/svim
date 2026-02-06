@@ -64,9 +64,16 @@ private:
         std::vector<RenderChunk> ordered_chunks, ScreenSize actual_size);
 
     std::vector<std::vector<RenderChunk>> calculateMetadataRows(ScreenSize actual_size);
+
+    int calculateLineNumberWidth();
+    std::vector<RenderChunk> calculateAbsoluteLineNumbers(ScreenSize text_area_size);
+    std::vector<RenderChunk> calculateLineNumbers(ScreenSize text_area_size);
+
     /// @brief calculates what should be rendered to the screen
     RenderInfo calculateRenderInfo(ScreenSize actual_size);
 
+    ScreenSize calculateTextAreaSize(const RenderInfo& render_info, const ScreenSize& total_size);
+    
 public:
     EditorController(std::optional<std::string> file_path = std::nullopt);
     virtual ~EditorController() = default;

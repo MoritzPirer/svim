@@ -41,7 +41,7 @@ vector<string> EditorController::splitIntoRows(const string& paragraph,
 }
 
 vector<vector<RenderChunk>> EditorController::calculateVisibleRows(ScreenSize text_area_size) {
-    Position first_visible = getFirstVisibleChar(text_area_size);
+    Position first_visible = m_state.getFirstVisibleChar(text_area_size);
 
     int current_paragraph = first_visible.row;
     vector<vector<RenderChunk>> visible_rows;    
@@ -76,7 +76,6 @@ vector<vector<RenderChunk>> EditorController::calculateVisibleRows(ScreenSize te
                 }});
             }
             visual_row++;
-
         }
     
         current_paragraph++;
@@ -295,29 +294,131 @@ vector<vector<RenderChunk>> EditorController::calculateMetadataRows(ScreenSize a
     return reorganizeMetadataRows(ordered_chunks, actual_size);
 }
 
+int EditorController::calculateLineNumberWidth() {
+    int longest_number_length = std::to_string(m_state.getNumberOfParagrahps() + 1).length();
+    int min_number_area_width = 3;
+
+    return std::max(min_number_area_width, longest_number_length + 1) + 1;
+}
+
+vector<RenderChunk> EditorController::calculateAbsoluteLineNumbers(ScreenSize text_area_size) {
+
+    vector<RenderChunk> numbers;
+    int numbering_width = calculateLineNumberWidth();
+    string empty_numbering(numbering_width - 1, ' ');
+    empty_numbering += '|';
+
+    Position first_visible = m_state.getFirstVisibleChar(text_area_size);
+    int current_paragraph = first_visible.row;
+
+    bool is_first_paragraph = true;
+    for (int visual_row = 0; visual_row < text_area_size.height;) {
+        
+        // end of file
+        if (static_cast<size_t>(current_paragraph) >= m_state.getNumberOfParagrahps()) {
+            numbers.push_back({empty_numbering, TextRole::UI_ELEMENT});
+            visual_row++;
+            continue;
+        }
+        
+        bool drew_number = false;
+
+        // render number in first line of paragraph, only if the start of the paragraph is visibe
+        if (!is_first_paragraph || first_visible.column < text_area_size.width) {
+            if (current_paragraph == m_state.getCursor().getRow()) {
+                numbers.push_back({
+                    StringHelpers::leftAlign(std::to_string(current_paragraph + 1), numbering_width - 1) + "|",
+                    TextRole::UI_ELEMENT
+                });
+            }
+            else {
+                numbers.push_back({
+                    StringHelpers::rightAlign(std::to_string(current_paragraph + 1) + "|", numbering_width),
+                    TextRole::UI_ELEMENT
+                });
+            }
+            visual_row++;
+            drew_number = true;
+        }
+        
+        
+        // draw empty placeholder for other visible lines of paragraph
+        int lines_needed = TextFile::visualLinesNeeded(
+            m_state.getParagraph(current_paragraph).length(), // - (is_first_paragraph? first_visible.column : 0),
+            text_area_size.width
+        );
+        if (is_first_paragraph) {
+            lines_needed -= (first_visible.column / text_area_size.width);
+        }
+        
+        
+        for (int _ = drew_number? 1 : 0; _ < lines_needed; _++) {
+            visual_row++;
+            if (visual_row <= text_area_size.height) {
+                numbers.push_back({empty_numbering, TextRole::UI_ELEMENT});
+            }   
+        }
+        
+        current_paragraph++;
+        is_first_paragraph = false;
+    } 
+
+    return numbers;
+}
+
+vector<RenderChunk> EditorController::calculateLineNumbers(ScreenSize text_area_size) {
+    bool do_numbering = true;
+    bool do_relative_numbers = false;
+    
+    if (!do_numbering) {
+        return {};
+    }
+
+    
+    if (do_relative_numbers) {
+        return {};
+    }
+    else {
+        return calculateAbsoluteLineNumbers(text_area_size);
+    }
+}
+
 RenderInfo EditorController::calculateRenderInfo(ScreenSize actual_size) {
     vector<vector<RenderChunk>> metadata_rows = calculateMetadataRows(actual_size);
-    ScreenSize text_area_size = actual_size; //FUTURE: also account for line number width
+
+    ScreenSize text_area_size = actual_size;
     text_area_size.height -= metadata_rows.size();
+    text_area_size.width -= calculateLineNumberWidth();
 
     return {
         calculateVisibleRows(text_area_size),
         metadata_rows,
+        calculateLineNumbers(text_area_size),
+        calculateLineNumberWidth(),
         calculateScreenPositionOfCursor(text_area_size),
         m_settings.isEnabled("render_color")
     };
 }
 
+ScreenSize EditorController::calculateTextAreaSize(const RenderInfo& render_info, const ScreenSize& total_size) {
+    return {
+        total_size.height - render_info.getPanelRowCount(),
+        total_size.width - render_info.getAsideWidth()
+    };
+}
+
+
 void EditorController::mainLoop() {
     while (m_state.getIsQuit() == false) {
-        RenderInfo render_info = calculateRenderInfo(m_ui_handler.screenSize());
+        ScreenSize total_size = m_ui_handler.screenSize();
+        RenderInfo render_info = calculateRenderInfo(total_size);
         m_ui_handler.render(render_info);
         int input = m_ui_handler.getInput();
 
         m_state.clearTemporaryMessages();
         vector<std::shared_ptr<Action>> actions = m_mode_manager.convertToAction(
             input,
-            m_ui_handler.screenSize(), // FUTURE: this needs to account for narrower rows once line numbers are in
+            calculateTextAreaSize(render_info, total_size),
             m_settings
         );
 

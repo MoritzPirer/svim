@@ -44,7 +44,7 @@ void UiHandler::setStyle(TextRole role) {
 
 void UiHandler::renderTextArea(const RenderInfo& render_info) {
     for (int i = 0; i < render_info.getTextAreaRowCount(); i++) {
-        move(i, 0);
+        move(i, render_info.getAsideWidth());
 
         for (auto& [content, role] : render_info.getTextAreaRow(i)) {
             if (render_info.shouldRenderColors()) {
@@ -60,15 +60,19 @@ void UiHandler::renderTextArea(const RenderInfo& render_info) {
 }
 
 void UiHandler::renderCursor(const RenderInfo& render_info) {
-    move(render_info.getCursorPosition().row, render_info.getCursorPosition().column);
+    move(
+        render_info.getCursorPosition().row,
+        render_info.getCursorPosition().column + render_info.getAsideWidth()
+    );
+
     curs_set(1);
 }
 
 void UiHandler::renderPanel(const RenderInfo& render_info) {
-    int metadata_offset = render_info.getTextAreaRowCount();
-    move(metadata_offset, 0);
+    int panel_offset = render_info.getTextAreaRowCount();
 
     for (int i = 0; i < render_info.getPanelRowCount(); i++) {
+        move(panel_offset, 0);
         for (auto& [content, role] : render_info.getPanelRow(i)) {
             if (render_info.shouldRenderColors()) {
                 setStyle(role);
@@ -79,9 +83,25 @@ void UiHandler::renderPanel(const RenderInfo& render_info) {
             
             writeString(content);
         }  
-        metadata_offset++;
-        move(metadata_offset, 0);
+        panel_offset++;
     }
+}
+
+void UiHandler::renderAside(const RenderInfo& render_info) {
+    for (int i = 0; i < render_info.getAsideRowCount(); i++) {
+        move(i, 0);
+        const auto& [content, role] = render_info.getAsideRow(i);
+
+        if (render_info.shouldRenderColors()) {
+            setStyle(role);
+        }
+        else {
+            setStyle(TextRole::TEXT_NORMAL);
+        }
+
+        writeString(content);
+    }
+
 }
 
 int UiHandler::translateInput(int original_input) {
@@ -121,6 +141,7 @@ void UiHandler::render(const RenderInfo& render_info) {
 
     renderTextArea(render_info);
     renderPanel(render_info);
+    renderAside(render_info);
     renderCursor(render_info);
 
     refresh();
