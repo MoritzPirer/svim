@@ -16,7 +16,7 @@
 #include "../Controller/Action/Action.hpp"
 
 struct ParseResult {
-    ModeType mode;
+    std::optional<ModeType> mode;
     std::vector<std::shared_ptr<Action>> actions;    
 };
 

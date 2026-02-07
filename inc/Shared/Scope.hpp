@@ -12,6 +12,7 @@
 enum class Scope {
     WORD,
     EXPRESSION,
+    LINE,
     PARAGRAPH,
     FILE
 };

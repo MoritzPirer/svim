@@ -12,17 +12,6 @@ DirectionalMoveAction::DirectionalMoveAction(Scope scope, Destination destinatio
         }
     }
 
-
-/*
-scope is handled
-destination, direction
-w/W moves to the next word start: forward, start
-e/E moves to the next word end: forward, end
-b/B moves to the previous word start: backwards, end
-
-must guarantee cursor movement except when impossible
-*/
-
 std::string DirectionalMoveAction::getDelimiters() const {
     switch (m_scope) {
         case Scope::WORD: {

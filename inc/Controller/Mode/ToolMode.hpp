@@ -10,9 +10,12 @@
 #define TOOL_MODE_HPP
 
 #include "EditorMode.hpp"
+#include "../Control/CommandParser.hpp"
 
 class ToolMode: public EditorMode {
 private:
+    CommandParser m_command_parser;
+
     ParseResult parseMouseMovement(Position click_position,
         ScreenSize actual_size, ScreenSize text_area_size);
 
