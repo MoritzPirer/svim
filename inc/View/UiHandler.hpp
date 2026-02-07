@@ -30,9 +30,10 @@ private:
     void setStyle(TextRole role);
 
     void renderTextArea(const RenderInfo& render_info);
-    void renderCursor(const RenderInfo& render_info);
     void renderPanel(const RenderInfo& render_info);
+    void renderOverlay(const RenderInfo& render_info);
     void renderAside(const RenderInfo& render_info);
+    void renderCursor(const RenderInfo& render_info);
 
     /// @brief translates special keys (e.g. escape, backspace) to the internal
     ///     standard defined in Shared/SpecialInputs.hpp. Normal keys are unaffected

@@ -34,6 +34,7 @@ RenderInfo EditorController::calculateRenderInfo(ScreenSize actual_size) {
         metadata_rows,
         renderer.calculateLineNumbers(text_area_size),
         renderer.calculateLineNumberWidth(),
+        renderer.calculateTemporaryRows(actual_size),
         renderer.calculateScreenPositionOfCursor(text_area_size),
         m_settings.isEnabled("render_color")
     };

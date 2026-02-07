@@ -5,6 +5,7 @@ RenderInfo::RenderInfo(
     std::vector<std::vector<RenderChunk>> panel_rows,
     std::vector<RenderChunk> aside_rows,
     int aside_width,
+    std::vector<RenderChunk> overlay_rows,
     Position cursor_position,
     bool render_colors
 ):
@@ -12,6 +13,7 @@ RenderInfo::RenderInfo(
     m_panel_rows{panel_rows},
     m_aside_rows{aside_rows},
     m_aside_width{aside_width},
+    m_overlay_rows{overlay_rows},
     m_cursor_position{cursor_position},
     m_render_colors{render_colors} {}
 
@@ -41,6 +43,14 @@ int RenderInfo::getAsideRowCount() const {
 
 int RenderInfo::getAsideWidth() const {
     return m_aside_width;
+}
+
+RenderChunk RenderInfo::getOverlayRow(int index) const {
+    return m_overlay_rows.at(index);
+}
+
+int RenderInfo::getOverlayRowCount() const {
+    return m_overlay_rows.size();
 }
 
 bool RenderInfo::shouldRenderColors() const {

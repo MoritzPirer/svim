@@ -22,6 +22,7 @@ private:
     std::vector<std::vector<RenderChunk>> m_panel_rows;
     std::vector<RenderChunk> m_aside_rows;
     int m_aside_width;
+    std::vector<RenderChunk> m_overlay_rows;
     Position m_cursor_position;
     
     bool m_render_colors;
@@ -32,6 +33,7 @@ public:
         std::vector<std::vector<RenderChunk>> panel_rows,
         std::vector<RenderChunk> aside_rows,
         int aside_width,
+        std::vector<RenderChunk> overlay_rows,
         Position cursor_position,
         bool render_in_color
     );
@@ -48,6 +50,9 @@ public:
     RenderChunk getAsideRow(int index) const;
     int getAsideRowCount() const;
     int getAsideWidth() const;
+
+    RenderChunk getOverlayRow(int index) const;
+    int getOverlayRowCount() const;
 
     bool shouldRenderColors() const;
 

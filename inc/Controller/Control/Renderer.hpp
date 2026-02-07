@@ -23,7 +23,6 @@ private:
     const char m_line_number_seperator = '|';
 
     std::vector<RenderChunk> getSeperatorChunks(ScreenSize actual_size);
-    std::vector<RenderChunk> getTemporaryMessageChunks(ScreenSize actual_size);
     std::vector<RenderChunk> getCharacterCountChunks();
     std::vector<RenderChunk> getWordCountChunks();
     std::vector<RenderChunk> getParagraphCountChunks();
@@ -71,6 +70,7 @@ public:
     ///     be rendered in a line of the screen
     std::vector<std::vector<RenderChunk>> calculateVisibleRows(ScreenSize text_area_size);
 
+    std::vector<RenderChunk> calculateTemporaryRows(ScreenSize actual_size);
 };
 
 #endif //RENDERER_HPP

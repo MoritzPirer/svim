@@ -109,31 +109,6 @@ vector<RenderChunk> Renderer::getSeperatorChunks(ScreenSize actual_size) {
     }};
 }
 
-vector<RenderChunk> Renderer::getTemporaryMessageChunks(ScreenSize actual_size) {
-    vector<RenderChunk> chunks;
-
-    bool has_message = false;
-    for (const string& message : m_state.getTemporaryMessages()) {
-        for (const string& message_row : StringHelpers::splitIntoRows(message, 0, actual_size.width - 1)) {
-            chunks.push_back({
-                StringHelpers::leftAlign(message_row, actual_size.width),
-                TextRole::TEXT_HIGHLIGHT
-            });
-        }
-        
-        if (message.length() > 0) {
-            has_message = true;
-        }
-    }
-
-    if (has_message == true) {
-        vector<RenderChunk> seperator_chunks = getSeperatorChunks(actual_size);
-        chunks.insert(chunks.end(), seperator_chunks.begin(), seperator_chunks.end());
-    }
-
-    return chunks;
-}
-
 vector<RenderChunk> Renderer::getCharacterCountChunks() {
     if (!m_settings.isEnabled("show_character_count")) {
         return {};
@@ -287,7 +262,6 @@ vector<vector<RenderChunk>> Renderer::calculateMetadataRows(ScreenSize actual_si
     };
     
     addContent(getSeperatorChunks(actual_size), true);
-    addContent(getTemporaryMessageChunks(actual_size), true);
     addContent(getEditorModeChunks());
     addContent(getFileNameChunks());
     addContent(getSaveIconChunks());
@@ -353,4 +327,24 @@ vector<vector<RenderChunk>> Renderer::calculateVisibleRows(ScreenSize text_area_
     }
     
     return visible_rows;
+}
+
+vector<RenderChunk> Renderer::calculateTemporaryRows(ScreenSize actual_size) {
+    vector<RenderChunk> chunks;
+
+    if (!m_state.getTemporaryMessages().empty()) {
+        vector<RenderChunk> seperator_chunks = getSeperatorChunks(actual_size);
+        chunks.insert(chunks.end(), seperator_chunks.begin(), seperator_chunks.end());
+    }
+
+    for (const string& message : m_state.getTemporaryMessages()) {
+        for (const string& message_row : StringHelpers::splitIntoRows(message, 0, actual_size.width - 1)) {
+            chunks.push_back({
+                StringHelpers::leftAlign(message_row, actual_size.width),
+                TextRole::TEXT_HIGHLIGHT
+            });
+        }
+    }
+
+    return chunks;
 }

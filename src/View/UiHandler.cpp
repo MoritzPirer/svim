@@ -59,6 +59,26 @@ void UiHandler::renderTextArea(const RenderInfo& render_info) {
     }
 }
 
+void UiHandler::renderOverlay(const RenderInfo& render_info) {
+    int overlay_offset = render_info.getTextAreaRowCount()
+        - render_info.getOverlayRowCount();
+
+    for (int i = 0; i < render_info.getOverlayRowCount(); i++) {
+        move(overlay_offset + i, 0);
+        
+        const auto& [content, role] = render_info.getOverlayRow(i);
+
+        if (render_info.shouldRenderColors()) {
+            setStyle(role);
+        }
+        else {
+            setStyle(TextRole::TEXT_NORMAL);
+        }
+
+        writeString(content);
+    }
+}
+
 void UiHandler::renderCursor(const RenderInfo& render_info) {
     move(
         render_info.getCursorPosition().row,
@@ -172,6 +192,7 @@ void UiHandler::render(const RenderInfo& render_info) {
     renderTextArea(render_info);
     renderPanel(render_info);
     renderAside(render_info);
+    renderOverlay(render_info);
     renderCursor(render_info);
 
     refresh();
