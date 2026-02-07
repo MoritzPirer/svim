@@ -4,8 +4,6 @@
 #include "../../../inc/Controller/Action/SaveAction.hpp"
 #include "../../../inc/Controller/Action/QuitAction.hpp"
 #include "../../../inc/Controller/Action/EraseAction.hpp"
-#include "../../../inc/Controller/Action/ChunkwiseMoveAction.hpp"
-#include "../../../inc/Controller/Action/DirectionalMoveAction.hpp"
 #include "../../../inc/Controller/Action/ParagraphSplittingAction.hpp"
 #include "../../../inc/Controller/Action/FixedPositionMoveAction.hpp"
 

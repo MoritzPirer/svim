@@ -11,8 +11,8 @@
 
 enum class OperatorType {
     MOVE_BY_CHARACTER,      //_hjkl
-    MOVE_BY_CHUNK,          //gG
     MOVE_WITHIN_CHUNK,      //mM
+    MOVE_OVER_CHUNK,
     FIND,                   //fF
     FILE_ACTION,            //!
     SWITCH_MODE,            //i

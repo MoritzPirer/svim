@@ -35,7 +35,8 @@ private:
 
     ParseResult generateCharacterwiseMove(ScreenSize text_area_size);
     ParseResult generateMoveWithinChunk(ScreenSize text_area_size, ModeType mode);
-
+    ParseResult generateMoveOverChunk(ScreenSize text_area_size);
+    
     ParseResult generateActions(ScreenSize text_area_size);
     void parseAsOperator(char input);
 
