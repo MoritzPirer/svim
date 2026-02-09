@@ -17,4 +17,6 @@ enum class Scope {
     FILE
 };
 
+
+
 #endif //SCOPE_HPP

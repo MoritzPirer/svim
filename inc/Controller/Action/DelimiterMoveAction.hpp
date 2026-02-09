@@ -10,21 +10,20 @@
 #define DELIMITER_MOVE_ACTION_HPP
 
 #include "Action.hpp"
-#include "ActionOptions/ActionDirection.hpp"
 #include "ActionOptions/EndBehavior.hpp"
 
 class DelimiterMoveAction: public Action {
 private:
     ScreenSize m_size;
     std::string m_delimiters;
-    ActionDirection m_move_direction;
+    Direction m_move_direction;
     EndBehavior m_end_behavior;
 
 public:
     DelimiterMoveAction(
         ScreenSize size,
         std::string delimiters,
-        ActionDirection move_direction,
+        Direction move_direction,
         EndBehavior end_behavior
     );
     DelimiterMoveAction(const DelimiterMoveAction&) = default;

@@ -1,6 +1,7 @@
 #include <unordered_map>
 
 #include "../../../inc/Controller/Control/CommandParser.hpp"
+#include "../../../inc/Controller/Control/CommandDetails.hpp"
 
 #include "../../../inc/Controller/Action/CharwiseMoveAction.hpp"
 #include "../../../inc/Controller/Action/SaveAction.hpp"
@@ -19,262 +20,290 @@ ParseResult CommandParser::emptyParse() {
 }
 
 ParseResult CommandParser::generateCharacterwiseMove(ScreenSize text_area_size) {
-    Direction direction;
-    switch (*m_argument) {
-        case 'h': {
-            direction = Direction::LEFT;
-            break;
-        }
-        case 'j': {
-            direction = Direction::DOWN;
-            break;
-        }
-        case 'k': {
-            direction = Direction::UP;
-            break;
-        }
-        case 'l': {
-            direction = Direction::RIGHT;
-            break;
-        }
-    }
-    
-    return {ModeType::TOOL_MODE, {make_shared<CharwiseMoveAction>(text_area_size, direction)}};
+    return {ModeType::TOOL_MODE, {make_shared<CharwiseMoveAction>(text_area_size, m_details->direction)}};
 }
 
-ParseResult CommandParser::generateMoveWithinChunk(ScreenSize text_area_size, ModeType mode) {
-    if (m_scope.has_value()) {
-        ActionDirection direction = (*m_destination == Destination::START)?
-            ActionDirection::BACKWARD : ActionDirection::FORWARD;
-        switch (*m_scope) {
-            case Scope::FILE:
-            case Scope::PARAGRAPH:
-            case Scope::LINE:
-                return {mode, {make_shared<ScopeMoveAction>(
-                    text_area_size,
-                    *m_scope,
-                    direction,
-                    EndBehavior::STOP_BEFORE_END
-                )}};
-            case Scope::EXPRESSION:
-                return {mode, {
-                    make_shared<DelimiterMoveAction>(
-                        text_area_size,
-                        m_expression_delimiters,
-                        direction,
-                        EndBehavior::STOP_BEFORE_END
-                    )}
-                };
-            case Scope::WORD:
-                return {mode, {
-                    make_shared<DelimiterMoveAction>(
-                        text_area_size,
-                        m_word_delimiters,
-                        direction,
-                        EndBehavior::STOP_BEFORE_END
-                    )}
-                };
-
-        }
+ParseResult CommandParser::generateMultiCharacterMove(ScreenSize text_area_size, EndBehavior end_behavior) {
+    if (!m_details->scope.has_value()) {
+        return {m_details->next_mode, {
+            make_shared<DelimiterMoveAction>(
+                text_area_size,
+                std::string(1, m_details->argument.value()),
+                m_details->direction,
+                end_behavior
+            )}
+        };
     }
 
-    return emptyParse();
-}
-
-ParseResult CommandParser::generateMoveOverChunk(ScreenSize text_area_size) {
-    if (m_scope.has_value()) {
-        ActionDirection direction = (*m_destination == Destination::START)?
-            ActionDirection::BACKWARD : ActionDirection::FORWARD;
-        switch (*m_scope) {
-            case Scope::FILE:
-            case Scope::PARAGRAPH:
-            case Scope::LINE:
-                return {ModeType::TOOL_MODE, {make_shared<ScopeMoveAction>(
-                    text_area_size,
-                    *m_scope,
-                    direction,
-                    EndBehavior::STOP_AFTER_END
-                )}};
-            case Scope::EXPRESSION:
-                return {ModeType::TOOL_MODE, {
-                    make_shared<DelimiterMoveAction>(
-                        text_area_size,
-                        m_expression_delimiters,
-                        direction,
-                        EndBehavior::STOP_AFTER_END
-                    )}
-                };
-            case Scope::WORD:
-                return {ModeType::TOOL_MODE, {
-                    make_shared<DelimiterMoveAction>(
-                        text_area_size,
-                        m_word_delimiters,
-                        direction,
-                        EndBehavior::STOP_AFTER_END
-                    )}
-                };
-        }
+    switch (m_details->scope.value()) {
+    case Scope::FILE:
+    case Scope::PARAGRAPH:
+    case Scope::LINE:
+        return {m_details->next_mode, {make_shared<ScopeMoveAction>(
+            text_area_size,
+            m_details->scope.value(),
+            m_details->direction,
+            end_behavior
+        )}};
+    case Scope::EXPRESSION:
+        return {m_details->next_mode, {
+            make_shared<DelimiterMoveAction>(
+                text_area_size,
+                m_expression_delimiters,
+                m_details->direction,
+                end_behavior
+            )}
+        };
+    case Scope::WORD:
+        return {m_details->next_mode, {
+            make_shared<DelimiterMoveAction>(
+                text_area_size,
+                m_word_delimiters,
+                m_details->direction,
+                end_behavior
+            )}
+        };
+    default:
+        break;
     }
-
-    return emptyParse();
 }
 
 ParseResult CommandParser::generateActions(ScreenSize text_area_size) {
-    switch (*m_operator_type) {
-        case OperatorType::FILE_ACTION: {
-            return {ModeType::TOOL_MODE, {make_shared<QuitAction>(QuitMode::FORCE_QUIT)}};
-        }
-        case OperatorType::MOVE_BY_CHARACTER: {
-            return generateCharacterwiseMove(text_area_size);
-        }
-        case OperatorType::MOVE_WITHIN_CHUNK: {
-            return generateMoveWithinChunk(text_area_size, *m_next_mode);
-        }
-        case OperatorType::MOVE_OVER_CHUNK: {
-            return generateMoveOverChunk(text_area_size);
-        }
-        default: break;
+    if (!m_details.has_value() ) {
+        return emptyParse();
     }
 
-    return emptyParse();
+    if (!m_details->is_complete) {
+        return {std::nullopt, {make_shared<MessageAction>("incomplete, but a command was recognized")}};
+    }
+
+    switch (m_details->operator_type) {
+    case Operator::FILE_ACTION: {
+        return {ModeType::TOOL_MODE, {make_shared<QuitAction>(QuitMode::FORCE_QUIT)}};
+    }
+    case Operator::MOVE_BY_CHARACTER: {
+        return generateCharacterwiseMove(text_area_size);
+    }
+    case Operator::MOVE_WITHIN_CHUNK: 
+        return generateMultiCharacterMove(text_area_size, EndBehavior::STOP_BEFORE_END);
+    case Operator::MOVE_OVER_CHUNK: {
+        return generateMultiCharacterMove(text_area_size, EndBehavior::STOP_AFTER_END);
+    }
+    default:
+        return emptyParse();
+    }
+
 }
 
 void CommandParser::parseAsOperator(char input) {
+    /*
     switch (input) {
         case 'h':
         case 'j':
         case 'k':
         case 'l':
-            m_operator_type = OperatorType::MOVE_BY_CHARACTER;
+            m_operator_type = Operator::MOVE_BY_CHARACTER;
             m_argument = input;
             m_is_complete = true;
             m_next_mode = ModeType::TOOL_MODE;
             break;
         case 'i':
-            m_operator_type = OperatorType::SWITCH_MODE;
+            m_operator_type = Operator::SWITCH_MODE;
             m_is_complete = true;
             m_next_mode = ModeType::TYPING_MODE;
             break;
         case 'm':
-            m_operator_type = OperatorType::MOVE_WITHIN_CHUNK;
+            m_operator_type = Operator::MOVE_WITHIN_CHUNK;
             m_destination = Destination::END;
             m_is_complete = false;
             m_next_mode = ModeType::TOOL_MODE;
             break;
         case 'M':
-            m_operator_type = OperatorType::MOVE_WITHIN_CHUNK;
+            m_operator_type = Operator::MOVE_WITHIN_CHUNK;
             m_destination = Destination::START;
             m_is_complete = false;
             m_next_mode = ModeType::TOOL_MODE;
             break;
         case 'g':
-            m_operator_type = OperatorType::MOVE_OVER_CHUNK;
+            m_operator_type = Operator::MOVE_OVER_CHUNK;
             m_destination = Destination::END;
             m_is_complete = false;
             m_next_mode = ModeType::TOOL_MODE;
             break;
         case 'G':
-            m_operator_type = OperatorType::MOVE_OVER_CHUNK;
+            m_operator_type = Operator::MOVE_OVER_CHUNK;
             m_destination = Destination::START;
             m_is_complete = false;
             m_next_mode = ModeType::TOOL_MODE;
             break;
         case 'a':
-            m_operator_type = OperatorType::MOVE_WITHIN_CHUNK;
+            m_operator_type = Operator::MOVE_WITHIN_CHUNK;
             m_destination = Destination::END;
             m_is_complete = false;
             m_next_mode = ModeType::TYPING_MODE;
             break;
         case 'A':
-            m_operator_type = OperatorType::MOVE_WITHIN_CHUNK;
+            m_operator_type = Operator::MOVE_WITHIN_CHUNK;
             m_destination = Destination::START;
             m_is_complete = false;
             m_next_mode = ModeType::TYPING_MODE;
             break;
         case 'q':
-            m_operator_type = OperatorType::FILE_ACTION;
+            m_operator_type = Operator::FILE_ACTION;
             m_is_complete = true;
             break;
         case 'f':
-            m_operator_type = OperatorType::FIND;
+            m_operator_type = Operator::FIND;
             m_destination = Destination::END;
             m_is_complete = false;
             m_next_mode = ModeType::TYPING_MODE;
+            break;
         
         default: //not a valid operator
             m_operator_type = std::nullopt;
             m_is_complete = false;
     }
-}
+    */
 
-bool CommandParser::operatorExpectsScopeOrRange() {
-    std::unordered_map<OperatorType, bool> is_expected = {
-        {OperatorType::FILE_ACTION, false},
-        {OperatorType::MOVE_BY_CHARACTER, false},
-        {OperatorType::MOVE_WITHIN_CHUNK, true},
-        {OperatorType::MOVE_OVER_CHUNK, true},
-        {OperatorType::FIND, false},
+    // operators requiring only one input
+    std::unordered_map<char, CommandDetails> simple_commands = {
+        {'h', {
+            .operator_type = Operator::MOVE_BY_CHARACTER,
+            .direction = Direction::LEFT,
+            .next_mode = ModeType::TOOL_MODE
+        }},
+        {'j', {
+            .operator_type = Operator::MOVE_BY_CHARACTER,
+            .direction = Direction::DOWN,
+            .next_mode = ModeType::TOOL_MODE
+        }},
+        {'k', {
+            .operator_type = Operator::MOVE_BY_CHARACTER,
+            .direction = Direction::UP,
+            .next_mode = ModeType::TOOL_MODE
+        }},
+        {'l', {
+            .operator_type = Operator::MOVE_BY_CHARACTER,
+            .direction = Direction::RIGHT,
+            .next_mode = ModeType::TOOL_MODE
+        }},
+        {'q', {
+            .operator_type = Operator::FILE_ACTION,
+        }},
     };
 
-    if (!m_operator_type.has_value()) {
-        return false;
+    //operators requiring a second input
+    std::unordered_map<char, CommandDetails> compound_commands = {
+        {'m', {
+            .operator_type = Operator::MOVE_WITHIN_CHUNK,
+            .direction = Direction::RIGHT,
+            .next_mode = ModeType::TOOL_MODE
+        }},
+        {'M', {
+            .operator_type = Operator::MOVE_WITHIN_CHUNK,
+            .direction = Direction::LEFT,
+            .next_mode = ModeType::TOOL_MODE
+        }},
+        {'g', {
+            .operator_type = Operator::MOVE_OVER_CHUNK,
+            .direction = Direction::RIGHT,
+            .next_mode = ModeType::TOOL_MODE
+        }},
+        {'G', {
+            .operator_type = Operator::MOVE_OVER_CHUNK,
+            .direction = Direction::LEFT,
+            .next_mode = ModeType::TOOL_MODE
+        }},
+        {'a', {
+            .operator_type = Operator::MOVE_WITHIN_CHUNK,
+            .direction = Direction::RIGHT,
+            .next_mode = ModeType::TYPING_MODE
+        }},
+        {'A', {
+            .operator_type = Operator::MOVE_WITHIN_CHUNK,
+            .direction = Direction::LEFT,
+            .next_mode = ModeType::TYPING_MODE
+        }}
+    };
+
+    if (simple_commands.contains(input)) {
+        m_details = simple_commands.at(input);
+        m_details->is_complete = true;
+        return;
     }
 
-    return is_expected.at(*m_operator_type);
+    if (compound_commands.contains(input)) {
+        m_details = compound_commands.at(input);
+        m_details->is_complete = false;
+        return;
+    }
+    
+    m_details->is_complete = false;
+    m_details = std::nullopt;
 }
 
-void CommandParser::parseAsScopeOrRange(char input) {
-    std::unordered_map<char, Scope> scope = {
+void CommandParser::parseAsParameter(char input) {
+
+    //only need to care about compund commands here
+    switch (m_details->operator_type) {
+    
+    //all ops that take scope or range here
+    case Operator::MOVE_WITHIN_CHUNK:
+    case Operator::MOVE_OVER_CHUNK: {
+        std::optional<Scope> scope = charToScope(input);
+        if (scope.has_value()) {
+            m_details->scope = scope;
+            m_details->is_complete = true;
+        }
+        else if (isRangeIndicator(input)) {
+            m_details->argument = input;
+            m_details->is_complete = true;
+        }
+        else {
+            m_details = std::nullopt;
+            m_details->is_complete = false;
+        }
+        break;
+    }
+    
+    default:
+        m_details = std::nullopt;
+    }
+}
+
+bool CommandParser::isRangeIndicator(char c) {
+    return (std::string("\"<>[](){}'").find(c) != std::string::npos);
+}
+
+std::optional<Scope> CommandParser::charToScope(char c) {
+    std::unordered_map<char, Scope> scopes = {
         {'w', Scope::WORD},
         {'e', Scope::EXPRESSION},
         {'l', Scope::LINE},
         {'p', Scope::PARAGRAPH},
-        {'f', Scope::FILE}
+        {'f', Scope::FILE},
     };
     
-    if (scope.contains(input)) {
-        m_scope = scope.at(input);
-        m_is_complete = true;
+    if (scopes.contains(c)) {
+        return scopes.at(c);
     }
-    else {
-        m_operator_type = std::nullopt;
-    }
-}
 
-void CommandParser::parseAsArgument(char input) {
-    m_argument = input;
-}
+    return std::nullopt;
+} 
 
 ParseResult CommandParser::tryGenerateHint() {
     return emptyParse();
 }
- 
+
 ParseResult CommandParser::parseInput(char input, ScreenSize text_area_size, const Settings& settings) {
     (void) settings;
 
-    if (m_operator_type.has_value()) {
-        //parse as second keystroke
-        if (operatorExpectsScopeOrRange()) {
-            parseAsScopeOrRange(input);
-        }
-        else {
-            parseAsArgument(input);
-        }
-    }
-    else {
+    if (!m_details.has_value()) {
         parseAsOperator(input);
     }
-    
-    if (m_is_complete) {
-        ParseResult result = generateActions(text_area_size);
-        m_operator_type = std::nullopt;
-        return result;
-    }
     else {
-        //return tryGenerateHint();
-        if (m_operator_type.has_value()) {
-            return {std::nullopt, {make_shared<MessageAction>("not complete, but you typed " + std::string(1, input))}};
-        }
-        else return emptyParse();
+        parseAsParameter(input);
     }
+    
+    return generateActions(text_area_size);
 }

@@ -18,7 +18,7 @@ class ScopeMoveAction: public Action {
 private:
     ScreenSize m_size;
     Scope m_scope;
-    ActionDirection m_move_direction;
+    Direction m_move_direction;
     EndBehavior m_end_behavior;
 
     void fileScopeMove(EditorState& state);
@@ -28,7 +28,7 @@ public:
     ScopeMoveAction(
         ScreenSize size,
         Scope scope,
-        ActionDirection move_direction,
+        Direction move_direction,
         EndBehavior end_behavior
     );
     ScopeMoveAction(const ScopeMoveAction&) = default;

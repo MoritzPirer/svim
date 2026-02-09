@@ -1,5 +1,5 @@
 ///
-/// @file: OperatorType.hpp
+/// @file: Operator.hpp
 /// @description: description
 ///
 /// @date: 2026-02-07
@@ -9,9 +9,9 @@
 #ifndef OPERATOR_TYPE_HPP
 #define OPERATOR_TYPE_HPP
 
-enum class OperatorType {
+enum class Operator {
     MOVE_BY_CHARACTER,      //_hjkl
-    MOVE_WITHIN_CHUNK,      //mM
+    MOVE_WITHIN_CHUNK,      //mM, aA
     MOVE_OVER_CHUNK,        //gm
     FIND,                   //fF
     FILE_ACTION,            //!

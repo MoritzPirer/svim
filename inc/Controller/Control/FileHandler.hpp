@@ -10,7 +10,6 @@
 #define FILE_HANDLER_HPP
 
 #include <string>
-#include <optional>
 
 #include "../../Model/TextFile.hpp"
 

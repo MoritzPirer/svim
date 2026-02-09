@@ -3,7 +3,7 @@
 DelimiterMoveAction::DelimiterMoveAction(
     ScreenSize size,
     std::string delimiters,
-    ActionDirection move_direction,
+    Direction move_direction,
     EndBehavior end_behavior
 ):
     m_size{size},
@@ -13,22 +13,31 @@ DelimiterMoveAction::DelimiterMoveAction(
     {}
 
 void DelimiterMoveAction::applyTo(EditorState& state) {
-    Direction direction = toDirection(m_move_direction);
     bool has_reached_delimiter = false;
 
-    while (state.canCursorMove(direction)) {
-        state.moveCursor(direction, m_size.width);
+    while (state.canCursorMove(m_move_direction)) {
+        int row_before = state.getCursor().getRow();
+        state.moveCursor(m_move_direction, m_size.width);
+        int row_after = state.getCursor().getRow();
 
         std::optional<char> character = state.readCharacterAtCursor();
 
+        if (row_before != row_after) {
+            if (m_end_behavior == EndBehavior::STOP_BEFORE_END) {
+                state.moveCursor(getOppositeDirection(m_move_direction), m_size.width);
+                break;
+            }
+            has_reached_delimiter = true;
+        }
+
         // handle overhang cursor position
         if (!character.has_value()){
-            bool cross_into_next_paragraph = false;
+            bool cross_into_next_paragraph = true;
             if (cross_into_next_paragraph) {
                 continue;
             }
 
-            state.moveCursor(getOppositeDirection(direction), m_size.width);
+            state.moveCursor(getOppositeDirection(m_move_direction), m_size.width);
             break;
         }
 
@@ -37,7 +46,7 @@ void DelimiterMoveAction::applyTo(EditorState& state) {
             has_reached_delimiter = true;
             
             if (m_end_behavior == EndBehavior::STOP_BEFORE_END) {
-                state.moveCursor(getOppositeDirection(direction), m_size.width);
+                state.moveCursor(getOppositeDirection(m_move_direction), m_size.width);
                 break;
             }
         }

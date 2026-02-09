@@ -22,12 +22,12 @@ void ModeManager::changeMode(ModeType new_mode) {
 
 std::vector<std::shared_ptr<Action>> ModeManager::convertToAction(
     Input input, ScreenSize actual_size, ScreenSize text_area_size, Settings settings) {
-    auto [new_mode, actions] = m_current_mode->parseInput(input, actual_size, text_area_size, settings);
-    if (new_mode.has_value()) {
-        changeMode(*new_mode);
+    ParseResult result = m_current_mode->parseInput(input, actual_size, text_area_size, settings);
+    if (result.mode.has_value()) {
+        changeMode(*result.mode);
     }
 
-    return actions;
+    return result.actions;
 }
 
 std::string ModeManager::getModeLabel() const {
