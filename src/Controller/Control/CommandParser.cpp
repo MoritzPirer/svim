@@ -80,7 +80,32 @@ ParseResult CommandParser::generateMultiCharacterMove(
     }
 }
 
-ParseResult CommandParser::generateActions(ScreenSize text_area_size) {
+ParseResult CommandParser::generateFileCommand(const Settings& settings) {
+    SaveConfirmation confirmation = settings.isEnabled("confirm_save")?
+        SaveConfirmation::YES : SaveConfirmation::NO;
+        
+    std::unordered_map<char, ParseResult> results = {
+        {'q', {std::nullopt, {make_shared<QuitAction>(QuitMode::ONLY_IF_SAVED)}}},
+        {'x', {std::nullopt, {make_shared<QuitAction>(QuitMode::FORCE_QUIT)}}},
+        {'s', {std::nullopt, {make_shared<SaveAction>(confirmation)}}},
+        {'Q', {std::nullopt, {
+            make_shared<SaveAction>(confirmation),
+            make_shared<QuitAction>(QuitMode::ONLY_IF_SAVED)
+        }}}
+
+        //TODO: rename, open settings
+    };
+
+    if (results.contains(*(m_details->argument))) {
+        return results.at(*(m_details->argument));
+    }
+
+    //return emptyParse();
+    std::string message = "You entered " + std::string(1, *(m_details->argument)) + " which is not a file command i know!";
+    return {std::nullopt, {make_shared<MessageAction>(message)}};;
+}
+
+ParseResult CommandParser::generateActions(ScreenSize text_area_size, const Settings& settings) {
     if (!m_details.has_value() ) {
         return emptyParse();
     }
@@ -94,9 +119,7 @@ ParseResult CommandParser::generateActions(ScreenSize text_area_size) {
         return {ModeType::TYPING_MODE, {}};
     }
 
-    case Operator::FILE_ACTION: {
-        return {ModeType::TOOL_MODE, {make_shared<QuitAction>(QuitMode::FORCE_QUIT)}};
-    }
+    /// Movement
 
     case Operator::MOVE_BY_CHARACTER: {
         return generateCharacterwiseMove(text_area_size);
@@ -109,6 +132,19 @@ ParseResult CommandParser::generateActions(ScreenSize text_area_size) {
     case Operator::MOVE_OVER_CHUNK: {
         return generateMultiCharacterMove(text_area_size, EndBehavior::STOP_AFTER_END);
     }
+    
+    /// Editing
+
+    case Operator::ERASE: {
+        return {m_details->next_mode, {make_shared<EraseAction>(0)}};
+    }
+
+    ///
+
+    case Operator::FILE_ACTION: {
+        return generateFileCommand(settings);
+    }
+
 
     default: {
         return emptyParse();
@@ -145,11 +181,13 @@ void CommandParser::parseAsOperator(char input) {
             .operator_type = Operator::SWITCH_MODE,
             .next_mode = ModeType::TYPING_MODE
         }},
-        {'q', {
-            .operator_type = Operator::FILE_ACTION,
-        }},
         {'e', {
-            .operator_type = Operator::ERASE
+            .operator_type = Operator::ERASE,
+            .next_mode = ModeType::TOOL_MODE
+        }},
+        {'E', {
+            .operator_type = Operator::ERASE,
+            .next_mode = ModeType::TYPING_MODE
         }}
     };
 
@@ -184,6 +222,9 @@ void CommandParser::parseAsOperator(char input) {
             .operator_type = Operator::MOVE_WITHIN_CHUNK,
             .direction = Direction::LEFT,
             .next_mode = ModeType::TYPING_MODE
+        }},
+        {'!', {
+            .operator_type = Operator::FILE_ACTION
         }}
     };
 
@@ -208,7 +249,7 @@ void CommandParser::parseAsParameter(char input) {
     //only need to care about compund commands here
     switch (m_details->operator_type) {
     
-    //all ops that take scope or range here
+    // Operators that take a scope or range indicator as a parameter
     case Operator::MOVE_WITHIN_CHUNK:
     case Operator::MOVE_OVER_CHUNK: {
         std::optional<Scope> scope = charToScope(input);
@@ -226,6 +267,13 @@ void CommandParser::parseAsParameter(char input) {
             m_details = std::nullopt;
             m_details->is_complete = false;
         }
+        break;
+    }
+
+    // Operators that take a non-standard type of parameter
+    case Operator::FILE_ACTION: {
+        m_details->argument = input;
+        m_details->is_complete = true;
         break;
     }
     
@@ -294,9 +342,7 @@ ParseResult CommandParser::tryGenerateHint() {
 }
 
 ParseResult CommandParser::parseInput(char input, ScreenSize text_area_size, const Settings& settings) {
-    (void) settings;
-
     m_details.has_value()? parseAsParameter(input) : parseAsOperator(input);
     
-    return generateActions(text_area_size);
+    return generateActions(text_area_size, settings);
 }
