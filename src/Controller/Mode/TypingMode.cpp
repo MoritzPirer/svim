@@ -32,25 +32,25 @@ ParseResult TypingMode::parseMouseMovement(Position click_position,
 ParseResult TypingMode::parseSpecialKey(SpecialKey key, ScreenSize text_area_size) {
     switch (key) {
     case SpecialKey::ARROW_LEFT: {
-        return {ModeType::TOOL_MODE, {
+        return {ModeType::TYPING_MODE, {
             make_shared<CharwiseMoveAction>(text_area_size, Direction::LEFT)
         }};
     }
 
     case SpecialKey::ARROW_DOWN: {
-        return {ModeType::TOOL_MODE, {
+        return {ModeType::TYPING_MODE, {
             make_shared<CharwiseMoveAction>(text_area_size, Direction::DOWN)
         }};
     }
 
     case SpecialKey::ARROW_UP: {
-        return {ModeType::TOOL_MODE, {
+        return {ModeType::TYPING_MODE, {
             make_shared<CharwiseMoveAction>(text_area_size, Direction::UP)
         }};
     }
 
     case SpecialKey::ARROW_RIGHT: {
-        return {ModeType::TOOL_MODE, {
+        return {ModeType::TYPING_MODE, {
             make_shared<CharwiseMoveAction>(text_area_size, Direction::RIGHT)
         }};
     }

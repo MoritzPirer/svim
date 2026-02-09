@@ -105,13 +105,32 @@ ParseResult CommandParser::generateFileCommand(const Settings& settings) {
     return {std::nullopt, {make_shared<MessageAction>(message)}};;
 }
 
+ParseResult CommandParser::generateHint() {
+    switch (m_details->operator_type) {
+    case Operator::MOVE_WITHIN_CHUNK:
+    case Operator::MOVE_OVER_CHUNK: {
+        return {std::nullopt, {
+            make_shared<MessageAction>("Complete with a scope or range identifier")
+        }};
+    }
+    case Operator::FILE_ACTION: {
+        return {std::nullopt, {
+            make_shared<MessageAction>("Complete with an action identifier") // todo refer to help operator
+        }};
+    }
+    
+    default: {
+        return emptyParse();
+    }
+    }
+}
 ParseResult CommandParser::generateActions(ScreenSize text_area_size, const Settings& settings) {
     if (!m_details.has_value() ) {
         return emptyParse();
     }
 
     if (!m_details->is_complete) {
-        return {std::nullopt, {make_shared<MessageAction>("incomplete, but a command was recognized")}};
+        return generateHint();
     }
 
     switch (m_details->operator_type) {
@@ -320,7 +339,7 @@ char CommandParser::getClosingRangeIndicator(char range_indicator) {
 }
 
 std::optional<Scope> CommandParser::charToScope(char c) {
-    c = std::tolower(c);
+    //c = std::tolower(c); //TODO: Descide if scope is case sensitive or not
 
     std::unordered_map<char, Scope> scopes = {
         {'w', Scope::WORD},
@@ -336,11 +355,6 @@ std::optional<Scope> CommandParser::charToScope(char c) {
 
     return std::nullopt;
 } 
-
-ParseResult CommandParser::tryGenerateHint() {
-    return emptyParse();
-}
-
 ParseResult CommandParser::parseInput(char input, ScreenSize text_area_size, const Settings& settings) {
     m_details.has_value()? parseAsParameter(input) : parseAsOperator(input);
     

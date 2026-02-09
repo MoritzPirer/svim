@@ -32,6 +32,7 @@ private:
     ParseResult generateMultiCharacterMove(ScreenSize text_area_size, EndBehavior end_behaviour);
     ParseResult generateFileCommand(const Settings& settings);
     
+    ParseResult generateHint();
     ParseResult generateActions(ScreenSize text_area_size, const Settings& settings);
     
     
@@ -43,7 +44,6 @@ private:
     char getClosingRangeIndicator(char range_indicator);
     std::optional<Scope> charToScope(char c);
 
-    ParseResult tryGenerateHint();
 public:
     CommandParser() = default;
     CommandParser(const CommandParser&) = default;

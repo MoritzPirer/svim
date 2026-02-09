@@ -121,6 +121,9 @@ Note that you can also use the arrow keys (also in Typing mode)
 - ! + r = rename file (details tbd)
 - ! + c = open settings
 
+### ?: Help operator
+Provides information about the character given as an argument. If that character is an operator, the information contains what the operator does, and, if it requires a secondary input, what that input should be. If the character is a scope identifier (w,e,l,p,f), information about that scope will also be explained.
+
 ### other planned commands (syntax tbd)
 - strg-f and seach-replace (%s)
 - prefixing commands with numbers to perform it multiple times
