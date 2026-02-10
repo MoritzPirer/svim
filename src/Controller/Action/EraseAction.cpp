@@ -1,6 +1,9 @@
 #include "../../../inc/Controller/Action/EraseAction.hpp"
 
-EraseAction::EraseAction(int offset): m_offset{offset} {}
+EraseAction::EraseAction(int offset, bool allow_overhang_erase):
+    m_offset{offset},
+    m_allow_overhang_erase{allow_overhang_erase}
+    {}
 
 void EraseAction::applyTo(EditorState& state) {
     /*
@@ -15,7 +18,6 @@ void EraseAction::applyTo(EditorState& state) {
     if (m_offset < 0) {
         // move left if possible
         if (erase_position.column > 0) {
-            // state.debug(std::to_string(erase_position.column));
             erase_position.column--;
         }
         // otherwise move to end of prev if possible
@@ -34,13 +36,20 @@ void EraseAction::applyTo(EditorState& state) {
     }
 
     if (erase_position.row < cursor_position.row) {
+        state.moveCursorLeft();
         state.joinLineToPrevious(cursor_position.row);
     }
+
+    // erase position is overhang
     else if (static_cast<size_t>(erase_position.column) == state.getParagraph(erase_position.row).length()
         && static_cast<size_t>(cursor_position.row + 1) < state.getNumberOfParagrahps()) {
 
-        state.joinLineToPrevious(cursor_position.row + 1);
-        state.moveCursorRight();
+        if (m_allow_overhang_erase) {
+
+            state.moveCursorLeft();
+            state.joinLineToPrevious(cursor_position.row + 1);
+            state.moveCursorRight();
+        }
     }
     else {
         state.deleteRange(erase_position, erase_position);

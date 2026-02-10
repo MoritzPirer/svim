@@ -30,7 +30,9 @@ private:
 
     ParseResult generateCharacterwiseMove(ScreenSize text_area_size);
     ParseResult generateMultiCharacterMove(ScreenSize text_area_size, EndBehavior end_behaviour);
+
     ParseResult generateFileCommand(const Settings& settings);
+    ParseResult generatParagraphCreationCommand(ScreenSize text_area_size);
     
     ParseResult generateHint();
     ParseResult generateActions(ScreenSize text_area_size, const Settings& settings);

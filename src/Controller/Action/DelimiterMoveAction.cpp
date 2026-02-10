@@ -4,12 +4,14 @@ DelimiterMoveAction::DelimiterMoveAction(
     ScreenSize size,
     std::string delimiters,
     Direction move_direction,
-    EndBehavior end_behavior
+    EndBehavior end_behavior,
+    bool paragraph_is_delimiter
 ):
     m_size{size},
     m_delimiters{delimiters},
     m_move_direction{move_direction},
-    m_end_behavior{end_behavior}
+    m_end_behavior{end_behavior},
+    m_paragraph_is_delimiter{paragraph_is_delimiter}
     {}
 
 void DelimiterMoveAction::applyTo(EditorState& state) {
@@ -22,7 +24,7 @@ void DelimiterMoveAction::applyTo(EditorState& state) {
 
         std::optional<char> character = state.readCharacterAtCursor();
 
-        if (row_before != row_after) {
+        if (m_paragraph_is_delimiter && row_before != row_after) {
             if (m_end_behavior == EndBehavior::STOP_BEFORE_END) {
                 state.moveCursor(getOppositeDirection(m_move_direction), m_size.width);
                 break;
@@ -47,6 +49,10 @@ void DelimiterMoveAction::applyTo(EditorState& state) {
             
             if (m_end_behavior == EndBehavior::STOP_BEFORE_END) {
                 state.moveCursor(getOppositeDirection(m_move_direction), m_size.width);
+                break;
+            }
+
+            if (m_end_behavior == EndBehavior::STOP_ON_END) {
                 break;
             }
         }

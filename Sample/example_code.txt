@@ -1,4 +1,4 @@
-#include "../../../inc/Controller/Control/EditorController.hpp"aaaa
+#include "../../../inc/Controller/Control/EditorController.hpp"
 #include "../../../inc/Controller/Control/FileHandler.hpp"
 
 EditorController::EditorController(std::optional<std::string> file_path):

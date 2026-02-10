@@ -14,8 +14,9 @@
 class EraseAction: public Action {
 private:
     int m_offset;
+    bool m_allow_overhang_erase;
 public:
-    EraseAction(int offset);
+    EraseAction(int offset, bool allow_overhang_erase = true);
     EraseAction(const EraseAction&) = default;
     ~EraseAction() = default;
 

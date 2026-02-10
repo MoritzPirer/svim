@@ -217,9 +217,7 @@ void EditorState::splitAtCursor() {
 }
 
 void EditorState::joinLineToPrevious(int line) {
-    moveCursorLeft();
     m_file.joinToPrevious(line);
-    // moveCursorRight();
 }
 
 Position EditorState::getFirstVisibleChar(ScreenSize text_area_size) const {

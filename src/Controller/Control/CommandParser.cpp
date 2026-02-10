@@ -8,10 +8,12 @@
 #include "../../../inc/Controller/Action/QuitAction.hpp"
 #include "../../../inc/Controller/Action/EraseAction.hpp"
 #include "../../../inc/Controller/Action/ParagraphSplittingAction.hpp"
+#include "../../../inc/Controller/Action/ParagraphJoiningAction.hpp"
 #include "../../../inc/Controller/Action/FixedPositionMoveAction.hpp"
 #include "../../../inc/Controller/Action/MessageAction.hpp"
 #include "../../../inc/Controller/Action/DelimiterMoveAction.hpp"
 #include "../../../inc/Controller/Action/ScopeMoveAction.hpp"
+#include "../../../inc/Controller/Action/InsertAction.hpp"
 
 using std::make_shared;
 
@@ -28,13 +30,15 @@ ParseResult CommandParser::generateCharacterwiseMove(ScreenSize text_area_size) 
 ParseResult CommandParser::generateMultiCharacterMove(
     ScreenSize text_area_size, EndBehavior end_behavior) {
 
+    // range or custom delimiter
     if (!m_details->scope.has_value()) {
         return {m_details->next_mode, {
             make_shared<DelimiterMoveAction>(
                 text_area_size,
                 std::string(1, m_details->argument.value()),
                 m_details->direction,
-                end_behavior
+                end_behavior,
+                false
             )}
         };
     }
@@ -57,7 +61,8 @@ ParseResult CommandParser::generateMultiCharacterMove(
                 text_area_size,
                 m_expression_delimiters,
                 m_details->direction,
-                end_behavior
+                end_behavior,
+                true
             )}
         };
     }
@@ -68,7 +73,8 @@ ParseResult CommandParser::generateMultiCharacterMove(
                 text_area_size,
                 m_word_delimiters,
                 m_details->direction,
-                end_behavior
+                end_behavior,
+                true
             )}
         };
     }
@@ -103,6 +109,24 @@ ParseResult CommandParser::generateFileCommand(const Settings& settings) {
     //return emptyParse();
     std::string message = "You entered " + std::string(1, *(m_details->argument)) + " which is not a file command i know!";
     return {std::nullopt, {make_shared<MessageAction>(message)}};;
+}
+
+ParseResult CommandParser::generatParagraphCreationCommand(ScreenSize text_area_size) {
+    ParseResult result = {m_details->next_mode, {
+        make_shared<ScopeMoveAction>(
+            text_area_size,
+            Scope::PARAGRAPH,
+            m_details->direction,
+            EndBehavior::STOP_BEFORE_END
+        ),
+        make_shared<ParagraphSplittingAction>()
+    }};
+
+    if (m_details->direction == Direction::LEFT) {
+        result.actions.emplace_back(make_shared<CharwiseMoveAction>(text_area_size, Direction::UP));
+    }
+
+    return result;
 }
 
 ParseResult CommandParser::generateHint() {
@@ -144,6 +168,9 @@ ParseResult CommandParser::generateActions(ScreenSize text_area_size, const Sett
         return generateCharacterwiseMove(text_area_size);
     }
 
+    case Operator::MOVE_FIND: {
+        return generateMultiCharacterMove(text_area_size, EndBehavior::STOP_ON_END);
+    }
     case Operator::MOVE_WITHIN_CHUNK: {
         return generateMultiCharacterMove(text_area_size, EndBehavior::STOP_BEFORE_END);
     }
@@ -151,11 +178,39 @@ ParseResult CommandParser::generateActions(ScreenSize text_area_size, const Sett
     case Operator::MOVE_OVER_CHUNK: {
         return generateMultiCharacterMove(text_area_size, EndBehavior::STOP_AFTER_END);
     }
-    
+
     /// Editing
 
     case Operator::ERASE: {
         return {m_details->next_mode, {make_shared<EraseAction>(0)}};
+    }
+
+    case Operator::PARAGRAPH_CREATE: {
+        return generatParagraphCreationCommand(text_area_size);
+    }
+
+    case Operator::PARAGRAPH_JOIN: {
+        return {ModeType::TOOL_MODE, {
+            make_shared<ScopeMoveAction>(
+                text_area_size,
+                Scope::PARAGRAPH,
+                Direction::RIGHT,
+                EndBehavior::STOP_BEFORE_END
+            ),
+            make_shared<ParagraphJoiningAction>()
+        }};
+    }
+
+    case Operator::PARAGRAPH_SPLIT: {
+        return {ModeType::TOOL_MODE, {make_shared<ParagraphSplittingAction>()}};
+    }
+
+    case Operator::REPLACE: {
+        return {ModeType::TOOL_MODE, {
+            make_shared<EraseAction>(0, false),
+            make_shared<InsertAction>(*(m_details->argument)),
+            make_shared<CharwiseMoveAction>(text_area_size, Direction::LEFT)
+        }};
     }
 
     ///
@@ -207,6 +262,22 @@ void CommandParser::parseAsOperator(char input) {
         {'E', {
             .operator_type = Operator::ERASE,
             .next_mode = ModeType::TYPING_MODE
+        }},
+        {'o', {
+            .operator_type = Operator::PARAGRAPH_CREATE,
+            .direction = Direction::RIGHT,
+            .next_mode = ModeType::TYPING_MODE
+        }},
+        {'O', {
+            .operator_type = Operator::PARAGRAPH_CREATE,
+            .direction = Direction::LEFT,
+            .next_mode = ModeType::TYPING_MODE
+        }},
+        {'+', {
+            .operator_type = Operator::PARAGRAPH_JOIN
+        }},
+        {'-', {
+            .operator_type = Operator::PARAGRAPH_SPLIT
         }}
     };
 
@@ -244,6 +315,19 @@ void CommandParser::parseAsOperator(char input) {
         }},
         {'!', {
             .operator_type = Operator::FILE_ACTION
+        }},
+        {'f', {
+            .operator_type = Operator::MOVE_FIND,
+            .direction = Direction::RIGHT,
+            .next_mode = ModeType::TOOL_MODE
+        }},
+        {'F', {
+            .operator_type = Operator::MOVE_FIND,
+            .direction = Direction::LEFT,
+            .next_mode = ModeType::TOOL_MODE
+        }},
+        {'r', {
+            .operator_type = Operator::REPLACE
         }}
     };
 
@@ -289,7 +373,9 @@ void CommandParser::parseAsParameter(char input) {
         break;
     }
 
-    // Operators that take a non-standard type of parameter
+    // Operators that take an argument
+    case Operator::REPLACE:
+    case Operator::MOVE_FIND:
     case Operator::FILE_ACTION: {
         m_details->argument = input;
         m_details->is_complete = true;
@@ -355,6 +441,7 @@ std::optional<Scope> CommandParser::charToScope(char c) {
 
     return std::nullopt;
 } 
+
 ParseResult CommandParser::parseInput(char input, ScreenSize text_area_size, const Settings& settings) {
     m_details.has_value()? parseAsParameter(input) : parseAsOperator(input);
     

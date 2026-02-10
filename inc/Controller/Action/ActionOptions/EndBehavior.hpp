@@ -11,7 +11,8 @@
 
 enum class EndBehavior {
     STOP_BEFORE_END,
-    STOP_AFTER_END
+    STOP_AFTER_END,
+    STOP_ON_END
 };
 
 #endif //END_BEHAVIOR_HPP

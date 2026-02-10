@@ -10,14 +10,20 @@
 #define OPERATOR_TYPE_HPP
 
 enum class Operator {
-    MOVE_BY_CHARACTER,      //_hjkl
+    MOVE_BY_CHARACTER,      //hjkl
     MOVE_WITHIN_CHUNK,      //mM, aA
     MOVE_OVER_CHUNK,        //gm
-    FIND,                   //fF
+    MOVE_FIND,              //fF
+
+    PARAGRAPH_JOIN,         //+
+    PARAGRAPH_SPLIT,        //-
+    PARAGRAPH_CREATE,       //oO
+
+    ERASE,                  //e
+    REPLACE,                //r
+
     FILE_ACTION,            //!
-    SWITCH_MODE,            //i
-    CREATE_PARAGRAPH,
-    ERASE                   //e
+    SWITCH_MODE             //i
 };
 
 #endif //OPERATOR_TYPE_HPP
