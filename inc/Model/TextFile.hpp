@@ -49,6 +49,7 @@ public:
     void writeToEnd(const std::string& line);
 
     void insertCharacterAt(char character_to_add, Position position);
+    void setCharacterAt(char character_to_set, Position position);
     
     void deleteRange(Position start, Position end);
     
@@ -73,7 +74,10 @@ public:
     static int visualLinesNeeded(int line_length, int screen_width);
     size_t visualLinesOfParagraph(size_t line_index, int screen_width) const;
 
-    bool isValidPosition(Position position);
+    bool isValidCursorPosition(Position position);
+
+    /// @brief like isValidCursorPosition, but excludes the overhang cursor position
+    bool isValidTextPosition(Position position);
 
 };
 

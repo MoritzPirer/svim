@@ -9,24 +9,16 @@
 #ifndef DELIMITER_MOVE_ACTION_HPP
 #define DELIMITER_MOVE_ACTION_HPP
 
-#include "Action.hpp"
-#include "ActionOptions/EndBehavior.hpp"
+#include "DelimiterAction.hpp"
 
-class DelimiterMoveAction: public Action {
-private:
-    ScreenSize m_size;
-    std::string m_delimiters;
-    Direction m_move_direction;
-    EndBehavior m_end_behavior;
-    bool m_paragraph_is_delimiter;
-
+class DelimiterMoveAction: public DelimiterAction {
 public:
     DelimiterMoveAction(
         ScreenSize size,
         std::string delimiters,
         Direction move_direction,
         EndBehavior end_behavior,
-        bool paragraph_is_delimiter = true
+        bool paragraph_is_delimiter
     );
     DelimiterMoveAction(const DelimiterMoveAction&) = default;
     ~DelimiterMoveAction() = default;

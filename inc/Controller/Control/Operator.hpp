@@ -21,8 +21,10 @@ enum class Operator {
 
     ERASE,                  //e
     REPLACE,                //r
-    INDENT,
-    UNINDENT,
+    INDENT,                 //>
+    UNINDENT,               //<
+    CASE_SET_UPPER,
+    CASE_SET_LOWER,
 
     FILE_ACTION,            //!
     SWITCH_MODE             //i

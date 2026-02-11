@@ -62,7 +62,8 @@ public:
 
     std::optional<char> readCharacterAt(Position position);
     std::optional<char> readCharacterAtCursor();
-
+    void setCharacterAt(char character_to_set, Position position);
+    
     /// @brief deletes from start to end, including both end points. if the range is 
     ///     an empty line, it is removed, not just cleared.
     /// @param start the inclusive start of deletion 
@@ -89,7 +90,6 @@ public:
     const std::string& getParagraph(size_t row) const { return m_file.getParagraph(row); }
 
     int calculateVisualLineOfCursor(int screen_width) const;
-
 
     void addTemporaryMessage(std::string message);
     const std::vector<std::string>& getTemporaryMessages() const;

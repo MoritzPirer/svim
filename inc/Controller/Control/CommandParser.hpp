@@ -11,13 +11,14 @@
 
 #include <optional>
 
-#include "Operator.hpp"
-#include "CommandDetails.hpp"
+#include "../Action/ActionOptions/Case.hpp"
 #include "../Action/ActionOptions/EndBehavior.hpp"
-#include "../../Shared/Scope.hpp"
-#include "../../Shared/ParseResult.hpp"
-#include "../../Shared/Destination.hpp"
 #include "../Settings/Settings.hpp"
+#include "../../Shared/Destination.hpp"
+#include "../../Shared/ParseResult.hpp"
+#include "../../Shared/Scope.hpp"
+#include "CommandDetails.hpp"
+#include "Operator.hpp"
 
 class CommandParser {
 private:
@@ -30,7 +31,8 @@ private:
 
     ParseResult generateCharacterwiseMove(ScreenSize text_area_size);
     ParseResult generateMultiCharacterMove(ScreenSize text_area_size, EndBehavior end_behaviour);
-
+    
+    ParseResult generateCaseSetCommand(ScreenSize text_area_size, Case target_case);
     ParseResult generateFileCommand(const Settings& settings);
     ParseResult generatParagraphCreationCommand(ScreenSize text_area_size);
     

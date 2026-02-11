@@ -16,6 +16,7 @@
 #include "../../../inc/Controller/Action/InsertAction.hpp"
 #include "../../../inc/Controller/Action/IndentAction.hpp"
 #include "../../../inc/Controller/Action/UnindentAction.hpp"
+#include "../../../inc/Controller/Action/DelimiterCaseSetAction.hpp"
 
 using std::make_shared;
 
@@ -88,6 +89,24 @@ ParseResult CommandParser::generateMultiCharacterMove(
     }
 }
 
+ParseResult CommandParser::generateCaseSetCommand(ScreenSize text_area_size, Case target_case) {
+    // range given
+    return {std::nullopt, {
+        make_shared<DelimiterCaseSetAction>(
+            text_area_size,
+            std::string(1, getOpeningRangeIndicator(*(m_details->argument))),
+            Direction::LEFT,
+            target_case
+        ),
+        make_shared<DelimiterCaseSetAction>(
+            text_area_size,
+            std::string(1, getClosingRangeIndicator(*(m_details->argument))),
+            Direction::RIGHT,
+            target_case
+        )
+    }};
+}
+
 ParseResult CommandParser::generateFileCommand(const Settings& settings) {
     SaveConfirmation confirmation = settings.isEnabled("confirm_save")?
         SaveConfirmation::YES : SaveConfirmation::NO;
@@ -133,6 +152,8 @@ ParseResult CommandParser::generatParagraphCreationCommand(ScreenSize text_area_
 
 ParseResult CommandParser::generateHint() {
     switch (m_details->operator_type) {
+    case Operator::CASE_SET_LOWER:
+    case Operator::CASE_SET_UPPER:
     case Operator::MOVE_WITHIN_CHUNK:
     case Operator::MOVE_OVER_CHUNK: {
         return {std::nullopt, {
@@ -227,6 +248,14 @@ ParseResult CommandParser::generateActions(ScreenSize text_area_size, const Sett
         }};
     }
 
+    case Operator::CASE_SET_LOWER: {
+        return generateCaseSetCommand(text_area_size, Case::LOWER_CASE);
+    }
+
+    case Operator::CASE_SET_UPPER: {
+        return generateCaseSetCommand(text_area_size, Case::UPPER_CASE);
+    }
+
     ///
 
     case Operator::FILE_ACTION: {
@@ -305,21 +334,25 @@ void CommandParser::parseAsOperator(char input) {
     std::unordered_map<char, CommandDetails> compound_commands = {
         {'m', {
             .operator_type = Operator::MOVE_WITHIN_CHUNK,
+            .scope = std::nullopt,
             .direction = Direction::RIGHT,
             .next_mode = ModeType::TOOL_MODE
         }},
         {'M', {
             .operator_type = Operator::MOVE_WITHIN_CHUNK,
+            .scope = std::nullopt,
             .direction = Direction::LEFT,
             .next_mode = ModeType::TOOL_MODE
         }},
         {'g', {
             .operator_type = Operator::MOVE_OVER_CHUNK,
+            .scope = std::nullopt,
             .direction = Direction::RIGHT,
             .next_mode = ModeType::TOOL_MODE
         }},
         {'G', {
             .operator_type = Operator::MOVE_OVER_CHUNK,
+            .scope = std::nullopt,
             .direction = Direction::LEFT,
             .next_mode = ModeType::TOOL_MODE
         }},
@@ -348,6 +381,14 @@ void CommandParser::parseAsOperator(char input) {
         }},
         {'r', {
             .operator_type = Operator::REPLACE
+        }},
+        {'t', {
+            .operator_type = Operator::CASE_SET_LOWER,
+            .scope = std::nullopt
+        }},
+        {'T', {
+            .operator_type = Operator::CASE_SET_UPPER,
+            .scope = std::nullopt
         }}
     };
 
@@ -373,6 +414,8 @@ void CommandParser::parseAsParameter(char input) {
     switch (m_details->operator_type) {
     
     // Operators that take a scope or range indicator as a parameter
+    case Operator::CASE_SET_LOWER:
+    case Operator::CASE_SET_UPPER:
     case Operator::MOVE_WITHIN_CHUNK:
     case Operator::MOVE_OVER_CHUNK: {
         std::optional<Scope> scope = charToScope(input);
@@ -441,6 +484,7 @@ char CommandParser::getClosingRangeIndicator(char range_indicator) {
         return indicators.at(range_indicator);
     }
 
+    // already closed or symmetrical
     return range_indicator;
 }
 
@@ -465,5 +509,10 @@ std::optional<Scope> CommandParser::charToScope(char c) {
 ParseResult CommandParser::parseInput(char input, ScreenSize text_area_size, const Settings& settings) {
     m_details.has_value()? parseAsParameter(input) : parseAsOperator(input);
     
-    return generateActions(text_area_size, settings);
+    ParseResult result = generateActions(text_area_size, settings);
+    if (m_details.has_value() && m_details->is_complete) {
+        m_details = std::nullopt;
+    }
+
+    return result;
 }

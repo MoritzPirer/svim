@@ -15,9 +15,19 @@ TextFile::TextFile(const std::string& file_path, SaveState save_state):
     m_word_count{0},
     m_character_count{0} {}
 
-bool TextFile::isValidPosition(Position position) {
+bool TextFile::isValidCursorPosition(Position position) {
     if (static_cast<size_t>(position.row) >= m_file_content.size()
         || static_cast<size_t>(position.column) > m_file_content.at(position.row).length()) {
+            
+        return false;
+    }
+
+    return true;
+}
+
+bool TextFile::isValidTextPosition(Position position) {
+    if (static_cast<size_t>(position.row) >= m_file_content.size()
+        || static_cast<size_t>(position.column) >= m_file_content.at(position.row).length()) {
             
         return false;
     }
@@ -57,7 +67,7 @@ void TextFile::writeToEnd(const std::string& line) {
 }
 
 void TextFile::insertCharacterAt(char character_to_add, Position position) {
-    if (!isValidPosition(position)) {
+    if (!isValidCursorPosition(position)) {
         throw std::invalid_argument("Insertion attempted at invalid position " + position.format() + "!");
     }
 
@@ -68,8 +78,19 @@ void TextFile::insertCharacterAt(char character_to_add, Position position) {
     calculateMetadata();
 }
 
+void TextFile::setCharacterAt(char character_to_set, Position position) {
+    if (!isValidTextPosition(position)) {
+        throw std::invalid_argument("Set attempted at invalid position " + position.format() + "!");
+    }
+
+    m_file_content.at(position.row).at(position.column) = character_to_set;
+    
+    markAsChanged();
+    calculateMetadata();
+}
+
 void TextFile::deleteRange(Position start, Position end) {
-    if (!isValidPosition(start) || !isValidPosition(end)) {
+    if (!isValidCursorPosition(start) || !isValidCursorPosition(end)) {
         throw std::invalid_argument("deletion start " + start.format()
             + " and / or end " + end.format() + " invalid!");
     }
@@ -111,7 +132,7 @@ void TextFile::deleteRange(Position start, Position end) {
 }
 
 void TextFile::splitAt(Position first_of_new_paragraph) {
-    if(!isValidPosition(first_of_new_paragraph)) {
+    if(!isValidCursorPosition(first_of_new_paragraph)) {
         throw std::invalid_argument("invalid splitting position " + first_of_new_paragraph.format() + "!");
     }
 
@@ -157,12 +178,12 @@ const std::string& TextFile::getParagraph(size_t index) const {
 }
 
 void TextFile::calculateMetadata() {
-    //recalculate char / word count
     m_character_count = 0;
     m_word_count = 0;
 
     for (const std::string& line : m_file_content) {
         m_character_count += line.length();
+        //FIXME: only count blocks of spaces, not individual spaces
         m_word_count += std::ranges::count(line, ' ');
     }
 }

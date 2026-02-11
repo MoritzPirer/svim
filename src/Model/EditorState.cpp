@@ -126,7 +126,7 @@ void EditorState::moveCursor(Direction direction, int screen_width) {
 }
 
 void EditorState::moveCursorTo(Position position) {
-    if (!m_file.isValidPosition(position)) {
+    if (!m_file.isValidCursorPosition(position)) {
         throw new std::invalid_argument("Invalid move destination " + position.format() + "!");
     }
 
@@ -205,6 +205,11 @@ std::optional<char> EditorState::readCharacterAt(Position position) {
 
 std::optional<char> EditorState::readCharacterAtCursor() {
     return readCharacterAt(m_cursor.getPosition());
+}
+
+void EditorState::setCharacterAt(char character_to_set, Position position) {
+    // TextFile does error handeling
+    m_file.setCharacterAt(character_to_set, position);
 }
 
 void EditorState::deleteRange(Position start, Position end) {
