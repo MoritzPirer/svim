@@ -12,6 +12,10 @@ DelimiterAction::DelimiterAction(
     m_paragraph_is_delimiter{paragraph_is_delimiter}
     {}
 
+bool DelimiterAction::isDelimiter(char c) {
+    return (m_delimiters.find(c) != std::string::npos);
+}
+
 Position DelimiterAction::findStopPosition(EditorState& state) {
     Position original_cursor_position = state.getCursor().getPosition();
 
@@ -21,6 +25,7 @@ Position DelimiterAction::findStopPosition(EditorState& state) {
     bool has_reached_non_delimiter = (!character.has_value() || m_delimiters.find(*character) == std::string::npos);
 
     while (state.canCursorMove(m_move_direction)) {
+
         int row_before = state.getCursor().getRow();
         state.moveCursorSideways(m_move_direction);
         int row_after = state.getCursor().getRow();
@@ -32,6 +37,7 @@ Position DelimiterAction::findStopPosition(EditorState& state) {
                 state.moveCursorSideways(getOppositeDirection(m_move_direction));
                 break;
             }
+
             has_reached_delimiter = true;
         }
 
@@ -40,17 +46,11 @@ Position DelimiterAction::findStopPosition(EditorState& state) {
             continue;
         }
 
-        // stop at first delimiter after moving at least once
-        if (m_delimiters.find(*character) == std::string::npos) {
-            has_reached_non_delimiter = true;
-            if (has_reached_delimiter && m_end_behavior == EndBehavior::STOP_AFTER_END) {
-                break; 
-            }
-        }
-        else {
+        if (isDelimiter(*character)) {
             has_reached_delimiter = true;
             
-            if (has_reached_non_delimiter && m_end_behavior == EndBehavior::STOP_BEFORE_END) {
+            if (m_end_behavior == EndBehavior::STOP_BEFORE_END && has_reached_non_delimiter) {
+                //move back of delimiter
                 state.moveCursorSideways(getOppositeDirection(m_move_direction));
                 break;
             }
@@ -59,8 +59,16 @@ Position DelimiterAction::findStopPosition(EditorState& state) {
                 break;
             }
         }
+        else {
+            has_reached_non_delimiter = true;
+
+            if (m_end_behavior == EndBehavior::STOP_AFTER_END && has_reached_delimiter) {
+                break; 
+            }
+        }
     }
 
+    // restore cursor position
     Position stop_position = state.getCursor().getPosition();
     state.moveCursorTo(original_cursor_position);
 

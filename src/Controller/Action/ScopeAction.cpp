@@ -99,7 +99,7 @@ Position ScopeAction::endOfParagraph(const EditorState& state) {
 }
 
 Position ScopeAction::endOfLine(const EditorState& state) {
-    int last_of_current_line = state.getCursor().getColumn() / m_size.width * m_size.width + m_size.width - 1;
+    int last_of_current_line = (state.getCursor().getColumn() / m_size.width + 1) * m_size.width - 1;
     int row = state.getCursor().getRow();
 
     last_of_current_line = std::min(

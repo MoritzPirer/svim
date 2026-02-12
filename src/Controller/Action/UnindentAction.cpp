@@ -13,9 +13,11 @@ void UnindentAction::applyTo(EditorState& state) {
     
     for (int _ = 0; _ < m_indent_width; _++) {
         std::optional<char> character = state.readCharacterAt(erase_position);
+
         if (!character.has_value() || *character != ' ') {
             break;
         }
+
         state.deleteRange(erase_position, erase_position);
         state.moveCursorLeft();
     }

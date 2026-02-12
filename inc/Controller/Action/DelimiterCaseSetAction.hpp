@@ -16,7 +16,9 @@ class DelimiterCaseSetAction: public DelimiterAction {
 private:
     Case m_target_case;
 
-    void setCaseAt(EditorState& state, Position position);
+    int getStartColumn(const EditorState& state, int row);
+    int getEndColumn(const EditorState& state, int row, Position stop_position);
+
 public:
     DelimiterCaseSetAction(
         std::string delimiters,

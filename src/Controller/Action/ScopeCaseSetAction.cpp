@@ -24,23 +24,16 @@ void ScopeCaseSetAction::applyTo(EditorState& state) {
             (row == end_of_scope.row? end_of_scope.column : state.getParagraph(row).length() - 1);
 
         for (int column = start_column; column <= end_column; column++) {
+
+            // guard against overhang cursor position
             if (static_cast<size_t>(column) >= state.getParagraph(row).length()) {
                 continue;
             }
 
             char character = *state.readCharacterAt({row, column});
 
-            switch (m_target_case) {
-            case Case::UPPER_CASE: {
-                character = std::toupper(character);
-                break;
-            }
-
-            case Case::LOWER_CASE: {
-                character = std::tolower(character);
-                break;
-            }
-            }
+            character = (m_target_case == Case::UPPER_CASE)?
+                std::toupper(character) : std::tolower(character);
 
             state.setCharacterAt(character, {row, column});
         }

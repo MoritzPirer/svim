@@ -5,6 +5,30 @@ EraseAction::EraseAction(int offset, bool allow_overhang_erase):
     m_allow_overhang_erase{allow_overhang_erase}
     {}
 
+std::optional<Position> EraseAction::findErasePosition(const EditorState& state) {
+    Position erase_position = state.getCursor().getPosition();
+    
+    if (m_offset < 0) {
+        if (erase_position.column > 0) { // move left if possible
+            erase_position.column--;
+            return erase_position;
+        }
+        else if (erase_position.row > 0) { // otherwise move to end of prev if possible
+            erase_position.row--;
+            erase_position.column = state.getParagraph(erase_position.row).length() - 1;
+            return erase_position;
+        } 
+
+        return std::nullopt;
+    }
+    else if (m_offset > 0) {
+        throw std::invalid_argument("positive offset not yet supported!");
+    }
+    else {
+        return erase_position;
+    }
+}
+
 void EraseAction::applyTo(EditorState& state) {
     /*
     NOTE:
@@ -13,35 +37,18 @@ void EraseAction::applyTo(EditorState& state) {
     */
 
     Position cursor_position = state.getCursor().getPosition();
-    Position erase_position = cursor_position; 
-    
-    if (m_offset < 0) {
-        // move left if possible
-        if (erase_position.column > 0) {
-            erase_position.column--;
-        }
-        // otherwise move to end of prev if possible
-        else if (erase_position.row > 0) {
-            erase_position.row--;
-            erase_position.column = state.getParagraph(erase_position.row).length() - 1;
-        } 
-        // if already at (0/0) erase offset is impossible
-        else {
-            return;
-        }
-        
-    }
-    else if (m_offset > 0) {
+    std::optional<Position> erase_position = findErasePosition(state); 
+    if (!erase_position.has_value()) {
         return;
     }
 
-    if (erase_position.row < cursor_position.row) {
+    if (erase_position->row < cursor_position.row) {
         state.moveCursorLeft();
         state.joinLineToPrevious(cursor_position.row);
     }
 
     // erase position is overhang
-    else if (static_cast<size_t>(erase_position.column) == state.getParagraph(erase_position.row).length()
+    else if (static_cast<size_t>(erase_position->column) == state.getParagraph(erase_position->row).length()
         && static_cast<size_t>(cursor_position.row + 1) < state.getNumberOfParagrahps()) {
 
         if (m_allow_overhang_erase) {
@@ -52,7 +59,7 @@ void EraseAction::applyTo(EditorState& state) {
         }
     }
     else {
-        state.deleteRange(erase_position, erase_position);
+        state.deleteRange(*erase_position, *erase_position);
         if (m_offset < 0) {
             state.moveCursorLeft();
         }

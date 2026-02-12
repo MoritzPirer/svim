@@ -13,6 +13,8 @@
 #include "ActionOptions/EndBehavior.hpp"
 
 class DelimiterAction: public Action {
+private:
+    bool isDelimiter(char c);
 protected:
     std::string m_delimiters;
     Direction m_move_direction;

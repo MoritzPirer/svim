@@ -15,6 +15,8 @@ class EraseAction: public Action {
 private:
     int m_offset;
     bool m_allow_overhang_erase;
+
+    std::optional<Position> findErasePosition(const EditorState& state);
 public:
     EraseAction(int offset, bool allow_overhang_erase = true);
     EraseAction(const EraseAction&) = default;
