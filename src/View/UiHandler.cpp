@@ -193,8 +193,16 @@ Input UiHandler::translateInput(int original_input) {
         return {SpecialKey::ARROW_DOWN};
     }
 
+    case '\t': {
+        return {SpecialKey::TAB};
+    }
+
+    case KEY_BTAB: {
+        return {SpecialKey::SHIFT_TAB};
+    }
+
     default: {
-        return {original_input};
+        return {static_cast<char>(original_input)};
     }
 
     }

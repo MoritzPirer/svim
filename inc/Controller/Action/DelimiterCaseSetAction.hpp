@@ -19,7 +19,6 @@ private:
     void setCaseAt(EditorState& state, Position position);
 public:
     DelimiterCaseSetAction(
-        ScreenSize size,
         std::string delimiters,
         Direction direction,
         bool paragraph_is_delimiter,

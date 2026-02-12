@@ -1,13 +1,11 @@
 #include "../../../inc/Controller/Action/DelimiterAction.hpp"
 
 DelimiterAction::DelimiterAction(
-    ScreenSize size,
     std::string delimiters,
     Direction move_direction,
     EndBehavior end_behavior,
     bool paragraph_is_delimiter
 ):
-    m_size{size},
     m_delimiters{delimiters},
     m_move_direction{move_direction},
     m_end_behavior{end_behavior},
@@ -24,14 +22,14 @@ Position DelimiterAction::findStopPosition(EditorState& state) {
 
     while (state.canCursorMove(m_move_direction)) {
         int row_before = state.getCursor().getRow();
-        state.moveCursor(m_move_direction, m_size.width);
+        state.moveCursorSideways(m_move_direction);
         int row_after = state.getCursor().getRow();
 
         character = state.readCharacterAtCursor();
 
         if (m_paragraph_is_delimiter && row_before != row_after) {
             if (m_end_behavior == EndBehavior::STOP_BEFORE_END) {
-                state.moveCursor(getOppositeDirection(m_move_direction), m_size.width);
+                state.moveCursorSideways(getOppositeDirection(m_move_direction));
                 break;
             }
             has_reached_delimiter = true;
@@ -53,7 +51,7 @@ Position DelimiterAction::findStopPosition(EditorState& state) {
             has_reached_delimiter = true;
             
             if (has_reached_non_delimiter && m_end_behavior == EndBehavior::STOP_BEFORE_END) {
-                state.moveCursor(getOppositeDirection(m_move_direction), m_size.width);
+                state.moveCursorSideways(getOppositeDirection(m_move_direction));
                 break;
             }
 

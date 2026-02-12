@@ -96,6 +96,26 @@ void EditorState::moveCursorRight() {
     }
 }
 
+void EditorState::moveCursorSideways(Direction direction) {
+    switch (direction) {
+    case Direction::RIGHT: {
+        moveCursorRight();
+        return;
+    }
+
+    case Direction::LEFT: {
+        moveCursorLeft();
+        return;
+    }
+
+    default: {
+        break;
+    }
+
+    }
+
+}
+
 void EditorState::moveCursor(Direction direction, int screen_width) {
     switch (direction) {
     case Direction::UP: {

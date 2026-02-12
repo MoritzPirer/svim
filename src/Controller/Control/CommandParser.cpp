@@ -31,14 +31,12 @@ ParseResult CommandParser::generateCharacterwiseMove(ScreenSize text_area_size) 
     }};
 }
 
-ParseResult CommandParser::generateMultiCharacterMove(
-    ScreenSize text_area_size, EndBehavior end_behavior) {
+ParseResult CommandParser::generateMultiCharacterMove(ScreenSize text_area_size, EndBehavior end_behavior) {
 
     // range or custom delimiter
     if (!m_details->scope.has_value()) {
         return {m_details->next_mode, {
             make_shared<DelimiterMoveAction>(
-                text_area_size,
                 std::string(1, m_details->argument.value()),
                 m_details->direction,
                 end_behavior,
@@ -62,7 +60,6 @@ ParseResult CommandParser::generateMultiCharacterMove(
     case Scope::EXPRESSION: {
         return {m_details->next_mode, {
             make_shared<DelimiterMoveAction>(
-                text_area_size,
                 m_expression_delimiters,
                 m_details->direction,
                 end_behavior,
@@ -74,7 +71,6 @@ ParseResult CommandParser::generateMultiCharacterMove(
     case Scope::WORD: {
         return {m_details->next_mode, {
             make_shared<DelimiterMoveAction>(
-                text_area_size,
                 m_word_delimiters,
                 m_details->direction,
                 end_behavior,
@@ -95,14 +91,12 @@ ParseResult CommandParser::generateCaseSetCommand(ScreenSize text_area_size, Cas
     if (!m_details->scope.has_value()) {
         return {std::nullopt, {
             make_shared<DelimiterCaseSetAction>(
-                text_area_size,
                 std::string(1, getOpeningRangeIndicator(*(m_details->argument))),
                 Direction::LEFT,
                 false,
                 target_case
             ),
             make_shared<DelimiterCaseSetAction>(
-                text_area_size,
                 std::string(1, getClosingRangeIndicator(*(m_details->argument))),
                 Direction::RIGHT,
                 false,
@@ -130,14 +124,12 @@ ParseResult CommandParser::generateCaseSetCommand(ScreenSize text_area_size, Cas
 
         return {std::nullopt, {
             make_shared<DelimiterCaseSetAction>(
-                text_area_size,
                 delimiters,
                 Direction::LEFT,
                 true,
                 target_case
             ),
             make_shared<DelimiterCaseSetAction>(
-                text_area_size,
                 delimiters,
                 Direction::RIGHT,
                 true,

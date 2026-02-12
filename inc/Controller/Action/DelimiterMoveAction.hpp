@@ -14,7 +14,6 @@
 class DelimiterMoveAction: public DelimiterAction {
 public:
     DelimiterMoveAction(
-        ScreenSize size,
         std::string delimiters,
         Direction move_direction,
         EndBehavior end_behavior,

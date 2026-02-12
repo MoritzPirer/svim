@@ -16,7 +16,7 @@ private:
     ParseResult parseMouseMovement(Position click_position,
         ScreenSize actual_size, ScreenSize text_area_size);
 
-    ParseResult parseSpecialKey(SpecialKey key, ScreenSize text_area_size);
+    ParseResult parseSpecialKey(SpecialKey key, ScreenSize text_area_size, const Settings& settings);
 
 public:
     TypingMode() = default;

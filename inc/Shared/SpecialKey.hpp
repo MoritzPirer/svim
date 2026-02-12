@@ -18,7 +18,9 @@ enum class SpecialKey {
    ARROW_LEFT,
    ARROW_RIGHT,
    ARROW_UP,
-   ARROW_DOWN 
+   ARROW_DOWN,
+   TAB,
+   SHIFT_TAB
 };
 
 #endif //SPECIAL_KEY_HPP

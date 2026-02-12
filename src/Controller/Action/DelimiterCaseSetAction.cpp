@@ -1,13 +1,12 @@
 #include "../../../inc/Controller/Action/DelimiterCaseSetAction.hpp"
 
 DelimiterCaseSetAction::DelimiterCaseSetAction(
-    ScreenSize size,
     std::string delimiters,
     Direction direction,
     bool paragraph_is_delimiter,
     Case target_case
 ):
-    DelimiterAction{size, delimiters, direction, EndBehavior::STOP_BEFORE_END, paragraph_is_delimiter},
+    DelimiterAction{delimiters, direction, EndBehavior::STOP_BEFORE_END, paragraph_is_delimiter},
     m_target_case{target_case}
     {}
 

@@ -14,7 +14,6 @@
 
 class DelimiterAction: public Action {
 protected:
-    ScreenSize m_size;
     std::string m_delimiters;
     Direction m_move_direction;
     EndBehavior m_end_behavior;
@@ -29,7 +28,6 @@ protected:
 
 public:
     DelimiterAction(
-        ScreenSize size,
         std::string delimiters,
         Direction move_direction,
         EndBehavior end_behavior,

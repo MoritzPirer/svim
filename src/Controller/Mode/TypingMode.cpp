@@ -4,6 +4,8 @@
 #include "../../../inc/Controller/Action/ParagraphSplittingAction.hpp"
 #include "../../../inc/Controller/Action/CharwiseMoveAction.hpp"
 #include "../../../inc/Controller/Action/FixedPositionMoveAction.hpp"
+#include "../../../inc/Controller/Action/IndentAction.hpp"
+#include "../../../inc/Controller/Action/UnindentAction.hpp"
 
 #include "../../../inc/Shared/SpecialKey.hpp"
 
@@ -29,7 +31,9 @@ ParseResult TypingMode::parseMouseMovement(Position click_position,
 
     return {ModeType::TYPING_MODE, {make_shared<FixedPositionMoveAction>(text_area_size, adjusted_position)}};}
 
-ParseResult TypingMode::parseSpecialKey(SpecialKey key, ScreenSize text_area_size) {
+ParseResult TypingMode::parseSpecialKey(SpecialKey key,
+    ScreenSize text_area_size, const Settings& settings) {
+
     switch (key) {
     case SpecialKey::ARROW_LEFT: {
         return {ModeType::TYPING_MODE, {
@@ -67,6 +71,18 @@ ParseResult TypingMode::parseSpecialKey(SpecialKey key, ScreenSize text_area_siz
         return {ModeType::TYPING_MODE, {std::make_shared<ParagraphSplittingAction>()}};
     }
 
+    case SpecialKey::TAB: {
+        return {ModeType::TYPING_MODE, {
+            std::make_shared<IndentAction>(settings.isEnabled("do_skinny_tabs")? 2 : 4)
+        }};
+    }
+
+    case SpecialKey::SHIFT_TAB: {
+        return {ModeType::TYPING_MODE, {
+            std::make_shared<UnindentAction>(settings.isEnabled("do_skinny_tabs")? 2 : 4)
+        }};
+    }
+
     default: {
         return {ModeType::TYPING_MODE, {}};
     }
@@ -84,7 +100,7 @@ ParseResult TypingMode::parseInput(
     }
 
     if (input.special_key.has_value()) {
-        return parseSpecialKey(*input.special_key, text_area_size);
+        return parseSpecialKey(*input.special_key, text_area_size, settings);
     }
 
     if (input.standard_input.has_value()) {

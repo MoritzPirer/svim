@@ -52,6 +52,9 @@ public:
     void moveCursorLeft();
     void moveCursorDown(int screen_width);
     void moveCursorRight();
+
+    /// @param direction should be LEFT or RIGHT, otherwise the function has no effect
+    void moveCursorSideways(Direction direction);
     void moveCursor(Direction direction, int screen_width);
     void moveCursorTo(Position position);
     bool canCursorMove(Direction direction) const;

@@ -17,7 +17,7 @@
 struct Input {
     std::optional<Position> mouse_position;
     std::optional<SpecialKey> special_key;
-    std::optional<int> standard_input;
+    std::optional<char> standard_input;
 
     Input(Position position):
         mouse_position{position},
@@ -29,7 +29,7 @@ struct Input {
         special_key{key},
         standard_input{std::nullopt} {}
 
-    Input(int input):
+    Input(char input):
         mouse_position{std::nullopt},
         special_key{std::nullopt},
         standard_input{input} {}
