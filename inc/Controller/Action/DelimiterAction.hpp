@@ -17,6 +17,9 @@ private:
     bool isDelimiter(char c);
     bool isAntiDelimiter(char c);
 
+    bool isSuitableEndpoint(EditorState& state, char character, bool& has_reached_delimiter,
+        bool& has_reached_non_delimiter, int& delimiter_balance);
+
 protected:
     std::string m_delimiters;
     std::string m_anti_delimiters;

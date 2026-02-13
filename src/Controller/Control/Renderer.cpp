@@ -149,10 +149,11 @@ vector<RenderChunk> Renderer::getCursorPositionChunks() {
     if (!m_settings.isEnabled("show_cursor_position")) {
         return {};
     }
-
+    Position position = m_state.getCursor().getPosition();
+    position.row++;
     return {
         {"Cursor position: ", TextRole::TEXT_NORMAL},
-        {m_state.getCursor().getPosition().format(), TextRole::TEXT_HIGHLIGHT}
+        {position.format(), TextRole::TEXT_HIGHLIGHT}
     };
 }
 
