@@ -15,6 +15,7 @@ class DelimiterMoveAction: public DelimiterAction {
 public:
     DelimiterMoveAction(
         std::string delimiters,
+        std::string anti_delimiters,
         Direction move_direction,
         EndBehavior end_behavior,
         bool paragraph_is_delimiter

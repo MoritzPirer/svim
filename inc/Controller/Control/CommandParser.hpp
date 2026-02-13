@@ -46,6 +46,7 @@ private:
     bool isRangeIndicator(char c);
     char getOpeningRangeIndicator(char range_indicator);
     char getClosingRangeIndicator(char range_indicator);
+    std::string getAntiDelimiter(char delimiter);
     std::optional<Scope> charToScope(char c);
 
 public:

@@ -2,11 +2,13 @@
 
 DelimiterAction::DelimiterAction(
     std::string delimiters,
+    std::string anti_delimiters,
     Direction move_direction,
     EndBehavior end_behavior,
     bool paragraph_is_delimiter
 ):
     m_delimiters{delimiters},
+    m_anti_delimiters{anti_delimiters},
     m_move_direction{move_direction},
     m_end_behavior{end_behavior},
     m_paragraph_is_delimiter{paragraph_is_delimiter}
@@ -16,14 +18,19 @@ bool DelimiterAction::isDelimiter(char c) {
     return (m_delimiters.find(c) != std::string::npos);
 }
 
+bool DelimiterAction::isAntiDelimiter(char c) {
+    return (m_anti_delimiters.find(c) != std::string::npos);
+}
+
 Position DelimiterAction::findStopPosition(EditorState& state) {
     Position original_cursor_position = state.getCursor().getPosition();
 
     bool has_reached_delimiter = false;
     
     std::optional<char> character = state.readCharacterAtCursor();
-    bool has_reached_non_delimiter = (!character.has_value() || m_delimiters.find(*character) == std::string::npos);
+    bool has_reached_non_delimiter = (!character.has_value() || !isDelimiter(*character));
 
+    int delimiter_balance = 0;
     while (state.canCursorMove(m_move_direction)) {
 
         int row_before = state.getCursor().getRow();
@@ -49,8 +56,13 @@ Position DelimiterAction::findStopPosition(EditorState& state) {
         if (isDelimiter(*character)) {
             has_reached_delimiter = true;
             
+            if (delimiter_balance != 0) {
+                delimiter_balance--;
+                continue;
+            }
+            
             if (m_end_behavior == EndBehavior::STOP_BEFORE_END && has_reached_non_delimiter) {
-                //move back of delimiter
+                //move back off of delimiter
                 state.moveCursorSideways(getOppositeDirection(m_move_direction));
                 break;
             }
@@ -58,12 +70,21 @@ Position DelimiterAction::findStopPosition(EditorState& state) {
             if (m_end_behavior == EndBehavior::STOP_ON_END) {
                 break;
             }
+            
+            if (!m_anti_delimiters.empty()) {
+                delimiter_balance--;
+            }
         }
         else {
             has_reached_non_delimiter = true;
 
-            if (m_end_behavior == EndBehavior::STOP_AFTER_END && has_reached_delimiter) {
+            if (m_end_behavior == EndBehavior::STOP_AFTER_END && has_reached_delimiter
+                && delimiter_balance == 0) {
                 break; 
+            }
+            
+            if (isAntiDelimiter(*character)) {
+                delimiter_balance++;
             }
         }
     }

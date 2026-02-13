@@ -15,22 +15,21 @@
 class DelimiterAction: public Action {
 private:
     bool isDelimiter(char c);
+    bool isAntiDelimiter(char c);
+
 protected:
     std::string m_delimiters;
+    std::string m_anti_delimiters;
     Direction m_move_direction;
     EndBehavior m_end_behavior;
     bool m_paragraph_is_delimiter;
     
-    /// @brief finds the position to stop at. Depending on m_end_behavior, this can be:
-    ///     - the last non-delimiter before the first set of delimiters
-    ///     - the first delimiter
-    ///     - the first non-delimiter after the first set of delimiters
-    /// @return the stop position
     Position findStopPosition(EditorState& state);
 
 public:
     DelimiterAction(
         std::string delimiters,
+        std::string anti_delimiters,
         Direction move_direction,
         EndBehavior end_behavior,
         bool paragraph_is_delimiter

@@ -22,6 +22,7 @@ private:
 public:
     DelimiterCaseSetAction(
         std::string delimiters,
+        std::string anti_delimiters,
         Direction direction,
         bool paragraph_is_delimiter,
         Case target_case

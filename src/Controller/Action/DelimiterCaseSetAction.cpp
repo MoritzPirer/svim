@@ -2,11 +2,12 @@
 
 DelimiterCaseSetAction::DelimiterCaseSetAction(
     std::string delimiters,
+    std::string anti_delimiters,
     Direction direction,
     bool paragraph_is_delimiter,
     Case target_case
 ):
-    DelimiterAction{delimiters, direction, EndBehavior::STOP_BEFORE_END, paragraph_is_delimiter},
+    DelimiterAction{delimiters, anti_delimiters, direction, EndBehavior::STOP_BEFORE_END, paragraph_is_delimiter},
     m_target_case{target_case}
     {}
 
