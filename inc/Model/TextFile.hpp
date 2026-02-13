@@ -29,6 +29,8 @@ private:
     size_t m_word_count;
     size_t m_character_count;
 
+    void calculateMetadata();
+
 public:
     TextFile() = default;
     TextFile(const std::string& file_name, SaveState save_state);
@@ -42,6 +44,7 @@ public:
     /// @brief registers that changes have been made to the file and updates the save state
     ///     accordingly 
     void markAsChanged();
+    
     SaveState getSaveState() const { return m_save_state; }
 
     /// @brief add a new line at the end of the file
@@ -69,7 +72,6 @@ public:
     int getParagraphLength(size_t index) const;
     const std::string& getParagraph(size_t index) const;
 
-    void calculateMetadata();
 
     static int visualLinesNeeded(int line_length, int screen_width);
     size_t visualLinesOfParagraph(size_t line_index, int screen_width) const;

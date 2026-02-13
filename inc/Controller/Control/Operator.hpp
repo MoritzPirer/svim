@@ -23,8 +23,8 @@ enum class Operator {
     REPLACE,                //r
     INDENT,                 //>
     UNINDENT,               //<
-    CASE_SET_UPPER,
-    CASE_SET_LOWER,
+    CASE_SET_LOWER,         //t
+    CASE_SET_UPPER,         //T
 
     FILE_ACTION,            //!
     SWITCH_MODE             //i

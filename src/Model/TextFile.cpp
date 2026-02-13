@@ -1,5 +1,6 @@
 #include <algorithm>
 #include "../../inc/Model/TextFile.hpp"
+#include "../../inc/Shared/StringHelpers.hpp"
 
 TextFile::TextFile(std::filesystem::path file_path, SaveState save_state):
     m_absolute_file_path{file_path},
@@ -183,8 +184,7 @@ void TextFile::calculateMetadata() {
 
     for (const std::string& line : m_file_content) {
         m_character_count += line.length();
-        //FIXME: only count blocks of spaces, not individual spaces
-        m_word_count += std::ranges::count(line, ' ');
+        m_word_count += StringHelpers::countWords(line);
     }
 }
 

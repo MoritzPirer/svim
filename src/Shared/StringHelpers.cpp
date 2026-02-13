@@ -68,3 +68,27 @@ vector<string> StringHelpers::splitIntoRows(const string& paragraph,
 
     return split;
 }
+
+int StringHelpers::countWords(const string& str) {
+
+    if (str.length() == 0) {
+        return 0;
+    } 
+
+    auto isWhitespace = [](char c) -> bool { return string(" \t\n").find(c) != string::npos; };
+
+    int current = 0;
+    int next = 1;
+    int words = (isWhitespace(str.at(0))? 0 : 1);
+
+    while (static_cast<size_t>(next) < str.length()) {
+        if (isWhitespace(str.at(current)) && !isWhitespace(str.at(next))) {
+            words++;
+        }
+
+        current++;
+        next++;
+    }
+
+    return words;
+}

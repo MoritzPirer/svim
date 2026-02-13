@@ -35,6 +35,12 @@ namespace StringHelpers {
     /// @return the split vector   
     std::vector<std::string> splitIntoRows(const std::string& paragraph,
         int start_column, int max_length);
+
+    /// @brief counts the number of words in the given string, with any amount of whitespace countin
+    ///     as a delimiter
+    /// @param str the string to count words in
+    /// @return the number of words in the string
+    int countWords(const std::string& str);
 }; //namespace StringHelpers
 
 #endif //STRING_HELPERS_HPP

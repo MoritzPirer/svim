@@ -41,7 +41,6 @@ TextFile FileHandler::openFile(const string& file_path) {
     }
 
     file.markAsSaved();
-    file.calculateMetadata();
 
     input_file.close();
     return file;
