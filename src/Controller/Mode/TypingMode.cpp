@@ -1,5 +1,6 @@
 #include "../../../inc/Controller/Mode/TypingMode.hpp"
 #include "../../../inc/Controller/Action/InsertAction.hpp"
+#include "../../../inc/Controller/Action/DeleteAction.hpp"
 #include "../../../inc/Controller/Action/EraseAction.hpp"
 #include "../../../inc/Controller/Action/ParagraphSplittingAction.hpp"
 #include "../../../inc/Controller/Action/CharwiseMoveAction.hpp"
@@ -32,7 +33,7 @@ ParseResult TypingMode::parseMouseMovement(Position click_position,
     return {ModeType::TYPING_MODE, {make_shared<FixedPositionMoveAction>(text_area_size, adjusted_position)}};}
 
 ParseResult TypingMode::parseSpecialKey(SpecialKey key,
-    ScreenSize text_area_size, const Settings& settings) {
+    ScreenSize text_area_size, const Settings& settings, const EditorState& state) {
 
     switch (key) {
     case SpecialKey::ARROW_LEFT: {
@@ -64,7 +65,19 @@ ParseResult TypingMode::parseSpecialKey(SpecialKey key,
     }
 
     case SpecialKey::BACKSPACE: {
-        return {ModeType::TYPING_MODE, {std::make_shared<EraseAction>(-1)}};
+        Position delete_position = state.getCursor().getPosition();
+        if (delete_position.column > 0) { // move left if possible
+            delete_position.column--;
+        }
+        else if (delete_position.row > 0) { // otherwise move to end of prev if possible
+            delete_position.row--;
+            delete_position.column = state.getParagraph(delete_position.row).length() - 1;
+        } 
+        else {
+            return {std::nullopt, {}};
+        }
+
+        return {ModeType::TYPING_MODE, {std::make_shared<DeleteAction>(delete_position, delete_position)}};
     }
 
     case SpecialKey::ENTER: {
@@ -91,7 +104,7 @@ ParseResult TypingMode::parseSpecialKey(SpecialKey key,
 }
 
 ParseResult TypingMode::parseInput(
-    Input input, ScreenSize actual_size, ScreenSize text_area_size, const Settings& settings, Position cursor) {
+    Input input, ScreenSize actual_size, ScreenSize text_area_size, const Settings& settings, const EditorState& state) {
 
     (void) settings;
        
@@ -100,13 +113,13 @@ ParseResult TypingMode::parseInput(
     }
 
     if (input.special_key.has_value()) {
-        return parseSpecialKey(*input.special_key, text_area_size, settings);
+        return parseSpecialKey(*input.special_key, text_area_size, settings, state);
     }
 
     if (input.standard_input.has_value()) {
         std::vector<std::string> content = {std::string(1, *input.standard_input)};
         return {ModeType::TYPING_MODE, {
-            std::make_shared<InsertAction>(content, cursor),
+            std::make_shared<InsertAction>(content, state.getCursor().getPosition()),
             // std::make_shared<CharwiseMoveAction>(text_area_size, Direction::RIGHT)
         }};
     } 

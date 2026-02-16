@@ -15,6 +15,7 @@
 #include "../../Model/EditorState.hpp"
 #include "../Mode/ModeManager.hpp"
 #include "../../Shared/Scope.hpp"
+#include "History.hpp"
 
 #include "../Settings/Settings.hpp"
 
@@ -24,14 +25,8 @@ private:
     ModeManager m_mode_manager;
     UiHandler m_ui_handler;
     Settings m_settings;
-      
-    /// @brief calculates the lines that are visible based on the position of the cursor
-    std::vector<std::vector<RenderChunk>> calculateVisibleRows(ScreenSize text_are_size);
-    
-    /// @brief calculates the position on the screen the cursor should be drawn to
-    ///     accounting for off-screen lines and line wrapping
-    Position calculateScreenPositionOfCursor(ScreenSize text_area_size);
-   
+    History m_history;
+
     /// @brief calculates what should be rendered to the screen
     RenderInfo calculateRenderInfo(ScreenSize actual_size);
 

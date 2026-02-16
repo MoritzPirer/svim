@@ -16,11 +16,11 @@ class MessageAction: public Action {
 private:
     std::string m_message;
 public:
-    MessageAction(std::string message): m_message{message} {}
+    MessageAction(std::string message);
     MessageAction(const MessageAction&) = default;
     ~MessageAction() = default;
 
-    void apply(EditorState& state) override { state.addTemporaryMessage(m_message);}
+    void apply(ExecutionContext& context) override;
 };
 
 #endif //MESSAGE_ACTION_HPP

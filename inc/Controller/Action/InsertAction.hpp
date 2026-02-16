@@ -22,9 +22,11 @@ public:
     InsertAction(const InsertAction&) = default;
     ~InsertAction() = default;
 
-    void apply(EditorState& state) override;
+    void apply(ExecutionContext& context) override;
 
     void undo(EditorState& state) override;
+
+    bool canBeUndone() const override;
 };
 
 #endif //INSERT_ACTION_HPP

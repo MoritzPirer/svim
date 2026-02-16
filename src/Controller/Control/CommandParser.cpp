@@ -24,6 +24,7 @@
 #include "../../../inc/Controller/Action/ScopeCaseSetAction.hpp"
 
 #include "../../../inc/Controller/Action/MessageAction.hpp"
+#include "../../../inc/Controller/Action/UndoAction.hpp"
 
 using std::make_shared;
 
@@ -94,6 +95,9 @@ void CommandParser::parseAsOperator(char input) {
         }},
         {'<', {
             .operator_type = Operator::UNINDENT,
+        }},
+        {'u', {
+            .operator_type = Operator::UNDO,
         }}
     };
 
@@ -308,6 +312,10 @@ ParseResult CommandParser::generateActions(ScreenSize text_area_size, const Sett
 
     case Operator::FILE_ACTION: {
         return generateFileCommand(settings);
+    }
+
+    case Operator::UNDO: {
+        return {ModeType::TOOL_MODE, {make_shared<UndoAction>()}};
     }
 
 

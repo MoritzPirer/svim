@@ -30,7 +30,7 @@ public:
     /// @return the mode the editor should transition to (may be the same as currently), one or more
     ///     actions to apply to the editor state (which may be empty if nothing should be done) 
     virtual ParseResult parseInput(Input input, ScreenSize screen_size,
-        ScreenSize text_area_size, const Settings& settings, Position cursor) = 0;
+        ScreenSize text_area_size, const Settings& settings, const EditorState& state) = 0;
 
     /// @brief returns the name of the mode for displaying
     virtual std::string getModeLabel() const = 0;

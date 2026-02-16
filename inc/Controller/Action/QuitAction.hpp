@@ -20,7 +20,7 @@ public:
     QuitAction(const QuitAction&) = default;
     ~QuitAction() = default;
 
-    void apply(EditorState& state) override;
+    void apply(ExecutionContext& context) override;
 };
 
 #endif //QUIT_ACTION_HPP

@@ -27,7 +27,8 @@ enum class Operator {
     CASE_SET_UPPER,         //T
 
     FILE_ACTION,            //!
-    SWITCH_MODE             //i
+    SWITCH_MODE,            //i
+    UNDO
 };
 
 #endif //OPERATOR_TYPE_HPP

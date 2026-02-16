@@ -17,7 +17,7 @@ public:
     ParagraphSplittingAction(const ParagraphSplittingAction &) = default;
     ~ParagraphSplittingAction() = default;
 
-    void apply(EditorState& state);
+    void apply(ExecutionContext& context) override;
 };
 
 #endif //PARAGRAPH_SPLITTING_ACTION_HPP

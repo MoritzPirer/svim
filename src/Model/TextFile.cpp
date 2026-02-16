@@ -109,6 +109,33 @@ void TextFile::setCharacterAt(char character_to_set, Position position) {
     calculateMetadata();
 }
 
+std::vector<std::string> TextFile::copyRange(Position start, Position end) {
+    if (!isValidCursorPosition(start) || !isValidCursorPosition(end)) {
+        throw std::invalid_argument("copy start " + start.format()
+            + " and / or end " + end.format() + " invalid!");
+    }
+
+    if (start.row > end.row
+        || (start.row == end.row && start.column > end.column)) {
+        throw std::invalid_argument("End before Start!");
+    }
+
+    // if first line start copying at start.column else from 0
+    // if last line copy until end.column else until row end
+    std::vector<std::string> copy;
+    copy.reserve(end.row - start.row + 1);
+
+    for (int row = start.row; row <= end.row; row++) {
+        std::string& current = m_file_content.at(row);
+        int start_column = (row == start.row? start.column : 0);
+        int end_column = (row == end.row? end.column : current.length() - 1);
+
+        copy.emplace_back(current.substr(start_column, end_column - start_column + 1));
+    }
+
+    return copy;
+}
+
 void TextFile::deleteRange(Position start, Position end) {
     if (!isValidCursorPosition(start) || !isValidCursorPosition(end)) {
         throw std::invalid_argument("deletion start " + start.format()

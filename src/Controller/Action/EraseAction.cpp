@@ -1,4 +1,5 @@
 #include "../../../inc/Controller/Action/EraseAction.hpp"
+#include "../../../inc/Controller/Control/ExecutionContext.hpp"
 
 EraseAction::EraseAction(int offset, bool allow_overhang_erase):
     m_offset{offset},
@@ -29,12 +30,13 @@ std::optional<Position> EraseAction::findErasePosition(const EditorState& state)
     }
 }
 
-void EraseAction::apply(EditorState& state) {
+void EraseAction::apply(ExecutionContext& context) {
     /*
     NOTE:
     if erasing a single char further away from the cursor or to the right of the cursor is needed
     this logic needs to be reworked!
     */
+    EditorState& state = context.state;
 
     Position cursor_position = state.getCursor().getPosition();
     std::optional<Position> erase_position = findErasePosition(state); 

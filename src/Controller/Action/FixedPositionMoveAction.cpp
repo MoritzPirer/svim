@@ -1,12 +1,15 @@
 #include "../../../inc/Controller/Action/FixedPositionMoveAction.hpp"
+#include "../../../inc/Controller/Control/ExecutionContext.hpp"
 
 FixedPositionMoveAction::FixedPositionMoveAction(ScreenSize text_area_size, Position target_position):
     m_text_area_size{text_area_size},
     m_target_position{target_position} {}
 
-void FixedPositionMoveAction::apply(EditorState& state) {
+void FixedPositionMoveAction::apply(ExecutionContext& context) {
     //TODO: Most of this logic is for converting mouse click position to logical position
     // extract that and move it to a different spot
+    EditorState& state = context.state;
+
     Position first_visible = state.getFirstVisibleChar(m_text_area_size);
 
     // how many visual lines are left in the first visible paragraph

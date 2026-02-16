@@ -26,8 +26,8 @@ void ModeManager::changeMode(ModeType new_mode) {
 }
 
 std::vector<std::shared_ptr<Action>> ModeManager::convertToAction(
-    Input input, ScreenSize actual_size, ScreenSize text_area_size, Settings settings, Position cursor) {
-    ParseResult result = m_current_mode->parseInput(input, actual_size, text_area_size, settings, cursor);
+    Input input, ScreenSize actual_size, ScreenSize text_area_size, Settings settings, const EditorState& state) {
+    ParseResult result = m_current_mode->parseInput(input, actual_size, text_area_size, settings, state);
     if (result.mode.has_value()) {
         changeMode(*result.mode);
     }

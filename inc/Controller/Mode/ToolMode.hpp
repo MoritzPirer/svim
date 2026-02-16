@@ -31,7 +31,7 @@ public:
     /// @param size the current size of the writing area 
     /// @return the next mode and the action to execute 
     ParseResult parseInput(Input input, ScreenSize actual_size,
-        ScreenSize text_area_size, const Settings& settings, Position cursor) override;
+        ScreenSize text_area_size, const Settings& settings, const EditorState& state) override;
 
     std::string getModeLabel() const override { return " TOOL MODE "; }
 };

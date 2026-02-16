@@ -1,4 +1,5 @@
 #include "../../../inc/Controller/Action/ScopeCaseSetAction.hpp"
+#include "../../../inc/Controller/Control/ExecutionContext.hpp"
 
 ScopeCaseSetAction::ScopeCaseSetAction(
     ScreenSize size,
@@ -10,7 +11,9 @@ ScopeCaseSetAction::ScopeCaseSetAction(
     m_target_case{target_case}
     {}
 
-void ScopeCaseSetAction::apply(EditorState& state) {
+void ScopeCaseSetAction::apply(ExecutionContext& context) {
+    EditorState& state = context.state;
+    
     Position start_of_scope = startOfScope(state, m_scope);
     Position end_of_scope = endOfScope(state, m_scope);
 

@@ -2,6 +2,7 @@
 #include "../../../inc/Controller/Control/FileHandler.hpp"
 #include "../../../inc/Shared/StringHelpers.hpp"
 #include "../../../inc/Controller/Control/Renderer.hpp"
+#include "../../../inc/Controller/Control/ExecutionContext.hpp"
 
 using std::vector, std::string;
 
@@ -60,11 +61,14 @@ void EditorController::mainLoop() {
             total_size,
             calculateTextAreaSize(render_info, total_size),
             m_settings,
-            m_state.getCursor().getPosition()
+            m_state
         );
 
+        ExecutionContext context = {m_state, m_history};
+
         for (std::shared_ptr action : actions) {
-            action->apply(m_state);
+            action->apply(context);
+            m_history.add(action);
         } 
     }
 }

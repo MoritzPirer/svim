@@ -1,4 +1,5 @@
 #include "../../../inc/Controller/Action/DelimiterMoveAction.hpp"
+#include "../../../inc/Controller/Control/ExecutionContext.hpp"
 
 DelimiterMoveAction::DelimiterMoveAction(
     std::string delimiters,
@@ -10,6 +11,6 @@ DelimiterMoveAction::DelimiterMoveAction(
     DelimiterAction{delimiters, anti_delimiters, move_direction, end_behavior, paragraph_is_delimiter}
     {}
 
-void DelimiterMoveAction::apply(EditorState& state) {
-    state.moveCursorTo(findStopPosition(state));
+void DelimiterMoveAction::apply(ExecutionContext& context) {
+    context.state.moveCursorTo(findStopPosition(context.state));
 }

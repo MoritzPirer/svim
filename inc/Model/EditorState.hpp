@@ -98,6 +98,8 @@ public:
     void addTemporaryMessage(std::string message);
     const std::vector<std::string>& getTemporaryMessages() const;
     void clearTemporaryMessages();
+
+    std::vector<std::string> cutLines(Position start, Position end);
 };
 
 #endif //EDITOR_STATE_HPP

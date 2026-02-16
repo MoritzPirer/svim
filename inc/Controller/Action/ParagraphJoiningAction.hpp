@@ -17,7 +17,7 @@ public:
     ParagraphJoiningAction(const ParagraphJoiningAction &) = default;
     ~ParagraphJoiningAction() = default;
 
-    void apply(EditorState& state);
+    void apply(ExecutionContext& context) override;
 };
 
 #endif //PARAGRAPH_JOINING_ACTION_HPP

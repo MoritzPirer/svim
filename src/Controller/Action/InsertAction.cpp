@@ -1,23 +1,32 @@
 #include "../../../inc/Controller/Action/InsertAction.hpp"
+#include "../../../inc/Controller/Control/ExecutionContext.hpp"
 
 InsertAction::InsertAction(std::vector<std::string> content, Position start):
     m_content{content},
     m_start{start}
     {}
 
-void InsertAction::apply(EditorState& state) {
-    state.insertLines(m_content, m_start);
+void InsertAction::apply(ExecutionContext& context) {
+    context.state.insertLines(m_content, m_start);
 
-    Position end_cursor_pos = m_start;
-    end_cursor_pos.row += m_content.size() - 1;
-    // end_cursor_pos.column = m_content.at(m_content.size() - 1).length();
+    Position first_after_insert = {
+        static_cast<int>(m_start.row + m_content.size() - 1),
+        static_cast<int>(m_content.back().length() + (m_content.size() == 1? m_start.column : 0))
+    };
 
-    end_cursor_pos.column = m_content.back().length() + (m_content.size() == 1? m_start.column : 0);
-
-    state.moveCursorTo(end_cursor_pos);
-
+    context.state.moveCursorTo(first_after_insert);
 }
 
 void InsertAction::undo(EditorState& state) {
+    Position last_inserted = {
+        static_cast<int>(m_start.row + m_content.size() - 1),
+        static_cast<int>(m_content.back().length() + (m_content.size() == 1? m_start.column : 0) - 1)
+    };
 
+    state.deleteRange(m_start, last_inserted);
+    state.moveCursorTo(m_start);
+}
+
+bool InsertAction::canBeUndone() const {
+    return true;
 }

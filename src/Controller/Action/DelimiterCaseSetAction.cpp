@@ -1,4 +1,5 @@
 #include "../../../inc/Controller/Action/DelimiterCaseSetAction.hpp"
+#include "../../../inc/Controller/Control/ExecutionContext.hpp"
 
 DelimiterCaseSetAction::DelimiterCaseSetAction(
     std::string delimiters,
@@ -37,33 +38,33 @@ int DelimiterCaseSetAction::getEndColumn(const EditorState& state, int row, Posi
     return state.getParagraph(row).length() - 1;
 }
 
-void DelimiterCaseSetAction::apply(EditorState& state) {
-    Position stop_position = findStopPosition(state); 
+void DelimiterCaseSetAction::apply(ExecutionContext& context) {
+    Position stop_position = findStopPosition(context.state); 
 
     int step = m_move_direction == Direction::LEFT? -1 : 1;
 
-    for (int row = state.getCursor().getRow(); row * step <= stop_position.row * step; row += step) {
-        if (state.getParagraph(row).length() == 0) {
+    for (int row = context.state.getCursor().getRow(); row * step <= stop_position.row * step; row += step) {
+        if (context.state.getParagraph(row).length() == 0) {
             continue;
         }
 
-        int start_column = getStartColumn(state, row);
-        int end_column = getEndColumn(state, row, stop_position);
+        int start_column = getStartColumn(context.state, row);
+        int end_column = getEndColumn(context.state, row, stop_position);
 
         for (int column = std::min(start_column, end_column);
             column <= std::max(start_column, end_column); column++) {
 
             //protect from overhang cursor position
-            if (static_cast<size_t>(column) >= state.getParagraph(row).length()) {
+            if (static_cast<size_t>(column) >= context.state.getParagraph(row).length()) {
                 continue;
             }
             
-            char character = *state.readCharacterAt({row, column});
+            char character = *context.state.readCharacterAt({row, column});
 
             character = (m_target_case == Case::UPPER_CASE)?
                 std::toupper(character) : std::tolower(character);
 
-            state.setCharacterAt(character, {row, column});
+            context.state.setCharacterAt(character, {row, column});
         }
     }
 }

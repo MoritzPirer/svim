@@ -57,6 +57,7 @@ public:
 
     void setCharacterAt(char character_to_set, Position position);
     
+    std::vector<std::string> copyRange(Position start, Position end);
     void deleteRange(Position start, Position end);
     
     /// @brief splits the paragraph containing the given position into two, with the given position

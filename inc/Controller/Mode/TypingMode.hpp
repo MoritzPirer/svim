@@ -16,7 +16,7 @@ private:
     ParseResult parseMouseMovement(Position click_position,
         ScreenSize actual_size, ScreenSize text_area_size);
 
-    ParseResult parseSpecialKey(SpecialKey key, ScreenSize text_area_size, const Settings& settings);
+    ParseResult parseSpecialKey(SpecialKey key, ScreenSize text_area_size, const Settings& settings, const EditorState& state);
 
 public:
     TypingMode() = default;
@@ -28,7 +28,7 @@ public:
     /// @param size the current size of the writing area 
     /// @return the next mode and the action to execute 
     ParseResult parseInput(Input input, ScreenSize actual_size,
-        ScreenSize text_area_size, const Settings& settings, Position cursor) override;
+        ScreenSize text_area_size, const Settings& settings, const EditorState& state) override;
 
     std::string getModeLabel() const override { return "TYPING MODE"; }
 };

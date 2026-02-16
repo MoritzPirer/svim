@@ -1,10 +1,12 @@
 #include "../../../inc/Controller/Action/UnindentAction.hpp"
+#include "../../../inc/Controller/Control/ExecutionContext.hpp"
 
 UnindentAction::UnindentAction(int indent_width):
     m_indent_width{indent_width}
     {}
 
-void UnindentAction::apply(EditorState& state) {
+void UnindentAction::apply(ExecutionContext& context) {
+    EditorState& state = context.state;
     Position erase_position = {
         state.getCursor().getRow(),
         0

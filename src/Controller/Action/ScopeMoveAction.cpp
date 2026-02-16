@@ -1,4 +1,5 @@
 #include "../../../inc/Controller/Action/ScopeMoveAction.hpp"
+#include "../../../inc/Controller/Control/ExecutionContext.hpp"
 
 ScopeMoveAction::ScopeMoveAction(
     ScreenSize size,
@@ -11,7 +12,9 @@ ScopeMoveAction::ScopeMoveAction(
     m_move_direction{move_direction}
     {}
 
-void ScopeMoveAction::apply(EditorState& state) {
+void ScopeMoveAction::apply(ExecutionContext& context) {
+    EditorState& state = context.state;
+
     switch (m_move_direction) {
     case Direction::LEFT: {
         state.moveCursorTo(startOfScope(state, m_scope));

@@ -22,7 +22,7 @@ public:
     UnindentAction(const UnindentAction&) = default;
     ~UnindentAction() = default;
 
-    void apply(EditorState& state) override;
+    void apply(ExecutionContext& context) override;
 };
 
 #endif //UNINDENT_ACTION_HPP
