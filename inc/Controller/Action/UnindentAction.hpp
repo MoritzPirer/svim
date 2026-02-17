@@ -13,16 +13,20 @@
 
 class UnindentAction: public Action {
 private:
-    int m_indent_width;
+    int m_row;
+    int m_max_indent_width;
+    int m_spaces_removed;
 
 public:
-    UnindentAction(
-        int indent_width
-    );
+    UnindentAction(int row, int indent_width);
     UnindentAction(const UnindentAction&) = default;
     ~UnindentAction() = default;
 
     void apply(ExecutionContext& context) override;
+
+    void undo(EditorState& state) override;
+
+    bool canBeUndone() const override;
 };
 
 #endif //UNINDENT_ACTION_HPP

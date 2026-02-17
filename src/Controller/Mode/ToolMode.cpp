@@ -39,13 +39,13 @@ ParseResult ToolMode::parseSpecialKey(SpecialKey key, ParsingContext context) {
 
     case SpecialKey::TAB: {
         return {ModeType::TOOL_MODE, 
-            make_shared<IndentAction>(context.settings.isEnabled("do_skinny_tabs")? 2 : 4)
+            make_shared<IndentAction>(context.state.getCursor().getRow(), context.settings.getTabWidth())
         };
     }
 
     case SpecialKey::SHIFT_TAB: {
         return {ModeType::TOOL_MODE, 
-            std::make_shared<UnindentAction>(context.settings.isEnabled("do_skinny_tabs")? 2 : 4)
+            make_shared<UnindentAction>(context.state.getCursor().getRow(), context.settings.getTabWidth())
         };
     }
 

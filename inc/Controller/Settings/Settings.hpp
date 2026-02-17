@@ -28,6 +28,8 @@ public:
     const std::vector<std::string>& getDescription(const std::string& boolean_setting_name) const;
 
     void updateSetting(const std::string& setting_name, const BooleanSetting& setting);
+
+    int getTabWidth() const;
 };
 
 #endif //SETTINGS_HPP

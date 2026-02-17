@@ -122,3 +122,7 @@ void Settings::updateSetting(const string& setting_name, const BooleanSetting& s
 
     throw std::invalid_argument("Unknown setting '" + setting_name + "' updated!");
 }
+
+int Settings::getTabWidth() const {
+    return isEnabled("do_skinny_tabs")? 2 : 4;
+}

@@ -12,7 +12,10 @@
 using std::make_shared;
 
 ParseResult TypingMode::parseSpecialKey(SpecialKey key,
-    ScreenSize text_area_size, const Settings& settings, const EditorState& state) {
+    ParsingContext context) {
+    
+    EditorState& state = context.state;
+    Position cursor = state.getCursor().getPosition();
 
     switch (key) {
     case SpecialKey::ESCAPE: {
@@ -20,7 +23,7 @@ ParseResult TypingMode::parseSpecialKey(SpecialKey key,
     }
 
     case SpecialKey::BACKSPACE: {
-        Position delete_position = state.getCursor().getPosition();
+        Position delete_position = cursor;
         if (delete_position.column > 0) { // move left if possible
             delete_position.column--;
         }
@@ -41,37 +44,37 @@ ParseResult TypingMode::parseSpecialKey(SpecialKey key,
 
     case SpecialKey::ARROW_LEFT: {
         return {ModeType::TYPING_MODE, {
-            make_shared<CharwiseMoveAction>(text_area_size, Direction::LEFT)
+            make_shared<CharwiseMoveAction>(context.text_area_size, Direction::LEFT)
         }};
     }
 
     case SpecialKey::ARROW_DOWN: {
         return {ModeType::TYPING_MODE, {
-            make_shared<CharwiseMoveAction>(text_area_size, Direction::DOWN)
+            make_shared<CharwiseMoveAction>(context.text_area_size, Direction::DOWN)
         }};
     }
 
     case SpecialKey::ARROW_UP: {
         return {ModeType::TYPING_MODE, {
-            make_shared<CharwiseMoveAction>(text_area_size, Direction::UP)
+            make_shared<CharwiseMoveAction>(context.text_area_size, Direction::UP)
         }};
     }
 
     case SpecialKey::ARROW_RIGHT: {
         return {ModeType::TYPING_MODE, {
-            make_shared<CharwiseMoveAction>(text_area_size, Direction::RIGHT)
+            make_shared<CharwiseMoveAction>(context.text_area_size, Direction::RIGHT)
         }};
     }
 
     case SpecialKey::TAB: {
         return {ModeType::TYPING_MODE, {
-            std::make_shared<IndentAction>(settings.isEnabled("do_skinny_tabs")? 2 : 4)
+            make_shared<IndentAction>(cursor.row, context.settings.getTabWidth())
         }};
     }
 
     case SpecialKey::SHIFT_TAB: {
         return {ModeType::TYPING_MODE, {
-            std::make_shared<UnindentAction>(settings.isEnabled("do_skinny_tabs")? 2 : 4)
+            make_shared<UnindentAction>(context.state.getCursor().getRow(), context.settings.getTabWidth())
         }};
     }
 
@@ -90,7 +93,7 @@ ParseResult TypingMode::parseInput(
     }
 
     if (input.special_key.has_value()) {
-        return parseSpecialKey(*input.special_key, context.text_area_size, context.settings, context.state);
+        return parseSpecialKey(*input.special_key, context);
     }
 
     if (input.standard_input.has_value()) {

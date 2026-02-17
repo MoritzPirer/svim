@@ -234,6 +234,8 @@ ParseResult CommandParser::generateActions(ParsingContext context) {
         return generateHint();
     }
 
+    EditorState& state = context.state;
+
     switch (m_details->operator_type) {
     case Operator::SWITCH_MODE: {
         return {ModeType::TYPING_MODE, std::nullopt};
@@ -260,7 +262,7 @@ ParseResult CommandParser::generateActions(ParsingContext context) {
     /// Editing
 
     case Operator::ERASE: {
-        Position cursor = context.state.getCursor().getPosition();
+        Position cursor = state.getCursor().getPosition();
         return {m_details->next_mode, make_shared<DeleteAction>(cursor, cursor)};
     }
 
@@ -269,7 +271,7 @@ ParseResult CommandParser::generateActions(ParsingContext context) {
     }
 
     case Operator::PARAGRAPH_JOIN: {
-        auto [start, end] = SectionResolver::fromScope(context.state, {
+        auto [start, end] = SectionResolver::fromScope(state, {
             .scope = Scope::PARAGRAPH,
             .end_behavior = EndBehavior::STOP_BEFORE_END,
             .size = context.text_area_size
@@ -285,7 +287,7 @@ ParseResult CommandParser::generateActions(ParsingContext context) {
     }
 
     case Operator::REPLACE: {
-        Position cursor = context.state.getCursor().getPosition();
+        Position cursor = state.getCursor().getPosition();
         return {ModeType::TOOL_MODE, make_shared<CompoundAction>(std::vector<std::shared_ptr<Action>>{
             make_shared<DeleteAction>(cursor, cursor),
             make_shared<CharwiseMoveAction>(context.text_area_size, Direction::LEFT)
@@ -294,13 +296,13 @@ ParseResult CommandParser::generateActions(ParsingContext context) {
 
     case Operator::INDENT: {
         return {ModeType::TOOL_MODE, 
-            make_shared<IndentAction>(context.settings.isEnabled("do_skinny_tabs")? 2 : 4)
+            make_shared<IndentAction>(state.getCursor().getRow(), context.settings.getTabWidth())
         };
     }
 
     case Operator::UNINDENT: {
         return {ModeType::TOOL_MODE, 
-            make_shared<UnindentAction>(context.settings.isEnabled("do_skinny_tabs")? 2 : 4)
+            make_shared<UnindentAction>(context.state.getCursor().getRow(), context.settings.getTabWidth())
         };
     }
 

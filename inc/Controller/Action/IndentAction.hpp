@@ -13,15 +13,19 @@
 
 class IndentAction: public Action {
 private:
-    int m_indent_width;
+    int m_row;
+    int m_max_indent_width;
+    int m_spaces_added;
 public:
-    IndentAction(
-        int indent_width
-    );
+    IndentAction(int row, int max_indent_width);
     IndentAction(const IndentAction&) = default;
     ~IndentAction() = default;
 
     void apply(ExecutionContext& context) override;
+
+    void undo(EditorState& state) override;
+
+    bool canBeUndone() const override;
 };
 
 #endif //INDENT_ACTION_HPP

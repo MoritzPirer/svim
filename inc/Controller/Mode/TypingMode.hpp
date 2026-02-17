@@ -14,7 +14,7 @@
 
 class TypingMode: public EditorMode {
 private:
-    ParseResult parseSpecialKey(SpecialKey key, ScreenSize text_area_size, const Settings& settings, const EditorState& state);
+    ParseResult parseSpecialKey(SpecialKey key, ParsingContext context);
 
 public:
     TypingMode() = default;
