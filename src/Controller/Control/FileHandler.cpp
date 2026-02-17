@@ -1,6 +1,7 @@
 #include <fstream>
 #include <filesystem>
 
+#include "../../../inc/Controller/Control/FileException.hpp"
 #include "../../../inc/Controller/Control/FileHandler.hpp"
 
 using std::string;
@@ -65,8 +66,7 @@ void FileHandler::saveFile(TextFile& file) {
         std::ofstream output_file(file.getFilepath().string());
     
         if (!output_file.is_open()) {
-            //MODO HANDLE THIS
-            return;
+            throw FileException();
         }
     
         for (int i = 0; i < file.getNumberOfParagrahps(); i++) {
@@ -78,13 +78,11 @@ void FileHandler::saveFile(TextFile& file) {
             }
         }
 
-        file.markAsSaved();
-
         output_file.close();
+        file.markAsSaved();
     }
     catch (const std::filesystem::filesystem_error& e) {
-        //MODO HANDLE THIS
-        return;
+        throw FileException();
     }
 }
 

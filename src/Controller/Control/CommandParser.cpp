@@ -1,12 +1,16 @@
 #include <unordered_map>
 
+
 #include "../../../inc/Controller/Control/CommandParser.hpp"
 #include "../../../inc/Controller/Control/CommandDetails.hpp"
 
 #include "../../../inc/Controller/Action/CharwiseMoveAction.hpp"
 #include "../../../inc/Controller/Action/FixedPositionMoveAction.hpp"
+
 #include "../../../inc/Controller/Control/SectionResolver.hpp"
 #include "../../../inc/Controller/Action/SectionMoveAction.hpp"
+
+#include "../../../inc/Controller/Action/CompoundAction.hpp"
 
 #include "../../../inc/Controller/Action/SaveAction.hpp"
 #include "../../../inc/Controller/Action/QuitAction.hpp"
@@ -232,7 +236,7 @@ ParseResult CommandParser::generateActions(ParsingContext context) {
 
     switch (m_details->operator_type) {
     case Operator::SWITCH_MODE: {
-        return {ModeType::TYPING_MODE, {}};
+        return {ModeType::TYPING_MODE, std::nullopt};
     }
 
     /// Movement
@@ -257,7 +261,7 @@ ParseResult CommandParser::generateActions(ParsingContext context) {
 
     case Operator::ERASE: {
         Position cursor = context.state.getCursor().getPosition();
-        return {m_details->next_mode, {make_shared<DeleteAction>(cursor, cursor)}};
+        return {m_details->next_mode, make_shared<DeleteAction>(cursor, cursor)};
     }
 
     case Operator::PARAGRAPH_CREATE: {
@@ -270,35 +274,34 @@ ParseResult CommandParser::generateActions(ParsingContext context) {
             .end_behavior = EndBehavior::STOP_BEFORE_END,
             .size = context.text_area_size
         });
-        return {ModeType::TOOL_MODE, {
+        return {ModeType::TOOL_MODE, make_shared<CompoundAction>(std::vector<std::shared_ptr<Action>>{
             make_shared<SectionMoveAction>(start, end, Direction::RIGHT),
             make_shared<ParagraphJoiningAction>()
-        }};
+        })};
     }
 
     case Operator::PARAGRAPH_SPLIT: {
-        return {ModeType::TOOL_MODE, {make_shared<ParagraphSplittingAction>()}};
+        return {ModeType::TOOL_MODE, make_shared<ParagraphSplittingAction>()};
     }
 
     case Operator::REPLACE: {
         Position cursor = context.state.getCursor().getPosition();
-        return {ModeType::TOOL_MODE, {
+        return {ModeType::TOOL_MODE, make_shared<CompoundAction>(std::vector<std::shared_ptr<Action>>{
             make_shared<DeleteAction>(cursor, cursor),
-            //make_shared<InsertAction>(*(m_details->argument)),
             make_shared<CharwiseMoveAction>(context.text_area_size, Direction::LEFT)
-        }};
+        })};
     }
 
     case Operator::INDENT: {
-        return {ModeType::TOOL_MODE, {
+        return {ModeType::TOOL_MODE, 
             make_shared<IndentAction>(context.settings.isEnabled("do_skinny_tabs")? 2 : 4)
-        }};
+        };
     }
 
     case Operator::UNINDENT: {
-        return {ModeType::TOOL_MODE, {
+        return {ModeType::TOOL_MODE, 
             make_shared<UnindentAction>(context.settings.isEnabled("do_skinny_tabs")? 2 : 4)
-        }};
+        };
     }
 
     case Operator::CASE_SET_LOWER: {
@@ -316,7 +319,7 @@ ParseResult CommandParser::generateActions(ParsingContext context) {
     }
 
     case Operator::UNDO: {
-        return {ModeType::TOOL_MODE, {make_shared<UndoAction>()}};
+        return {ModeType::TOOL_MODE, make_shared<UndoAction>()};
     }
 
 
@@ -329,7 +332,7 @@ ParseResult CommandParser::generateActions(ParsingContext context) {
 }
 
 ParseResult CommandParser::emptyParse() {
-    return {std::nullopt, {}};
+    return {std::nullopt, std::nullopt};
 }
 
 ParseResult CommandParser::generateHint() {
@@ -340,23 +343,23 @@ ParseResult CommandParser::generateHint() {
     case Operator::MOVE_OVER_CHUNK:
     case Operator::CASE_SET_UPPER:
     case Operator::CASE_SET_LOWER: {
-        return {std::nullopt, {
+        return {std::nullopt, 
             make_shared<MessageAction>("Enter a scope (w,e,p,l,f) or a range identifier ( \",',(,[, {, <)!")
-        }};
+        };
     }
     
     case Operator::MOVE_FIND:
     case Operator::REPLACE: {
-        return {std::nullopt, {
+        return {std::nullopt, 
             make_shared<MessageAction>("Enter a character argument (letter, digit, special character)!")
-        }};
+        };
 
     }
 
     case Operator::FILE_ACTION: {
-        return {std::nullopt, {
+        return {std::nullopt, 
             make_shared<MessageAction>("Enter an action identifier! Refer to the help command for more info!")
-        }};
+        };
     }
     
     default: {
@@ -366,9 +369,9 @@ ParseResult CommandParser::generateHint() {
 }
 
 ParseResult CommandParser::generateCharacterwiseMove(ScreenSize text_area_size) {
-    return {ModeType::TOOL_MODE, {
+    return {ModeType::TOOL_MODE, 
         make_shared<CharwiseMoveAction>(text_area_size, m_details->direction)
-    }};
+    };
 }
 
 std::string CommandParser::getAntiDelimiter(char delimiter) {
@@ -404,9 +407,9 @@ ParseResult CommandParser::generateMultiCharacterMove(ParsingContext context, En
             .paragraph_is_delimiter = false
         });
 
-        return {m_details->next_mode, {
+        return {m_details->next_mode, 
             make_shared<SectionMoveAction>(start, end, m_details->direction)
-        }};
+        };
     }
 
     ScopeSettings settings = {
@@ -426,8 +429,8 @@ ParseResult CommandParser::generateMultiCharacterMove(ParsingContext context, En
         context.state,
         settings
     );
-    return {m_details->next_mode, {make_shared<SectionMoveAction>(start, end, m_details->direction)}};
 
+    return {m_details->next_mode, make_shared<SectionMoveAction>(start, end, m_details->direction)};
 }
 
 ParseResult CommandParser::generateCaseSetCommand(ParsingContext context, Case target_case) {
@@ -439,9 +442,9 @@ ParseResult CommandParser::generateCaseSetCommand(ParsingContext context, Case t
             .paragraph_is_delimiter = false
         });
 
-        return {m_details->next_mode, {
+        return {m_details->next_mode, 
             make_shared<CaseSetAction>(start, end, target_case)
-        }};
+        };
     }
 
     ScopeSettings settings = {
@@ -462,7 +465,7 @@ ParseResult CommandParser::generateCaseSetCommand(ParsingContext context, Case t
         settings
     );
 
-    return {m_details->next_mode, {make_shared<CaseSetAction>(start, end, target_case)}};
+    return {m_details->next_mode, make_shared<CaseSetAction>(start, end, target_case)};
 }
 
 ParseResult CommandParser::generateFileCommand(const Settings& settings) {
@@ -470,13 +473,13 @@ ParseResult CommandParser::generateFileCommand(const Settings& settings) {
         SaveConfirmation::YES : SaveConfirmation::NO;
         
     std::unordered_map<char, ParseResult> results = {
-        {'q', {std::nullopt, {make_shared<QuitAction>(QuitMode::ONLY_IF_SAVED)}}},
-        {'x', {std::nullopt, {make_shared<QuitAction>(QuitMode::FORCE_QUIT)}}},
-        {'s', {std::nullopt, {make_shared<SaveAction>(confirmation)}}},
-        {'Q', {std::nullopt, {
+        {'q', {std::nullopt, make_shared<QuitAction>(QuitMode::ONLY_IF_SAVED)}},
+        {'x', {std::nullopt, make_shared<QuitAction>(QuitMode::FORCE_QUIT)}},
+        {'s', {std::nullopt, make_shared<SaveAction>(confirmation)}},
+        {'Q', {std::nullopt, make_shared<CompoundAction>(std::vector<std::shared_ptr<Action>>{
             make_shared<SaveAction>(confirmation),
             make_shared<QuitAction>(QuitMode::ONLY_IF_SAVED)
-        }}}
+        })}}
 
         //TODO: rename, open settings
     };
@@ -487,7 +490,7 @@ ParseResult CommandParser::generateFileCommand(const Settings& settings) {
 
     //return emptyParse();
     std::string message = "You entered " + std::string(1, *(m_details->argument)) + " which is not a file command i know!";
-    return {std::nullopt, {make_shared<MessageAction>(message)}};;
+    return {std::nullopt, make_shared<MessageAction>(message)};
 }
 
 ParseResult CommandParser::generatParagraphCreationCommand(ParsingContext context) {
@@ -496,16 +499,19 @@ ParseResult CommandParser::generatParagraphCreationCommand(ParsingContext contex
         .end_behavior = EndBehavior::STOP_BEFORE_END
     });
 
-    ParseResult result = {m_details->next_mode, {
-        make_shared<SectionMoveAction>(start, end, m_details->direction),
-        make_shared<ParagraphSplittingAction>()
-    }};
-
     if (m_details->direction == Direction::LEFT) {
-        result.actions.emplace_back(make_shared<CharwiseMoveAction>(context.text_area_size, Direction::UP));
+        return {m_details->next_mode, make_shared<CompoundAction>(std::vector<std::shared_ptr<Action>>{
+            make_shared<SectionMoveAction>(start, end, m_details->direction),
+            make_shared<ParagraphSplittingAction>(),
+            make_shared<CharwiseMoveAction>(context.text_area_size, Direction::UP)
+        })};
     }
 
-    return result;
+    return {m_details->next_mode, make_shared<CompoundAction>(std::vector<std::shared_ptr<Action>>{
+        make_shared<SectionMoveAction>(start, end, m_details->direction),
+        make_shared<ParagraphSplittingAction>()
+    })};
+
 }
 
 bool CommandParser::isRangeIndicator(char c) {

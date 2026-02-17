@@ -17,6 +17,7 @@ private:
     Case m_target_case;
     std::vector<std::string> m_original_content;
 
+    std::vector<std::string> getContentAsCase();
 public:
     CaseSetAction(
         Position start,

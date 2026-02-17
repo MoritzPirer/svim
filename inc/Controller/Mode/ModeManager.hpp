@@ -25,12 +25,7 @@ public:
     ModeManager(ModeType initial_mode);
     ~ModeManager() = default;
     
-    /// @brief generate an action based on the given input and the current mode.
-    ///     May change the current mode
-    /// @param input the user input
-    /// @param size the current size of the text area
-    /// @return a set of actions to execute
-    std::vector<std::shared_ptr<Action>> convertToAction(Input input, ParsingContext context);
+    std::optional<std::shared_ptr<Action>> convertToAction(Input input, ParsingContext context);
     
     /// @return the name of the current mode
     std::string getModeLabel() const;

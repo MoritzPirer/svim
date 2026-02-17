@@ -20,6 +20,12 @@
 #include "../Control/ParsingContext.hpp"
 
 class EditorMode {
+private:
+    bool isClickPositionValid(Position click_position,
+        int aside_width, ScreenSize text_area_size);
+protected:
+    ParseResult parseMouseMovement(Position click_position,
+        ScreenSize actual_size, ScreenSize text_area_size);
 public:
     EditorMode() = default;
     EditorMode(const EditorMode&) = default;

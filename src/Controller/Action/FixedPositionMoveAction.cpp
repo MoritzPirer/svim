@@ -6,7 +6,8 @@ FixedPositionMoveAction::FixedPositionMoveAction(ScreenSize text_area_size, Posi
     m_target_position{target_position} {}
 
 void FixedPositionMoveAction::apply(ExecutionContext& context) {
-    //TODO: Most of this logic is for converting mouse click position to logical position
+    //TODO WHEN: 
+    // Most of this logic is for converting mouse click position to logical position
     // extract that and move it to a different spot
     EditorState& state = context.state;
 

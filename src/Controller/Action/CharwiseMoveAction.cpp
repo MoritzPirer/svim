@@ -1,3 +1,6 @@
+#include <unordered_map>
+#include <functional>
+
 #include "../../../inc/Controller/Action/CharwiseMoveAction.hpp"
 #include "../../../inc/Controller/Control/ExecutionContext.hpp"
 
@@ -6,30 +9,16 @@ CharwiseMoveAction::CharwiseMoveAction(ScreenSize size, Direction direction):
     m_direction{direction} {}
 
 void CharwiseMoveAction::apply(ExecutionContext& context) {
-    switch (m_direction) {
-    case Direction::RIGHT: {
-        context.state.moveCursorRight();
-        break;
-    }
+    EditorState& state = context.state;
+    
+    std::unordered_map<Direction, std::function<void(void)>> move_actions = {
+        {Direction::RIGHT, [&]() -> void { state.moveCursorRight(); }},
+        {Direction::LEFT, [&]() -> void { state.moveCursorLeft(); }},
+        {Direction::UP, [&]() -> void { state.moveCursorUp(m_size.width); }},
+        {Direction::DOWN, [&]() -> void { state.moveCursorDown(m_size.width); }},
+    };
 
-    case Direction::LEFT: {
-        context.state.moveCursorLeft();
-        break;
-    }
-
-    case Direction::UP: {
-        context.state.moveCursorUp(m_size.width);
-        break;
-    }
-
-    case Direction::DOWN: {
-        context.state.moveCursorDown(m_size.width);
-        break;
-    }
-
-    default: {
-        throw std::invalid_argument("Unknown enum value!");
-    }
-
+    if (move_actions.contains(m_direction)) {
+        move_actions.at(m_direction)();
     }
 }

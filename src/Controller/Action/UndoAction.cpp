@@ -5,11 +5,3 @@
 void UndoAction::apply(ExecutionContext& context) {
     context.history.undo(context.state);
 }
-
-void UndoAction::undo(EditorState& state) {
-    (void) state;
-}
-
-bool UndoAction::canBeUndone() const {
-    return false;
-}

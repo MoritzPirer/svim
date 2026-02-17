@@ -11,67 +11,46 @@
 
 using std::make_shared;
 
-ParseResult ToolMode::parseMouseMovement(Position click_position,
-    ScreenSize actual_size, ScreenSize text_area_size) {
-
-    /// validate click position
-    int aside_width = actual_size.width - text_area_size.width;
-
-    if (click_position.column < aside_width || click_position.column > actual_size.width) {
-        return {ModeType::TOOL_MODE, {}};
-    }
-    if (click_position.row < 0 || click_position.row > text_area_size.height) {
-        return {ModeType::TOOL_MODE, {}};
-    }
-
-    Position adjusted_position = {
-        click_position.row,
-        click_position.column - aside_width
-    };
-
-    return {ModeType::TOOL_MODE, {make_shared<FixedPositionMoveAction>(text_area_size, adjusted_position)}};
-}
-
 ParseResult ToolMode::parseSpecialKey(SpecialKey key, ParsingContext context) {
     switch (key) {
     case SpecialKey::ARROW_LEFT: {
-        return {ModeType::TOOL_MODE, {
+        return {ModeType::TOOL_MODE, 
             make_shared<CharwiseMoveAction>(context.text_area_size, Direction::LEFT)
-        }};
+        };
     }
 
     case SpecialKey::ARROW_DOWN: {
-        return {ModeType::TOOL_MODE, {
+        return {ModeType::TOOL_MODE, 
             make_shared<CharwiseMoveAction>(context.text_area_size, Direction::DOWN)
-        }};
+        };
     }
 
     case SpecialKey::ARROW_UP: {
-        return {ModeType::TOOL_MODE, {
+        return {ModeType::TOOL_MODE, 
             make_shared<CharwiseMoveAction>(context.text_area_size, Direction::UP)
-        }};
+        };
     }
 
     case SpecialKey::ARROW_RIGHT: {
-        return {ModeType::TOOL_MODE, {
+        return {ModeType::TOOL_MODE, 
             make_shared<CharwiseMoveAction>(context.text_area_size, Direction::RIGHT)
-        }};
+        };
     }
 
     case SpecialKey::TAB: {
-        return {ModeType::TOOL_MODE, {
+        return {ModeType::TOOL_MODE, 
             make_shared<IndentAction>(context.settings.isEnabled("do_skinny_tabs")? 2 : 4)
-        }};
+        };
     }
 
     case SpecialKey::SHIFT_TAB: {
-        return {ModeType::TOOL_MODE, {
+        return {ModeType::TOOL_MODE, 
             std::make_shared<UnindentAction>(context.settings.isEnabled("do_skinny_tabs")? 2 : 4)
-        }};
+        };
     }
 
     default: {
-        return {ModeType::TOOL_MODE, {}};
+        return {ModeType::TOOL_MODE, std::nullopt};
     }
 
     }
@@ -95,5 +74,5 @@ ParseResult ToolMode::parseInput(Input input, ParsingContext context) {
         return parseStandardInput(*input.standard_input, context);
     }
     
-    return {ModeType::TOOL_MODE, {}};
+    return {ModeType::TOOL_MODE, std::nullopt};
 }

@@ -22,9 +22,11 @@ public:
 
     virtual void apply(ExecutionContext& context) = 0;
 
-    virtual void undo(EditorState& state) { (void) state; }; // temporary; will be replaced by pure virtual
+    // all undoable actions must override this
+    virtual void undo(EditorState& state) { (void) state; }; 
 
-    virtual bool canBeUndone() const { return false; }; // temporary; will be pure virtual
+    // all undoable actions must override this
+    virtual bool canBeUndone() const { return false; };
 };
 
 #endif //ACTION_HPP

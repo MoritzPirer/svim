@@ -17,7 +17,7 @@
 
 struct ParseResult {
     std::optional<ModeType> mode;
-    std::vector<std::shared_ptr<Action>> actions;    
+    std::optional<std::shared_ptr<Action>> action;    
 };
 
 #endif //PARSE_RESULT_HPP

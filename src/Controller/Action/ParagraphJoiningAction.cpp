@@ -2,8 +2,9 @@
 #include "../../../inc/Controller/Control/ExecutionContext.hpp"
 
 void ParagraphJoiningAction::apply(ExecutionContext& context) {
-    EditorState& state = context.state;
-    if (static_cast<size_t>(state.getCursor().getRow()) < state.getNumberOfParagrahps() - 1) {
-        state.joinLineToPrevious(state.getCursor().getRow() + 1);
+    int row = context.state.getCursor().getRow();
+
+    if (static_cast<size_t>(row) < context.state.getNumberOfParagrahps() - 1) {
+        context.state.joinLineToPrevious(row + 1);
     }
 }

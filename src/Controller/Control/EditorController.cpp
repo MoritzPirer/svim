@@ -56,7 +56,7 @@ void EditorController::mainLoop() {
         Input input = m_ui_handler.getInput();
 
         m_state.clearTemporaryMessages();
-        vector<std::shared_ptr<Action>> actions = m_mode_manager.convertToAction(
+        std::optional<std::shared_ptr<Action>> action = m_mode_manager.convertToAction(
             input, {
                 m_state,
                 total_size,
@@ -67,9 +67,9 @@ void EditorController::mainLoop() {
 
         ExecutionContext context = {m_state, m_history};
 
-        for (std::shared_ptr action : actions) {
-            action->apply(context);
-            m_history.add(action);
+        if (action.has_value()) {
+            (*action)->apply(context);
+            m_history.add(*action);
         } 
     }
 }

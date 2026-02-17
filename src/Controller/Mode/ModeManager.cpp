@@ -25,14 +25,14 @@ void ModeManager::changeMode(ModeType new_mode) {
     }
 }
 
-std::vector<std::shared_ptr<Action>> ModeManager::convertToAction(
+std::optional<std::shared_ptr<Action>> ModeManager::convertToAction(
     Input input, ParsingContext context) {
     ParseResult result = m_current_mode->parseInput(input, context);
     if (result.mode.has_value()) {
         changeMode(*result.mode);
     }
 
-    return result.actions;
+    return result.action;
 }
 
 std::string ModeManager::getModeLabel() const {

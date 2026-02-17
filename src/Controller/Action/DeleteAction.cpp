@@ -17,13 +17,6 @@ void DeleteAction::apply(ExecutionContext& context) {
 
 void DeleteAction::undo(EditorState& state) {
     state.insertLines(m_deleted_content, m_start);
-    if (m_deleted_content.size() > 0) {
-        state.addTemporaryMessage(m_deleted_content.at(0));
-    }
-    else {
-        state.addTemporaryMessage("deleted_content is empty!");
-    }
-
     state.moveCursorTo({m_end.row, m_end.column + 1});
 }
 

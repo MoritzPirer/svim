@@ -20,10 +20,6 @@ public:
     ~UndoAction() = default;
 
     void apply(ExecutionContext& context) override;
-
-    void undo(EditorState& state) override;
-
-    bool canBeUndone() const override;
 };
 
 #endif //UNDO_ACTION_HPP
