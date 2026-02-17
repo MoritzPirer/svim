@@ -22,7 +22,7 @@ void InsertAction::undo(EditorState& state) {
         static_cast<int>(m_start.row + m_content.size() - 1),
         static_cast<int>(m_content.back().length() + (m_content.size() == 1? m_start.column : 0) - 1)
     };
-
+    state.addTemporaryMessage("adding from to " + m_start.format() + last_inserted.format());
     state.deleteRange(m_start, last_inserted);
     state.moveCursorTo(m_start);
 }

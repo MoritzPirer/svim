@@ -277,9 +277,6 @@ void EditorState::clearTemporaryMessages() {
     m_temporary_messages.clear();
 }
 
-std::vector<string> EditorState::cutLines(Position start, Position end) {
-    std::vector<string> lines = m_file.copyRange(start, end);
-    m_file.deleteRange(start, end);
-    
-    return lines;
+std::vector<string> EditorState::copyRange(Position start, Position end) {
+    return m_file.copyRange(start, end);
 }

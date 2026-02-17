@@ -41,6 +41,10 @@ namespace StringHelpers {
     /// @param str the string to count words in
     /// @return the number of words in the string
     int countWords(const std::string& str);
+
+    void uppercase(std::string& str);
+
+    void lowercase(std::string& str);
 }; //namespace StringHelpers
 
 #endif //STRING_HELPERS_HPP

@@ -10,7 +10,8 @@ DeleteAction::DeleteAction(Position start, Position end):
 void DeleteAction::apply(ExecutionContext& context) {
     EditorState& state = context.state;
 
-    m_deleted_content = state.cutLines(m_start, m_end);
+    m_deleted_content = state.copyRange(m_start, m_end);
+    state.deleteRange(m_start, m_end);
     state.moveCursorTo(m_start);
 }
 

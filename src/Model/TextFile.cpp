@@ -120,8 +120,6 @@ std::vector<std::string> TextFile::copyRange(Position start, Position end) {
         throw std::invalid_argument("End before Start!");
     }
 
-    // if first line start copying at start.column else from 0
-    // if last line copy until end.column else until row end
     std::vector<std::string> copy;
     copy.reserve(end.row - start.row + 1);
 
@@ -147,31 +145,16 @@ void TextFile::deleteRange(Position start, Position end) {
         throw std::invalid_argument("End before Start!");
     }
 
-    // delete empty line (update logic for full line delete)
-    if (start.row == end.row 
-        && m_file_content.at(start.row).length() == 0) {
-        
-        if (m_file_content.size() > 1) { // always leave at least one empty line
-            m_file_content.erase(m_file_content.begin() + start.row);
-        } 
-        
-        markAsChanged();
-        calculateMetadata();
+    std::string end_of_last = m_file_content.at(end.row).substr(end.column + 1);
 
-        return;
-    }
+    m_file_content.at(start.row).erase(start.column);
+    m_file_content.at(start.row) += end_of_last;
 
-    for (int row = start.row; row <= end.row; row++) {
-        if (row != start.row && row != end.row) { // entire line deleted
-            m_file_content.erase(m_file_content.begin() + row);
-            continue;
-        }
-        // partial line deleted
-        std::string& line = m_file_content.at(row);
-        int start_of_erase = (row == start.row? start.column : 0);
-        int end_of_erase = (row == end.row? end.column : line.length()) + 1; 
-
-        line.erase(line.begin() + start_of_erase, line.begin() + end_of_erase);
+    if (end.row > start.row) {
+        m_file_content.erase(
+            m_file_content.begin() + start.row + 1, 
+            m_file_content.begin() + end.row + 1
+        );
     }
 
     markAsChanged();

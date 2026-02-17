@@ -33,7 +33,7 @@ private:
     ParseResult generateCharacterwiseMove(ScreenSize text_area_size);
     ParseResult generateMultiCharacterMove(ParsingContext context, EndBehavior end_behavior);
     
-    ParseResult generateCaseSetCommand(ScreenSize text_area_size, Case target_case);
+    ParseResult generateCaseSetCommand(ParsingContext context, Case target_case);
     ParseResult generateFileCommand(const Settings& settings);
     ParseResult generatParagraphCreationCommand(ParsingContext context);
     

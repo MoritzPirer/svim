@@ -92,3 +92,15 @@ int StringHelpers::countWords(const string& str) {
 
     return words;
 }
+
+void StringHelpers::uppercase(std::string& str) {
+    for (char& c : str) {
+        c = std::toupper(c);
+    }
+}
+
+void StringHelpers::lowercase(std::string& str) {
+    for (char& c : str) {
+        c = std::tolower(c);
+    }
+}

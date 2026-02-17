@@ -99,7 +99,8 @@ public:
     const std::vector<std::string>& getTemporaryMessages() const;
     void clearTemporaryMessages();
 
-    std::vector<std::string> cutLines(Position start, Position end);
+    std::vector<std::string> copyRange(Position start, Position end);
+    std::vector<std::string> deleteLines(Position start, Position end);
 };
 
 #endif //EDITOR_STATE_HPP

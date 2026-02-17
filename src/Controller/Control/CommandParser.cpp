@@ -12,7 +12,7 @@
 #include "../../../inc/Controller/Action/QuitAction.hpp"
 
 #include "../../../inc/Controller/Action/InsertAction.hpp"
-#include "../../../inc/Controller/Action/EraseAction.hpp"
+#include "../../../inc/Controller/Action/DeleteAction.hpp"
 
 #include "../../../inc/Controller/Action/ParagraphSplittingAction.hpp"
 #include "../../../inc/Controller/Action/ParagraphJoiningAction.hpp"
@@ -20,8 +20,7 @@
 #include "../../../inc/Controller/Action/IndentAction.hpp"
 #include "../../../inc/Controller/Action/UnindentAction.hpp"
 
-#include "../../../inc/Controller/Action/DelimiterCaseSetAction.hpp"
-#include "../../../inc/Controller/Action/ScopeCaseSetAction.hpp"
+#include "../../../inc/Controller/Action/CaseSetAction.hpp"
 
 #include "../../../inc/Controller/Action/MessageAction.hpp"
 #include "../../../inc/Controller/Action/UndoAction.hpp"
@@ -196,9 +195,7 @@ void CommandParser::parseAsParameter(char input) {
             m_details->is_complete = true;
         }
         else if (isRangeIndicator(input)) {
-            m_details->argument = m_details->direction == Direction::RIGHT?
-                getClosingRangeIndicator(input) : getOpeningRangeIndicator(input);
-
+            m_details->argument = getOpeningRangeIndicator(input);
             m_details->is_complete = true;
         }
         else {
@@ -259,7 +256,8 @@ ParseResult CommandParser::generateActions(ParsingContext context) {
     /// Editing
 
     case Operator::ERASE: {
-        return {m_details->next_mode, {make_shared<EraseAction>(0)}};
+        Position cursor = context.state.getCursor().getPosition();
+        return {m_details->next_mode, {make_shared<DeleteAction>(cursor, cursor)}};
     }
 
     case Operator::PARAGRAPH_CREATE: {
@@ -283,8 +281,9 @@ ParseResult CommandParser::generateActions(ParsingContext context) {
     }
 
     case Operator::REPLACE: {
+        Position cursor = context.state.getCursor().getPosition();
         return {ModeType::TOOL_MODE, {
-            make_shared<EraseAction>(0, false),
+            make_shared<DeleteAction>(cursor, cursor),
             //make_shared<InsertAction>(*(m_details->argument)),
             make_shared<CharwiseMoveAction>(context.text_area_size, Direction::LEFT)
         }};
@@ -303,11 +302,11 @@ ParseResult CommandParser::generateActions(ParsingContext context) {
     }
 
     case Operator::CASE_SET_LOWER: {
-        return generateCaseSetCommand(context.text_area_size, Case::LOWER_CASE);
+        return generateCaseSetCommand(context, Case::LOWER_CASE);
     }
 
     case Operator::CASE_SET_UPPER: {
-        return generateCaseSetCommand(context.text_area_size, Case::UPPER_CASE);
+        return generateCaseSetCommand(context, Case::UPPER_CASE);
     }
 
     ///
@@ -431,63 +430,39 @@ ParseResult CommandParser::generateMultiCharacterMove(ParsingContext context, En
 
 }
 
-ParseResult CommandParser::generateCaseSetCommand(ScreenSize text_area_size, Case target_case) {
-    // range given
+ParseResult CommandParser::generateCaseSetCommand(ParsingContext context, Case target_case) {
     if (!m_details->scope.has_value()) {
-        return {std::nullopt, {
-            make_shared<DelimiterCaseSetAction>(
-                std::string(1, getOpeningRangeIndicator(*(m_details->argument))),
-                std::string(1, getClosingRangeIndicator(*(m_details->argument))),
-                Direction::LEFT,
-                false,
-                target_case
-            ),
-            make_shared<DelimiterCaseSetAction>(
-                std::string(1, getClosingRangeIndicator(*(m_details->argument))),
-                std::string(1, getOpeningRangeIndicator(*(m_details->argument))),
-                Direction::RIGHT,
-                false,
-                target_case
-            )
+        auto [start, end] = SectionResolver::fromDelimiter(context.state, {
+            .delimiters = std::string(1, *(m_details->argument)),
+            .anti_delimiters = getAntiDelimiter(*(m_details->argument)),
+            .end_behavior = EndBehavior::STOP_BEFORE_END,
+            .paragraph_is_delimiter = false
+        });
+
+        return {m_details->next_mode, {
+            make_shared<CaseSetAction>(start, end, target_case)
         }};
     }
 
-    switch (*(m_details->scope)) {
-    case Scope::FILE: 
-    case Scope::PARAGRAPH:
-    case Scope::LINE: {
-        return {std::nullopt, {
-            make_shared<ScopeCaseSetAction>(
-                text_area_size,
-                *(m_details->scope),
-                target_case
-            )
-        }};
-    }
-    case Scope::EXPRESSION:
-    case Scope::WORD: {
-        std::string delimiters =
-            (*(m_details->scope) == Scope::EXPRESSION? m_expression_delimiters : m_word_delimiters);
+    ScopeSettings settings = {
+        .scope = *(m_details->scope),
+        .size = context.text_area_size,
+        .end_behavior = EndBehavior::STOP_BEFORE_END
+    };
 
-        return {std::nullopt, {
-            make_shared<DelimiterCaseSetAction>(
-                delimiters,
-                "",
-                Direction::LEFT,
-                true,
-                target_case
-            ),
-            make_shared<DelimiterCaseSetAction>(
-                delimiters,
-                "",
-                Direction::RIGHT,
-                true,
-                target_case
-            )
-        }};
+    if (settings.scope == Scope::EXPRESSION) {
+        settings.delimiters = m_expression_delimiters;
+    }
+    else if (settings.scope == Scope::WORD) {
+        settings.delimiters = m_word_delimiters;
     }
 
-    }
+    auto [start, end] = SectionResolver::fromScope(
+        context.state,
+        settings
+    );
+
+    return {m_details->next_mode, {make_shared<CaseSetAction>(start, end, target_case)}};
 }
 
 ParseResult CommandParser::generateFileCommand(const Settings& settings) {
