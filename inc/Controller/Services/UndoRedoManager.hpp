@@ -15,6 +15,7 @@
 
 class Action;
 class EditorState;
+#include "../Actions/ExecutionContext.hpp"
 
 class UndoRedoManager {
 private:
@@ -31,7 +32,7 @@ public:
 
     void undo(EditorState& state);
 
-    void redo(EditorState& state);
+    void redo(ExecutionContext& context);
 };
 
 #endif //UNDO_REDO_MANAGER_HPP

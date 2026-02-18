@@ -1,6 +1,6 @@
 ///
 /// @file: UndoAction.hpp
-/// @description: describes an action that moves the cursor on character or visual row
+/// @description: undoes the most recent undoable action
 ///
 /// @date: 2026-02-16
 /// @author: Moritz Pirer
@@ -13,7 +13,6 @@
 #include "../../../Shared/Types/Direction.hpp"
 
 class UndoAction: public Action{
-private:
 public:
     UndoAction() = default;
     UndoAction(const UndoAction&) = default;

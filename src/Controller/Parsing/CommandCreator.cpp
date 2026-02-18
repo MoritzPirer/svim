@@ -12,6 +12,7 @@
 #include "../../../inc/Controller/Actions/System/QuitAction.hpp"
 #include "../../../inc/Controller/Actions/System/NotifyAction.hpp"
 #include "../../../inc/Controller/Actions/System/UndoAction.hpp"
+#include "../../../inc/Controller/Actions/System/RedoAction.hpp"
 
 #include "../../../inc/Controller/Actions/Editing/InsertAction.hpp"
 #include "../../../inc/Controller/Actions/Editing/DeleteAction.hpp"
@@ -125,6 +126,9 @@ ParseResult CommandCreator::generateActions(std::optional<CommandDetails> detail
         return {ModeType::TOOL_MODE, make_shared<UndoAction>()};
     }
 
+    case Operator::REDO: {
+        return {ModeType::TOOL_MODE, make_shared<RedoAction>()};
+    }
 
     default: {
         return emptyParse();

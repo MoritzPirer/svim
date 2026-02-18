@@ -77,6 +77,9 @@ void CommandParser::parseAsOperator(char input) {
         }},
         {'u', {
             .operator_type = Operator::UNDO,
+        }},
+        {'U', {
+            .operator_type = Operator::REDO,
         }}
     };
 
@@ -94,13 +97,13 @@ void CommandParser::parseAsOperator(char input) {
             .direction = Direction::LEFT,
             .next_mode = ModeType::TOOL_MODE
         }},
-        {'g', {
+        {'n', {
             .operator_type = Operator::MOVE_OVER_CHUNK,
             .scope = std::nullopt,
             .direction = Direction::RIGHT,
             .next_mode = ModeType::TOOL_MODE
         }},
-        {'G', {
+        {'N', {
             .operator_type = Operator::MOVE_OVER_CHUNK,
             .scope = std::nullopt,
             .direction = Direction::LEFT,

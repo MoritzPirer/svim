@@ -28,7 +28,8 @@ enum class Operator {
 
     FILE_ACTION,            //!
     SWITCH_MODE,            //i
-    UNDO
+    UNDO,
+    REDO
 };
 
 #endif //OPERATOR_TYPE_HPP

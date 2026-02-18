@@ -1,5 +1,6 @@
 #include "../../../inc/Controller/Services/UndoRedoManager.hpp"
 #include "../../../inc/Controller/Actions/Action.hpp"
+#include "../../../inc/Controller/Actions/ExecutionContext.hpp"
 
 using std::shared_ptr;
 
@@ -28,4 +29,18 @@ void UndoRedoManager::undo(EditorState& state) {
     action->undo(state);
 
     m_redoable_actions.push(action);
+}
+
+void UndoRedoManager::redo(ExecutionContext& context) {
+    if (m_redoable_actions.empty()) {
+        context.state.addTemporaryMessage("No actions to redo!");
+        return;
+    }
+    
+    shared_ptr<Action> action = m_redoable_actions.top();
+    m_redoable_actions.pop();
+
+    action->apply(context);
+
+    m_undoable_actions.push_back(action);
 }
