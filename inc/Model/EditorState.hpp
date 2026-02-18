@@ -43,6 +43,16 @@ public:
     EditorState(const EditorState&) = default;
     ~EditorState() = default;
     
+    /// @return the number of paragraphs in the file
+    size_t getNumberOfParagrahps() const { return m_file.getNumberOfParagrahps(); }
+    size_t getNumberOfWords() const { return m_file.getNumberOfWords(); }
+    size_t getNumberOfCharacters() const { return m_file.getNumberofCharacters(); }
+
+    SaveState getSaveState() const { return m_file.getSaveState(); }
+    std::string getFileName() const { return m_file.getFilepath().filename(); }
+
+    const std::string& getParagraph(size_t row) const { return m_file.getParagraph(row); }
+
     const Cursor& getCursor() const { return m_cursor; }
     TextFile& getFile() { return m_file; }
     bool getIsQuit() const { return m_is_quit; }
@@ -62,7 +72,6 @@ public:
     void insertCharacterAt(char character_to_add, Position position);
     void insertLines(std::vector<std::string> content, Position start);
 
-    std::optional<char> readCharacterAt(Position position);
     std::optional<char> readCharacterAtCursor();
     void setCharacterAt(char character_to_set, Position position);
     
@@ -72,36 +81,22 @@ public:
     /// @param end the inclusive end of deletion 
     void deleteRange(Position start, Position end);
 
-    /// @brief splits the current line of the cursor in two, with the cursor position
-    ///     being the first character in the new line
-    void splitAtCursor();
+    std::vector<std::string> copyRange(Position start, Position end);
 
     void splitAt(Position position);
 
-    /// @brief joins the given line to the end of previous line
-    /// @param line the index of the line to join to the previous 
-    void joinLineToPrevious(int line);
-
     void joinNextParagraphTo(int paragraph_index);
 
+    /// @brief calculates the logical position of the first character to be shown on screen
+    /// @param size the size of the text area
     Position getFirstVisibleChar(ScreenSize size) const;
     
-    /// @return the number of paragraphs in the file
-    size_t getNumberOfParagrahps() const { return m_file.getNumberOfParagrahps(); }
-    size_t getNumberOfWords() const { return m_file.getNumberOfWords(); }
-    size_t getNumberOfCharacters() const { return m_file.getNumberofCharacters(); }
-    SaveState getSaveState() const { return m_file.getSaveState(); }
-    std::string getFileName() const { return m_file.getFilepath().filename(); }
-
-    const std::string& getParagraph(size_t row) const { return m_file.getParagraph(row); }
-
     int calculateVisualLineOfCursor(int screen_width) const;
 
     void addTemporaryMessage(std::string message);
     const std::vector<std::string>& getTemporaryMessages() const;
     void clearTemporaryMessages();
 
-    std::vector<std::string> copyRange(Position start, Position end);
 };
 
 #endif //EDITOR_STATE_HPP

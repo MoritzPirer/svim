@@ -173,17 +173,6 @@ void TextFile::splitAt(Position first_of_new_paragraph) {
     markAsChanged();
 }
 
-void TextFile::joinToPrevious(int paragraph_index) {
-    if (paragraph_index == 0 || static_cast<size_t>(paragraph_index) >= m_file_content.size()) {
-        return;
-    }
-
-    m_file_content.at(paragraph_index - 1).append(m_file_content.at(paragraph_index));
-    m_file_content.erase(m_file_content.begin() + paragraph_index);
-
-    markAsChanged();
-}
-
 void TextFile::joinNextParagraphTo(int paragraph_index) {
     if (paragraph_index < 0 || static_cast<size_t>(paragraph_index) >= m_file_content.size() - 1) {
         return;

@@ -1,6 +1,6 @@
 ///
 /// @file: SpanAction.hpp
-/// @description: abstract base for an action that is performed from the cursor position to the first occurrence of a delimiter
+/// @description: abstract base for an action that is performed between two positions
 ///
 /// @date: 2026-02-11
 /// @author: Moritz Pirer

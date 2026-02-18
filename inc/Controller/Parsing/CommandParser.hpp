@@ -1,6 +1,6 @@
 ///
 /// @file: CommandParser.hpp
-/// @description: description
+/// @description: Parses user input into CommandDetails 
 ///
 /// @date: 2026-02-07
 /// @author: Moritz Pirer

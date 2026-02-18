@@ -1,6 +1,6 @@
 ///
 /// @file: ScopeSettings.hpp
-/// @description: description
+/// @description: Settings needed to generate a Span based on a scope
 ///
 /// @date: 2026-02-17
 /// @author: Moritz Pirer

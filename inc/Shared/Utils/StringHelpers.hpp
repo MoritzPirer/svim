@@ -22,12 +22,14 @@ namespace StringHelpers {
     /// @return a string with str on the left 
     std::string leftAlign(const std::string& str, unsigned int total_width, const char& pad_with = ' ');
 
+    /// @brief return a string of length total_width with str on the right, filled with pad_with. If str is
+    ///     longer than total_width, str will be truncated
+    /// @param str the string to right-align
+    /// @param total_width how wide the new string should be, including the padding 
+    /// @param pad_with the char to fill the space with
+    /// @return a string with str on the right
     std::string rightAlign(const std::string& str, unsigned int total_width, const char& pad_with = ' ');
 
-    std::string join(const std::vector<std::string>& to_join, const std::string& join_with = ", ");
-
-    std::string padToMulitple(const std::string& to_pad, int width, const char& pad_with = ' ');
-    
     /// @brief splits the given paragraph into a vector of chunks that are at
     ///     most as long as the text area is wide (i.e that don't need to wrap)
     /// @param paragraph the paragraph to split 

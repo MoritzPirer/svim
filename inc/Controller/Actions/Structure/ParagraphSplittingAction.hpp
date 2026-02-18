@@ -1,6 +1,6 @@
 ///
 /// @file: ParagraphSplittingAction.hpp
-/// @description: description
+/// @description: Splits a paragraph into two parts at a given position
 ///
 /// @date: 2026-01-25
 /// @author: Moritz Pirer

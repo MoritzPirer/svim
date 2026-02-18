@@ -1,6 +1,6 @@
 ///
 /// @file: Operator.hpp
-/// @description: description
+/// @description: describes the different operators the editor knows
 ///
 /// @date: 2026-02-07
 /// @author: Moritz Pirer

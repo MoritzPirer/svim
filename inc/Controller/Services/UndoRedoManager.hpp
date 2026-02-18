@@ -1,6 +1,6 @@
 ///
 /// @file: UndoRedoManager.hpp
-/// @description: description
+/// @description: handles the undo and redo history of the editor
 ///
 /// @date: 2026-02-15
 /// @author: Moritz Pirer
@@ -20,7 +20,9 @@ class UndoRedoManager {
 private:
     std::deque<std::shared_ptr<Action>> m_undoable_actions;
     std::stack<std::shared_ptr<Action>> m_redoable_actions;
-static constexpr int c_max_UndoRedoManager_size = 100;public:
+    static constexpr int c_max_history_size = 100;
+
+public:
     UndoRedoManager() = default;
     UndoRedoManager(const UndoRedoManager&) = default;
     ~UndoRedoManager() = default;

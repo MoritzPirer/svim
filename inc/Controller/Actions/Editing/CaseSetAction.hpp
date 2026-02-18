@@ -1,6 +1,6 @@
 ///
 /// @file: CaseSetAction.hpp
-/// @description: moves backwards or forwards until a set of delimiters is reached or passed
+/// @description: Sets a Span of characters to a given case
 ///
 /// @date: 2026-02-07
 /// @author: Moritz Pirer

@@ -30,29 +30,6 @@ string StringHelpers::rightAlign(const string& str,
     return output; 
 }
 
-
-string StringHelpers::join(
-    const vector<string>& to_join, const string& join_with) {
-
-    string output;
-
-    for (size_t i = 0; i < to_join.size(); i++) {
-        output += to_join.at(i);
-        if (i < to_join.size() - 1) {
-            output += join_with;
-        }
-    }
-
-    return output;
-}
-
-string StringHelpers::padToMulitple(const string& to_pad, int width, const char& pad_with) {
-
-    int new_length = std::ceil(to_pad.length() / static_cast<float>(width)) * width;
-
-    return leftAlign(to_pad, new_length, pad_with);
-}
-
 vector<string> StringHelpers::splitIntoRows(const string& paragraph,
     int start_column, int max_length) {
 

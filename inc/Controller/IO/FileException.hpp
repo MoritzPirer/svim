@@ -1,6 +1,6 @@
 ///
 /// @file: FileException.hpp
-/// @description: description
+/// @description: Exception for when a file operation (e.g. load, save) fails
 ///
 /// @date: 2026-02-17
 /// @author: Moritz Pirer

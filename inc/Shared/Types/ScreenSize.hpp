@@ -1,6 +1,6 @@
 ///
 /// @file: ScreenSize.hpp
-/// @description: description
+/// @description: The size of the entire screen or a part of it 
 ///
 /// @date: 2026-01-24
 /// @author: Moritz Pirer

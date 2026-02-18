@@ -1,6 +1,6 @@
 ///
 /// @file: InsertAction.hpp
-/// @description: description
+/// @description: Inserts some text at a given position
 ///
 /// @date: 2026-01-24
 /// @author: Moritz Pirer

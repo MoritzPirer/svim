@@ -1,6 +1,6 @@
 ///
 /// @file: CommandDetails.hpp
-/// @description: description
+/// @description: Stores partial results of command parsing
 ///
 /// @date: 2026-02-08
 /// @author: Moritz Pirer

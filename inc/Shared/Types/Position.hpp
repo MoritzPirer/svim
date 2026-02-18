@@ -1,6 +1,6 @@
 ///
 /// @file: Position.hpp
-/// @description: description
+/// @description: a position within the file
 ///
 /// @date: 2026-01-16
 /// @author: Moritz Pirer

@@ -1,6 +1,6 @@
 ///
 /// @file: DeleteAction.hpp
-/// @description: description
+/// @description: Deletes a given span of text
 ///
 /// @date: 2026-01-24
 /// @author: Moritz Pirer

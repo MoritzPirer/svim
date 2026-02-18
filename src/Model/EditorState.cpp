@@ -218,17 +218,15 @@ void EditorState::insertLines(std::vector<string> content, Position start) {
     m_file.insertLines(content, start);
 }
 
-std::optional<char> EditorState::readCharacterAt(Position position) {
+std::optional<char> EditorState::readCharacterAtCursor() {
+    Position position = m_cursor.getPosition();
+
     if (m_file.getNumberOfParagrahps() <= position.row
         || m_file.getParagraph(position.row).length() <= static_cast<size_t>(position.column)) {
         return std::nullopt;
     }
 
     return m_file.getParagraph(position.row).at(position.column);
-}
-
-std::optional<char> EditorState::readCharacterAtCursor() {
-    return readCharacterAt(m_cursor.getPosition());
 }
 
 void EditorState::setCharacterAt(char character_to_set, Position position) {
@@ -240,17 +238,8 @@ void EditorState::deleteRange(Position start, Position end) {
     m_file.deleteRange(start, end);
 }
 
-void EditorState::splitAtCursor() {
-    m_file.splitAt(m_cursor.getPosition());
-    moveCursorRight();
-}
-
 void EditorState::splitAt(Position position) {
     m_file.splitAt(position);
-}
-
-void EditorState::joinLineToPrevious(int line) {
-    m_file.joinToPrevious(line);
 }
 
 void EditorState::joinNextParagraphTo(int paragraph_index) {

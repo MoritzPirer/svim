@@ -1,6 +1,6 @@
 ///
 /// @file: EditorController.hpp
-/// @description: description
+/// @description: Organizes Data flow between Model and View
 ///
 /// @date: 2026-01-14
 /// @author: Moritz Pirer

@@ -1,6 +1,7 @@
 ///
 /// @file: TypingMode.hpp
-/// @description: the mode that is primarily used for adding and deleting characters in the classic way
+/// @description: the mode that is primarily used for adding and deleting
+///     characters in the classic way
 ///
 /// @date: 2026-01-23
 /// @author: Moritz Pirer

@@ -11,7 +11,7 @@ void UndoRedoManager::add(shared_ptr<Action> action) {
     m_undoable_actions.push_back(action);
     m_redoable_actions = std::stack<shared_ptr<Action>>();
 
-    if (m_undoable_actions.size() > c_max_UndoRedoManager_size) {
+    if (m_undoable_actions.size() > c_max_history_size) {
         m_undoable_actions.pop_front();
     }
 }

@@ -1,6 +1,6 @@
 ///
 /// @file: ToggleSetting.hpp
-/// @description: holds all information for a boolean (on/of) setting
+/// @description: holds all information for a boolean (on/off) setting
 ///
 /// @date: 2026-02-05
 /// @author: Moritz Pirer

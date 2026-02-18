@@ -1,6 +1,6 @@
 ///
 /// @file: ParagraphJoiningAction.hpp
-/// @description: description
+/// @description: joins two paragraphs into one
 ///
 /// @date: 2026-01-25
 /// @author: Moritz Pirer

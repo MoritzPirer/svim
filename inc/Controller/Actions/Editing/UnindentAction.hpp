@@ -1,6 +1,6 @@
 ///
 /// @file: UnindentAction.hpp
-/// @description: description
+/// @description: reduces the indentation of a paragraph
 ///
 /// @date: 2026-01-24
 /// @author: Moritz Pirer

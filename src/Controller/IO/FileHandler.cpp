@@ -19,7 +19,50 @@ namespace {
         return default_file_name + "_(" + std::to_string(counter) + ")" + default_file_ending;
     }
 
-}
+    std::ofstream openOutputFile(const TextFile& file) {
+
+        std::filesystem::path file_path = file.getFilepath();
+        std::filesystem::path parent_directory = file_path.parent_path();
+
+        if (!parent_directory.empty()) {
+            std::filesystem::create_directories(parent_directory);
+        }
+
+        std::ofstream output_file(file.getFilepath().string());
+    
+        if (!output_file.is_open()) {
+            throw FileException();
+        }
+
+        return output_file;
+    }
+
+    void writeToFile(std::ofstream& output_file, TextFile& file) {
+        for (int i = 0; i < file.getNumberOfParagrahps(); i++) {
+            const string& line = file.getParagraph(i);
+            output_file << line; 
+    
+            if (!line.ends_with("\n") && i < file.getNumberOfParagrahps() - 1) {
+                output_file << "\n";
+            }
+        }
+
+        file.markAsSaved();
+    }
+
+    TextFile readFromFile(std::ifstream& input_file, const string& file_path) {
+        TextFile file(file_path, SaveState::SAVED);
+        string line;
+
+        while (getline(input_file, line)) {
+            file.writeToEnd(line);
+        }
+
+        file.markAsSaved();
+        return file;
+    }
+
+} // anonymous namespace
 
 
 TextFile FileHandler::openFile(const string& file_path) {
@@ -28,22 +71,15 @@ TextFile FileHandler::openFile(const string& file_path) {
         return createFile(file_path);
     }
     
-    TextFile file(file_path, SaveState::SAVED);
     std::ifstream input_file(file_path);
     if (!input_file.is_open()) {
         //MODO HANDLE THIS
-        return file;
+        return {file_path, SaveState::SAVED};
     }
 
-    string line;
-
-    while (getline(input_file, line)) {
-        file.writeToEnd(line);
-    }
-
-    file.markAsSaved();
-
+    TextFile file = readFromFile(input_file, file_path);
     input_file.close();
+
     return file;
 }
 
@@ -55,31 +91,10 @@ TextFile FileHandler::createFile(std::filesystem::path file_path) {
 
 
 void FileHandler::saveFile(TextFile& file) {
-    std::filesystem::path file_path = file.getFilepath();
-    std::filesystem::path parent_directory = file_path.parent_path();
-
     try {
-        if (!parent_directory.empty()) {
-            std::filesystem::create_directories(parent_directory);
-        }
-
-        std::ofstream output_file(file.getFilepath().string());
-    
-        if (!output_file.is_open()) {
-            throw FileException();
-        }
-    
-        for (int i = 0; i < file.getNumberOfParagrahps(); i++) {
-            const string& line = file.getParagraph(i);
-            output_file << line; 
-    
-            if (!line.ends_with("\n") && i < file.getNumberOfParagrahps() - 1) {
-                output_file << "\n";
-            }
-        }
-
+        std::ofstream output_file = openOutputFile(file);
+        writeToFile(output_file, file); 
         output_file.close();
-        file.markAsSaved();
     }
     catch (const std::filesystem::filesystem_error& e) {
         throw FileException();

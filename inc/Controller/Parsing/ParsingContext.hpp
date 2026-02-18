@@ -1,6 +1,6 @@
 ///
 /// @file: ParsingContext.hpp
-/// @description: description
+/// @description: Environmental information needed to Parse input into actions
 ///
 /// @date: 2026-02-17
 /// @author: Moritz Pirer

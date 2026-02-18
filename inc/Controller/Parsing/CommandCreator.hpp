@@ -1,6 +1,6 @@
 ///
 /// @file: CommandCreator.hpp
-/// @description: description
+/// @description: Creates a ParseResult based on a CommandDetails struct populated by user input
 ///
 /// @date: 2026-02-18
 /// @author: Moritz Pirer
@@ -24,7 +24,7 @@ private:
     ParseResult emptyParse();
 
     ParseResult generateCharacterwiseMove(CommandDetails details, ScreenSize text_area_size);
-    ParseResult generateMultiCharacterMove(CommandDetails details, ParsingContext context, EndBehavior end_behavior);
+    ParseResult generateSpanMove(CommandDetails details, ParsingContext context, EndBehavior end_behavior);
 
     ParseResult generateCaseSetCommand(CommandDetails details, ParsingContext context, Case target_case);
     ParseResult generateFileCommand(CommandDetails details, const Settings& settings);

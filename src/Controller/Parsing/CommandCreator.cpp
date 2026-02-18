@@ -49,15 +49,15 @@ ParseResult CommandCreator::generateActions(std::optional<CommandDetails> detail
     }
 
     case Operator::MOVE_FIND: {
-        return generateMultiCharacterMove(*details, context, EndBehavior::STOP_ON_END);
+        return generateSpanMove(*details, context, EndBehavior::STOP_ON_END);
     }
 
     case Operator::MOVE_WITHIN_CHUNK: {
-        return generateMultiCharacterMove(*details, context, EndBehavior::STOP_BEFORE_END);
+        return generateSpanMove(*details, context, EndBehavior::STOP_BEFORE_END);
     }
 
     case Operator::MOVE_OVER_CHUNK: {
-        return generateMultiCharacterMove(*details, context, EndBehavior::STOP_AFTER_END);
+        return generateSpanMove(*details, context, EndBehavior::STOP_AFTER_END);
     }
 
     /// Editing
@@ -199,7 +199,7 @@ std::string CommandCreator::getAntiDelimiter(char delimiter) {
     return "";
 }
 
-ParseResult CommandCreator::generateMultiCharacterMove(CommandDetails details, ParsingContext context, EndBehavior end_behavior) {
+ParseResult CommandCreator::generateSpanMove(CommandDetails details, ParsingContext context, EndBehavior end_behavior) {
 
     // range or custom delimiter
     if (!details.scope.has_value()) {

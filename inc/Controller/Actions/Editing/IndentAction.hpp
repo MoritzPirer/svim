@@ -1,6 +1,6 @@
 ///
 /// @file: IndentAction.hpp
-/// @description: description
+/// @description: Indents a paragraph
 ///
 /// @date: 2026-01-24
 /// @author: Moritz Pirer

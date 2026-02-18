@@ -1,6 +1,6 @@
 ///
 /// @file: SpanResolver.hpp
-/// @description: description
+/// @description: Generate a Span consisting of inclusive start and end positions
 ///
 /// @date: 2026-02-17
 /// @author: Moritz Pirer

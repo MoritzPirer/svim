@@ -1,6 +1,6 @@
 ///
 /// @file: CharwiseMoveAction.hpp
-/// @description: describes an action that moves the cursor on character or visual row
+/// @description: Moves the cursor one character over or one line up / down
 ///
 /// @date: 2026-01-24
 /// @author: Moritz Pirer

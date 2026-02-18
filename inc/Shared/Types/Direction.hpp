@@ -1,6 +1,5 @@
 ///
 /// @file: Direction.hpp
-/// @description: description
 ///
 /// @date: 2026-01-24
 /// @author: Moritz Pirer

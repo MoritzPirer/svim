@@ -1,6 +1,6 @@
 ///
 /// @file: ExecutionContext.hpp
-/// @description: description
+/// @description: Provides the environment actions are performed in
 ///
 /// @date: 2026-02-16
 /// @author: Moritz Pirer

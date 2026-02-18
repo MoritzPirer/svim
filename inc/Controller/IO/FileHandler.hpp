@@ -1,6 +1,6 @@
 ///
 /// @file: FileHandler.hpp
-/// @description: description
+/// @description: handles all file operations
 ///
 /// @date: 2026-01-13
 /// @author: Moritz_Pirer
