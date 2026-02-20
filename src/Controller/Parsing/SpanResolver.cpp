@@ -4,6 +4,7 @@
 
 namespace {
 
+// find gets "" as antidelim and arg as delim
 Position findStopPosition(EditorState& state, RangeSettings settings, Direction direction) {
     Position original_cursor_position = state.getCursor().getPosition();
 
@@ -285,7 +286,7 @@ Position endOfScope(EditorState& state, ScopeSettings settings) {
 std::pair<Position, Position> SpanResolver::fromDelimiter(EditorState& state, RangeSettings settings) {
     Position start = findStopPosition(state, settings, Direction::LEFT);
 
-    if (settings.anti_delimiters.has_value()) {
+    if (settings.anti_delimiters.has_value() && !settings.anti_delimiters->empty()) {
         std::string temp = settings.delimiters;
         settings.delimiters = *settings.anti_delimiters;
         settings.anti_delimiters = temp;
