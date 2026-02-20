@@ -18,8 +18,9 @@ private:
     std::vector<std::string> m_deleted_content;
     Position m_start;
     Position m_end;
+    Position m_cursor; //where to restore the cursor to
 public:
-    DeleteAction(Position start, Position end);
+    DeleteAction(Position start, Position end, Position cursor);
     DeleteAction(const DeleteAction&) = default;
     ~DeleteAction() = default;
 

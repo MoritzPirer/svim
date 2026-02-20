@@ -65,7 +65,7 @@ ParseResult CommandCreator::generateActions(std::optional<CommandDetails> detail
 
     case Operator::ERASE: {
         Position cursor = state.getCursor().getPosition();
-        return {details->next_mode, make_shared<DeleteAction>(cursor, cursor)};
+        return {details->next_mode, make_shared<DeleteAction>(cursor, cursor, cursor)};
     }
 
     case Operator::PARAGRAPH_CREATE: {
@@ -91,7 +91,8 @@ ParseResult CommandCreator::generateActions(std::optional<CommandDetails> detail
     case Operator::REPLACE: {
         Position cursor = state.getCursor().getPosition();
         return {ModeType::TOOL_MODE, make_shared<CompoundAction>(std::vector<std::shared_ptr<Action>>{
-            make_shared<DeleteAction>(cursor, cursor),
+            make_shared<DeleteAction>(cursor, cursor, cursor),
+            make_shared<InsertAction>(std::vector<std::string>{std::string(1, *(details->argument))}, cursor),
             make_shared<CharwiseMoveAction>(context.text_area_size, Direction::LEFT)
         })};
     }

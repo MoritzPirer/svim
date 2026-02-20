@@ -238,7 +238,7 @@ Position endOfScope(EditorState& state, ScopeSettings settings) {
     switch (settings.scope) {
     case Scope::FILE: {
         int row = state.getNumberOfParagrahps() - 1;
-        return {row, static_cast<int>(state.getParagraph(row).length() - 1)};
+        return {row, static_cast<int>(state.getParagraph(row).length())};
     }
 
     case Scope::PARAGRAPH: {

@@ -32,6 +32,8 @@ private:
     /// @brief updates m_word_count and m_character_count
     void calculateMetadata();
 
+    bool isOverhangPosition(Position position);
+
 public:
     TextFile() = default;
     TextFile(const std::string& file_name, SaveState save_state);

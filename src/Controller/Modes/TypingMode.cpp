@@ -1,5 +1,6 @@
 #include "../../../inc/Controller/Modes/TypingMode.hpp"
 #include "../../../inc/Controller/Actions/Editing/InsertAction.hpp"
+#include "../../../inc/Controller/Actions/System/CompoundAction.hpp"
 #include "../../../inc/Controller/Actions/Editing/DeleteAction.hpp"
 #include "../../../inc/Controller/Actions/Structure/ParagraphSplittingAction.hpp"
 #include "../../../inc/Controller/Actions/Movement/CharwiseMoveAction.hpp"
@@ -29,17 +30,24 @@ ParseResult TypingMode::parseSpecialKey(SpecialKey key,
         }
         else if (delete_position.row > 0) { // otherwise move to end of prev if possible
             delete_position.row--;
-            delete_position.column = std::max(static_cast<int>(state.getParagraph(delete_position.row).length()) - 1, 0);
+            delete_position.column = state.getParagraph(delete_position.row).length();
         } 
         else {
             return {std::nullopt, {}};
         }
 
-        return {ModeType::TYPING_MODE, {std::make_shared<DeleteAction>(delete_position, delete_position)}};
+        return {ModeType::TYPING_MODE, {std::make_shared<CompoundAction>(std::vector<std::shared_ptr<Action>>{
+            std::make_shared<DeleteAction>(delete_position, delete_position, cursor),
+            // std::make_shared<CharwiseMoveAction>(context.text_area_size, Direction::LEFT)
+        })}};
     }
 
     case SpecialKey::ENTER: {
-        return {ModeType::TYPING_MODE, {std::make_shared<ParagraphSplittingAction>(context.state.getCursor().getPosition())}};
+        return {ModeType::TYPING_MODE, {std::make_shared<CompoundAction>(std::vector<std::shared_ptr<Action>>{
+            std::make_shared<ParagraphSplittingAction>(context.state.getCursor().getPosition()),
+            std::make_shared<CharwiseMoveAction>(context.text_area_size, Direction::RIGHT)
+        })}};
+
     }
 
     case SpecialKey::ARROW_LEFT: {

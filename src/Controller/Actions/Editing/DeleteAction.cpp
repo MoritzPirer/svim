@@ -1,10 +1,11 @@
 #include "../../../../inc/Controller/Actions/Editing/DeleteAction.hpp"
 #include "../../../../inc/Controller/Actions/ExecutionContext.hpp"
 
-DeleteAction::DeleteAction(Position start, Position end):
+DeleteAction::DeleteAction(Position start, Position end, Position cursor):
     m_deleted_content{},
     m_start{start},
-    m_end{end}
+    m_end{end},
+    m_cursor{cursor}
     {}
 
 void DeleteAction::apply(ExecutionContext& context) {
@@ -17,7 +18,7 @@ void DeleteAction::apply(ExecutionContext& context) {
 
 void DeleteAction::undo(EditorState& state) {
     state.insertLines(m_deleted_content, m_start);
-    state.moveCursorTo({m_end.row, m_end.column + 1});
+    state.moveCursorTo(m_cursor);
 }
 
 bool DeleteAction::canBeUndone() const {
