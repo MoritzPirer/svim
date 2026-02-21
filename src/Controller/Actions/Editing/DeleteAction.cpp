@@ -31,15 +31,10 @@ bool DeleteAction::canAbsorb(const std::shared_ptr<Action>& action) const {
     if (delete_action == nullptr) {
         return false; // not a delete action
     }
-    return true;
-    // 1. Must be on the same row
     if (this->m_start.row != delete_action->m_start.row) {
         return false;
     }
 
-    // 2. Check Adjacency
-    // Backspace: 'this' start matches 'delete_action' end
-    // Delete: 'this' start matches 'delete_action' start (since cursor stays put)
     bool is_adjacent = (this->m_start.column - 1 == delete_action->m_end.column) 
         || (this->m_end.column == delete_action->m_start.column - 1);
     
@@ -59,7 +54,6 @@ void DeleteAction::absorb(const std::shared_ptr<Action>& action) {
     auto other = std::static_pointer_cast<DeleteAction>(action);
 
     // 1. Update the cursor to the latest position
-    this->m_cursor = other->m_cursor;
 
     // 2. Determine merge direction
     // If other ends where this starts, it's a Backspace (Delete Left)
@@ -83,20 +77,23 @@ void DeleteAction::absorb(const std::shared_ptr<Action>& action) {
     }
     else {
         // APPEND the text: [This Text][Other Text] (Forward Delete)
-        // We update our end to the other's end
-        // this->m_end = other->m_end;
+
+        this->m_cursor = other->m_cursor;
+
+        // account for text moving over
         this->m_end.column = this->m_start.column + 
-                             (this->m_deleted_content.back().length() + 
-                              other->m_deleted_content.front().length()) - 1;
+            (this->m_deleted_content.back().length() + 
+                other->m_deleted_content.front().length()) - 1;
 
-        if (!other->m_deleted_content.empty()) {
-            // Merge the overlapping line (our last line + other's first line)
-            this->m_deleted_content.back().append(other->m_deleted_content.front());
+        if (other->m_deleted_content.empty()) {
+            return;
 
-            // Add any subsequent lines from the other action
-            for (size_t i = 1; i < other->m_deleted_content.size(); ++i) {
-                this->m_deleted_content.push_back(other->m_deleted_content.at(i));
-            }
+        }
+        this->m_deleted_content.back().append(other->m_deleted_content.front());
+
+        // Add any subsequent lines from the other action
+        for (size_t i = 1; i < other->m_deleted_content.size(); ++i) {
+            this->m_deleted_content.push_back(other->m_deleted_content.at(i));
         }
     }
 }
