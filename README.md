@@ -1,130 +1,116 @@
 # MoTex
-MoTex is a solo-devloped, command line-based text editor. It is written in C++20 using the `ncurses` library and drawing heavy inspiration from vi / vim
 
-## Design philosophy
-The goal of MoTex is to provide a command system that strikes a balance between editing power and intuition and ease of use. Commands are structured with a simple and consistent grammar, and only a small number of command shortcuts are necessary to start editing.
+MoTex is a vim-inspired, solo-developed commandline text editor, created as a learning experience and a passion project. This readme is written for version 0.4.2.
 
-## Modes
-Akin to vim, MoTex uses a TOOL MODE (~vim's normal mode) that provides the commands, and a TYPING MODE (~vim's insert mode) that is used for writing text.
-Transioning from TYPING to TOOL mode is done with the escape key. Entering typing mode can be done in multiple ways, as described below
+## DESIGN PHILOSOPHY
 
-## Command system:
-Note that some of these commands are not yet implemented.
+MoTex' goal is simple: lower the skill floor while keeping the skill ceiling high. A minimal amount of shortcuts is needed to get started, and the command grammar is designed to be consistent, intuitive and easy to master. Additionally, multiple planned features will encourage discovering commands to add to your toolbox, rather than having a memorization overhead.
 
-### Definitions:
+## ARCHITECTURE
 
-#### SCOPE
-Scopes divide the text to specify what text area will be affectetd by commands. At any point, the cursor is in all five scopes at once - think of them as subsets of each other.
+The under-the-hood architecture is built around a Model-View-Controller architecture, with a state pattern for modal editing and mode-specific shortcuts. User Actions are processed using a command pattern, allowing for a low-cost undo/redo history via delta tracking.
 
-- w = word: one or more letters and numbers, seperated by whitespace or special characters (or the end of a paragraph)
-- e = expression: one or more letters, numbers and special characters, seperatedby whitespace (or the end of a paragraph)
-- l = line: a visual line on the screen
+## KEY FEATURES
+
+intuitive command grammar, default UI meta info, in-editor settings planned
+
+## GETTING STARTED
+
+### MINIMUM REQUIRED KNOWLEDGE
+
+To get started with MoTex, you will need to understand the two core modes: TYPING MODE is used for writing and deleting text, whereas TOOL MODE is used for all of MoTex' commands. When in TOOL MODE, press 'i' to enter TYPING MODE. When in TYPING MODE, press the escape key to enter TOOL MODE. Move the cursor with the arrow keys in either mode or, if you are in TOOL MODE, using h (left), j (down), k (up) and l (right). When in TOOL MODE, you can save with !s and quit with !q.
+
+### EXISTING COMMANDS
+Unless otherwise specified, all commands stay in TOOL MODE.
+
+The following commands require only a single input:
+
+- e & E: the ERASE operator. Erases the character under the cursor. E (uppercase) enters TYPING MODE, e (lowercase) stays in TOOL MODE
+- u & U: the UNDO & REDO operator. u (lowercase) undoes the most recent editing action, U (uppercase) redoes the most recently undone action.
+- o & O: the paragraph creation operator. o (lowercase) creates a paragraph below the current one, O (uppercase) creates a paragraph above the current one
+- + & -: the Split & Join operators. + (plus) joins the next paragraph to the current one, - (minus) splits the current paragraph from the cursor onwards into its own paragraph
+- > & <: the INDENTATION operator. > (greater than) indents the current paragraph to the next multiple of four spaces, < (less than) unindents the current paragraph to the previous multiple of four spaces. TAB and SHIFT-TAB do the same thing, both in TYPING MODE and in TOOL MODE. Currently, tab width is locked to four spaces, but it will be possible to configure this in a future update.
+
+The next section describes 'compound commands', which are commands where a secondary input is needed. There are three types of input: Scopes, ranges and arguments.
+
+Scopes divide the text to specify what text area will be affected by commands. At any point, the cursor is in all five scopes at once - think of them as subsets of each other.
+- w = word: one or more letters and numbers, seperated by whitespace or special characters. (or the end of a paragraph)
+- e = expression: one or more letters, numbers and special characters, seperated by whitespace (or the end of a paragraph)
+- l = line: a visual line on the screen (depends on window width)
 - p = paragraph: one paragraph of text
 - f = file: the entire file
 
-#### RANGE
-Ranges are sections of text surrounded by a matching pair of delimiting characters
-
+Ranges are sections of text surrounded by a matching pair of delimiting characters:
 - " = within double quotes
 - ' = within single quotes
 - ( = within parentheses
-- [ = within brackets
 - { = within curly braces
+- [ = within brackets
 - < = within angled brackets
+Ranges account for nesting, meaning in a string like '(abc(def)ghi)', with the cursor on 'a', 'm(' (move to the end of the parentheses) would move to i, not f, because 'def' is within nested parentheses.
 
-#### ARGUMENT
-An argument is any ascii character that can be typed.
+Arguments are a general-purpose type of input that will be processed individually by each operator.
 
-### Cursor movement
-- h = move the cursor one character left
-- j = move the cursor one line down
-- k = move the cursor one line up
-- l = move the cursor one character right
-Note that you can also use the arrow keys (also in Typing mode)
+MOVE operator (m & M): Accepts either a scope or a range. m (lowercase) moves the cursor forward to the end of the given scope or range. M (uppercase) moves the cursor backward to the start of the given scope or range.
 
-#### g & G: GOTO a neighbouring scope / range
-- g + scope / range = go to start of the next scope / range
-- G + scope / range = go to end of the previous scope / range
+NEXT operator (n & N): Accepts either a scope or a range. n (lowercase) moves the cursor to the start of the next scope or range. N (uppercase) moves the cursor backwards to the end of the previous scope or range.
 
-#### m & M: MOVE within a scope / range
-- m + scope / range = move to the end of the scope / range
-- M + scope / range = move to the start of the scope / range
+FIND operator (f & F): Accepts an argument. f (lowercase) moves the cursor to the next occurrence of that argument. F (uppercase) moves the cursor backwards to the previous occurrence of that argument. As opposed to vim, this is not limited to the current paragraph.
 
-#### f & F: FIND a character
-- f + argument = move to the next occurrence of the argument
-- F + argument = move to the previous occurrence of the argument
+AT operator (a & A): Accepts either a scope or a range. Moves the cursor just like the move operator, but also enters TYPING MODE.
 
-(how g/G and f/F will behave if their end point is not present is still undecided (e.g. gf of f; if there is no semicolon to find)
+NOTE: In case the target position is not reachable (e.g. f; without a semicolon to find, nf,...), all movement operations described above move as far as possible.
 
-#### b & B: set a BOOKMARK
-(this is MoTex's version of vim's marks)
+REPLACE operator (r): Accepts an argument. The character under the cursor is replaced by the argument.
 
-- b + argument = set bookmark 'argument' to the current cursor position
-- B + argument = move to the position of bookmark 'argument'
-(how bookmarks will account for edits that move the position they were set at is not yet decided)
+TOGGLE CASE operator (t & T): Accepts either a scope or a range. t (lowercase) sets that scope or range to lowercase, T (uppercase) sets the scope or range to uppercase.
 
-### Entering Typing mode
-- i = enter typing mode at the current position
+SYSTEM operator (!): Accepts one of the following arguments:
+- q: if all changes are saved, quit. Otherwise display a warning.
+- Q: save all changes and quit.
+- x: quit without saving
+- s: save
 
-#### a & A: start typing AT
-- a + scope / range = enter typing mode at the end of the current scope / range
-- A + scope / range = enter typing mode at the start of the current scope / range
+### UPCOMING COMMANDS
+(d,c,y,p) ( ., !, ?)
 
-#### o & O: insert paragraphs
-- o = add a new paragraph below the current one and enter typing mode at the start of it
-- O = add a new paragraph above the current one and enter typing mode at the start of it
+DELETE operators (d & D): d (lowercase) accepts a scope or range. That area is deleted. D (uppercase) accepts an argument. The area from the cursor to the next occurence of the argument is deleted (including the argument and the starting position).
 
-### Editing
+CHANGE operators (c & C): c and C work just like d and D, but switches to TYPING MODE.
 
-#### d,c,y & D,C,Y: DELETE, CHANGE and YANK
-- d + scope / range = delete that scope / range
-- c + scope / range = delete that scope / range and enter typing mode
-- y + scope / range = copy that scope / range to an internal clipboard
+YANK operators (y & Y): y (lowercase) accepts a scope or range. That area is copied to an internal clipboard. Y (uppercase) accepts an argument. The area from the cursor to the next occurence of the argument is copied to an internal clipboard (including the argument and the starting position).
 
-- D + argument = delete from the cursor to the next occurrence of argument
-- C + argument = delete from the cursor to the next occurrence of argument and enter typing mode
-- Y + argument = copy from the cursor to the next occurrence of argument to an internal clipboard
+PASTE operator (p & P): p (lowercase) pastes the contents of the internal clipboard after the cursor, P (uppercase) pastess the contents of the internal clipboard before the cursor.
 
-#### r, e & E: REPLACE and ERASE
-- r + argument = replace the character under the cursor with argument
-- e = delete the character under the cursor
-- E = delete the character under the cursor and enter typing mode
+HELP operator (?): Accepts an argument. If that argument is an operator, usage tips for that operator are displayed as a temporary message. If that argument is also a scope or range indicator, that scope or range is explained as well.
 
-#### p & P: PASTE
-- p = paste the contents of the internal clipboard after the cursor
-- P = paste the contents of the internal clipboard before the cursor
+REPEAT operator (.): Repeats the last editing command (specifics to be determined)
 
-#### u & U: UNDO and redo
-- u = undo the last action
-- U = redo the last action
+SYSTEM operator (!): In addition to the already existing options, these will be added:
+- r: rename the file
+- c: configure settings
 
-#### t & T: TOGGLE case
-- t + scope / range = transform the scope / range to all-lowercase
-- T + scope / range = transform the scope / range to all-uppercase
+BOOKMARK operator (b & B): Accepts an argument. b (lowercase) creates a bookmark at the current cursor position, named with the argument. B (uppercase) moves to the bookmark associated with the argument. (specifics to be determined, especially with regards to bookmark positions being deleted
 
-#### .: repeat
-- . = repeat the last executed command
-(Some commands, e.g. most if not all cursor movement commands, will not be repeatable -> exact details to be decided)
+## Technical Stack
 
-#### > & <: indent and unindent
-- > = indent the current paragraph
-- < = unindent the current paragraph
+MoTex is written in C++ 20 using the ncurses library for rendering and input handeling. Everything else was built from scratch or uses the C++ standard library.
 
-#### + & -: join and split paragraph
-- + = join the next paragraph to the current one
-- - = split the current paragraph into two parts
+## ROADMAP & LIMITATIONS
+What can it do, what can't it do, what will it be able to do soon
 
-### File actions
-- ! + q = soft quit: if all changes are saved, quit. Otherwise, display a message asking for either a save or exit command
-- ! + x = exit: close without saving and without asking for confirmation
-- ! + s = save
-- ! + Q = save and quit
-- ! + r = rename file (details tbd)
-- ! + c = open settings
+In addition to the planned commands described above, the following features are planned:
+1. Auto Save (either after some amount of time or some number of edits)
+2. Changing settings at runtime (e.g. disabling UI color, relative vs absolute vs no line numbering, What meta information to display).
+3. Simple spell checking / typo detection
+4. Selection mode similar to vim's visual mode
 
-### ?: Help operator
-Provides information about the character given as an argument. If that character is an operator, the information contains what the operator does, and, if it requires a secondary input, what that input should be. If the character is a scope identifier (w,e,l,p,f), information about that scope will also be explained.
+Some additional features are being considered, but are not guaranteed to be implemented
+1. vim-like macros
+2. Rendering bold / italics / headings in markdown files
+3. syntax highlighting in code files using an LSP
+4. find and search replace commands
 
-### other planned commands (syntax tbd)
-- strg-f and seach-replace (%s)
-- prefixing commands with numbers to perform it multiple times
+Limitations MoTex has and will have for at least the near future:
+- no unicode support (ascii only)
+- no interaction with system clipboard 
