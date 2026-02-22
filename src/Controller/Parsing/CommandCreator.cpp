@@ -49,23 +49,27 @@ ParseResult CommandCreator::generateActions(std::optional<CommandDetails> detail
         return generateCharacterwiseMove(*details, context.text_area_size);
     }
 
-    case Operator::MOVE_FIND: {
+    case Operator::MOVE_TO_FIND: {
         return generateSpanMove(*details, context, EndBehavior::STOP_ON_END);
     }
 
-    case Operator::MOVE_WITHIN_CHUNK: {
+    case Operator::MOVE_TO_END: {
         return generateSpanMove(*details, context, EndBehavior::STOP_BEFORE_END);
     }
 
-    case Operator::MOVE_OVER_CHUNK: {
+    case Operator::MOVE_TO_NEXT: {
         return generateSpanMove(*details, context, EndBehavior::STOP_AFTER_END);
     }
 
     /// Editing
 
-    case Operator::ERASE: {
+    case Operator::DELETE_SINGLE: {
         Position cursor = state.getCursor().getPosition();
         return {details->next_mode, make_shared<DeleteAction>(cursor, cursor, cursor)};
+    }
+
+    case Operator::DELETE_WITHIN: {
+        return generateDeleteCommand(*details, context);
     }
 
     case Operator::PARAGRAPH_CREATE: {
@@ -147,8 +151,8 @@ ParseResult CommandCreator::generateHint(CommandDetails details) {
     // only applies to compound commands
     switch (details.operator_type) {
 
-    case Operator::MOVE_WITHIN_CHUNK:
-    case Operator::MOVE_OVER_CHUNK:
+    case Operator::MOVE_TO_END:
+    case Operator::MOVE_TO_NEXT:
     case Operator::CASE_SET_UPPER:
     case Operator::CASE_SET_LOWER: {
         return {std::nullopt, 
@@ -156,7 +160,7 @@ ParseResult CommandCreator::generateHint(CommandDetails details) {
         };
     }
     
-    case Operator::MOVE_FIND:
+    case Operator::MOVE_TO_FIND:
     case Operator::REPLACE: {
         return {std::nullopt, 
             make_shared<NotifyAction>("Enter a character argument (letter, digit, special character)!")
@@ -321,34 +325,37 @@ ParseResult CommandCreator::generatParagraphCreationCommand(CommandDetails detai
     })};
 }
 
-// ParseResult CommandCreator::generateDeleteCommand(CommandDetails details, ParsingContext context) {
-//     // range or custom delimiter
-//     if (!details.scope.has_value()) {
-//         auto [start, end] = SpanResolver::fromDelimiter(context.state, {
-//             .delimiters = std::string(1, *(details.argument)),
-//             .anti_delimiters = getAntiDelimiter(*(details.argument)),
-//             .end_behavior = EndBehavior::STOP_BEFORE_END,
-//             .paragraph_is_delimiter = false
-//         });
+ParseResult CommandCreator::generateDeleteCommand(CommandDetails details, ParsingContext context) {
+    Position cursor = context.state.getCursor().getPosition();
 
-//         return {details.next_mode, make_shared<DeleteAction>(start, end)};
-//     }
+    // range or custom delimiter
+    if (!details.scope.has_value()) {
+        auto [start, end] = SpanResolver::fromDelimiter(context.state, {
+            .delimiters = std::string(1, *(details.argument)),
+            .anti_delimiters = getAntiDelimiter(*(details.argument)),
+            .end_behavior = EndBehavior::STOP_BEFORE_END,
+            .paragraph_is_delimiter = false
+        });
 
-//     ScopeSettings settings = {
-//         .scope = *(details.scope),
-//         .size = context.text_area_size,
-//         .end_behavior = EndBehavior::STOP_BEFORE_END
-//     };
+        return {details.next_mode, make_shared<DeleteAction>(start, end, cursor)};
+    }
 
-//     if (settings.scope == Scope::EXPRESSION) {
-//         settings.delimiters = m_expression_delimiters;
-//     }
-//     else if (settings.scope == Scope::WORD) {
-//         settings.delimiters = m_word_delimiters;
-//     }
+    // Scope given
+    ScopeSettings settings = {
+        .scope = *(details.scope),
+        .size = context.text_area_size,
+        .end_behavior = EndBehavior::STOP_BEFORE_END
+    };
 
-//     auto [start, end] = SpanResolver::fromScope(context.state, settings);
+    if (settings.scope == Scope::EXPRESSION) {
+        settings.delimiters = m_expression_delimiters;
+    }
+    else if (settings.scope == Scope::WORD) {
+        settings.delimiters = m_word_delimiters;
+    }
 
-//     return {details.next_mode, make_shared<DeleteAction>(start, end)};
+    auto [start, end] = SpanResolver::fromScope(context.state, settings);
 
-// }
+    return {details.next_mode, make_shared<DeleteAction>(start, end, cursor)};
+
+}

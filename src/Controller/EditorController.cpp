@@ -24,7 +24,12 @@ EditorController::~EditorController() {
     }
 }
 void EditorController::startAutoSaveLoop(std::filesystem::path executable_path) {
-    m_state.requestBackup();
+    if (m_state.getSaveState() == SaveState::SAVED) {
+        m_state.registerBackup();
+    } 
+    else {
+        m_state.requestBackup();
+    }
 
 
     std::filesystem::path backup_directory = FileHandler::createBackupLocation(executable_path);

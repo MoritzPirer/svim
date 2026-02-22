@@ -46,11 +46,11 @@ void CommandParser::parseAsOperator(char input) {
             .next_mode = ModeType::TYPING_MODE
         }},
         {'e', {
-            .operator_type = Operator::ERASE,
+            .operator_type = Operator::DELETE_SINGLE,
             .next_mode = ModeType::TOOL_MODE
         }},
         {'E', {
-            .operator_type = Operator::ERASE,
+            .operator_type = Operator::DELETE_SINGLE,
             .next_mode = ModeType::TYPING_MODE
         }},
         {'o', {
@@ -86,36 +86,36 @@ void CommandParser::parseAsOperator(char input) {
     //operators requiring a second input
     std::unordered_map<char, CommandDetails> compound_commands = {
         {'m', {
-            .operator_type = Operator::MOVE_WITHIN_CHUNK,
+            .operator_type = Operator::MOVE_TO_END,
             .scope = std::nullopt,
             .direction = Direction::RIGHT,
             .next_mode = ModeType::TOOL_MODE
         }},
         {'M', {
-            .operator_type = Operator::MOVE_WITHIN_CHUNK,
+            .operator_type = Operator::MOVE_TO_END,
             .scope = std::nullopt,
             .direction = Direction::LEFT,
             .next_mode = ModeType::TOOL_MODE
         }},
         {'n', {
-            .operator_type = Operator::MOVE_OVER_CHUNK,
+            .operator_type = Operator::MOVE_TO_NEXT,
             .scope = std::nullopt,
             .direction = Direction::RIGHT,
             .next_mode = ModeType::TOOL_MODE
         }},
         {'N', {
-            .operator_type = Operator::MOVE_OVER_CHUNK,
+            .operator_type = Operator::MOVE_TO_NEXT,
             .scope = std::nullopt,
             .direction = Direction::LEFT,
             .next_mode = ModeType::TOOL_MODE
         }},
         {'a', {
-            .operator_type = Operator::MOVE_WITHIN_CHUNK,
+            .operator_type = Operator::MOVE_TO_END,
             .direction = Direction::RIGHT,
             .next_mode = ModeType::TYPING_MODE
         }},
         {'A', {
-            .operator_type = Operator::MOVE_WITHIN_CHUNK,
+            .operator_type = Operator::MOVE_TO_END,
             .direction = Direction::LEFT,
             .next_mode = ModeType::TYPING_MODE
         }},
@@ -123,12 +123,12 @@ void CommandParser::parseAsOperator(char input) {
             .operator_type = Operator::FILE_ACTION
         }},
         {'f', {
-            .operator_type = Operator::MOVE_FIND,
+            .operator_type = Operator::MOVE_TO_FIND,
             .direction = Direction::RIGHT,
             .next_mode = ModeType::TOOL_MODE
         }},
         {'F', {
-            .operator_type = Operator::MOVE_FIND,
+            .operator_type = Operator::MOVE_TO_FIND,
             .direction = Direction::LEFT,
             .next_mode = ModeType::TOOL_MODE
         }},
@@ -142,6 +142,18 @@ void CommandParser::parseAsOperator(char input) {
         {'T', {
             .operator_type = Operator::CASE_SET_UPPER,
             .scope = std::nullopt
+        }},
+        {'d', {
+            .operator_type = Operator::DELETE_WITHIN,
+            .scope = std::nullopt,
+            .next_mode = ModeType::TOOL_MODE,
+
+        }},
+        {'c', {
+            .operator_type = Operator::DELETE_WITHIN,
+            .scope = std::nullopt,
+            .next_mode = ModeType::TYPING_MODE,
+
         }}
     };
 
@@ -167,10 +179,11 @@ void CommandParser::parseAsParameter(char input) {
     switch (m_details->operator_type) {
     
     // Operators that take a scope or range indicator as a parameter
+    case Operator::DELETE_WITHIN:
     case Operator::CASE_SET_LOWER:
     case Operator::CASE_SET_UPPER:
-    case Operator::MOVE_WITHIN_CHUNK:
-    case Operator::MOVE_OVER_CHUNK: {
+    case Operator::MOVE_TO_END:
+    case Operator::MOVE_TO_NEXT: {
         std::optional<Scope> scope = charToScope(input);
         if (scope.has_value()) {
             m_details->scope = scope;
@@ -189,7 +202,7 @@ void CommandParser::parseAsParameter(char input) {
 
     // Operators that take an argument
     case Operator::REPLACE:
-    case Operator::MOVE_FIND:
+    case Operator::MOVE_TO_FIND:
     case Operator::FILE_ACTION: {
         m_details->argument = input;
         m_details->is_complete = true;

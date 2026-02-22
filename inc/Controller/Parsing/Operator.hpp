@@ -11,15 +11,17 @@
 
 enum class Operator {
     MOVE_BY_CHARACTER,      //hjkl
-    MOVE_WITHIN_CHUNK,      //mM, aA
-    MOVE_OVER_CHUNK,        //gm
-    MOVE_FIND,              //fF
+    MOVE_TO_END,      //mM, aA
+    MOVE_TO_NEXT,        //gm
+    MOVE_TO_FIND,              //fF
 
     PARAGRAPH_JOIN,         //+
     PARAGRAPH_SPLIT,        //-
     PARAGRAPH_CREATE,       //oO
 
-    ERASE,                  //e
+    DELETE_SINGLE,                  //e
+    DELETE_WITHIN,
+    DELETE_UNTIL,
     REPLACE,                //r
     INDENT,                 //>
     UNINDENT,               //<

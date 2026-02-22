@@ -1,6 +1,6 @@
 # MoTex
 
-MoTex is a vim-inspired, solo-developed commandline text editor, created as a learning experience and a passion project. This readme is written for version 0.4.2.
+MoTex is a vim-inspired, solo-developed commandline text editor, created as a learning experience and a passion project. This readme is written for version 0.5.0.
 
 ## DESIGN PHILOSOPHY
 
@@ -12,7 +12,16 @@ The under-the-hood architecture is built around a Model-View-Controller architec
 
 ## KEY FEATURES
 
-intuitive command grammar, default UI meta info, in-editor settings planned, auto save
+MoTex displays useful meta information about the file currently being edited:
+- the current mode
+- The file currently being edited
+- the save state of the file
+- the cursor position
+- the number of words, paragraphs and characters
+- the current version of the editor
+- paragraph numbers along the left edge
+
+There are also several quality-of-life features to make using MoTex as smoth as possible. The text history system groups text into words when undoing them to make deleting larger sections of text or undoing large deletions faster. Additionally files are periodically backed up to a fixed location relative to the location of the executable. That way, you never lose more than five minuts of progress.
 
 ## GETTING STARTED
 
@@ -29,7 +38,7 @@ The following commands require only a single input:
 - u & U: the UNDO & REDO operator. u (lowercase) undoes the most recent editing action, U (uppercase) redoes the most recently undone action.
 - o & O: the paragraph creation operator. o (lowercase) creates a paragraph below the current one, O (uppercase) creates a paragraph above the current one
 - + & -: the Split & Join operators. + (plus) joins the next paragraph to the current one, - (minus) splits the current paragraph from the cursor onwards into its own paragraph
-- > & <: the INDENTATION operator. > (greater than) indents the current paragraph to the next multiple of four spaces, < (less than) unindents the current paragraph to the previous multiple of four spaces. TAB and SHIFT-TAB do the same thing, both in TYPING MODE and in TOOL MODE. Currently, tab width is locked to four spaces, but it will be possible to configure this in a future update.
+- \> & <: the INDENTATION operator. > (greater than) indents the current paragraph to the next multiple of four spaces, < (less than) unindents the current paragraph to the previous multiple of four spaces. TAB and SHIFT-TAB do the same thing, both in TYPING MODE and in TOOL MODE. Currently, tab width is locked to four spaces, but it will be possible to configure this in a future update.
 
 The next section describes 'compound commands', which are commands where a secondary input is needed. There are three types of input: Scopes, ranges and arguments.
 
