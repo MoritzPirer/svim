@@ -4,5 +4,5 @@
 #include "../../../../inc/Controller/Actions/ExecutionContext.hpp"
 
 void UndoAction::apply(ExecutionContext& context) {
-    context.UndoRedoManager.undo(context.state);
+    context.undoRedoManager.undo(context.state);
 }

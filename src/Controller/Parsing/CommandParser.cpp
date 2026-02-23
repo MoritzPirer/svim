@@ -89,24 +89,28 @@ void CommandParser::parseAsOperator(char input) {
             .operator_type = Operator::MOVE_TO_END,
             .scope = std::nullopt,
             .direction = Direction::RIGHT,
+            .scope = std::nullopt,
             .next_mode = ModeType::TOOL_MODE
         }},
         {'M', {
             .operator_type = Operator::MOVE_TO_END,
             .scope = std::nullopt,
             .direction = Direction::LEFT,
+            .scope = std::nullopt,
             .next_mode = ModeType::TOOL_MODE
         }},
         {'n', {
             .operator_type = Operator::MOVE_TO_NEXT,
             .scope = std::nullopt,
             .direction = Direction::RIGHT,
+            .scope = std::nullopt,
             .next_mode = ModeType::TOOL_MODE
         }},
         {'N', {
             .operator_type = Operator::MOVE_TO_NEXT,
             .scope = std::nullopt,
             .direction = Direction::LEFT,
+            .scope = std::nullopt,
             .next_mode = ModeType::TOOL_MODE
         }},
         {'a', {

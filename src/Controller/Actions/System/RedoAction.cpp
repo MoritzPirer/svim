@@ -4,5 +4,5 @@
 #include "../../../../inc/Controller/Actions/ExecutionContext.hpp"
 
 void RedoAction::apply(ExecutionContext& context) {
-    context.UndoRedoManager.redo(context);
+    context.undoRedoManager.redo(context);
 }

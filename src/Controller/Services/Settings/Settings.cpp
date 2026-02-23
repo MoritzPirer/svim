@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 #include "../../../../inc/Controller/Services/Settings/Settings.hpp"
 
 using std::vector, std::string;

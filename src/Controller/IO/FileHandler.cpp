@@ -20,22 +20,38 @@ namespace {
     }
 
     std::ofstream openOutputFile(const TextFile& file) {
-
         path file_path = file.getFilepath();
-        path parent_directory = file_path.parent_path();
+        // Use absolute path to ensure we aren't losing the directory context
+        path abs_path = std::filesystem::absolute(file_path);
+        path parent_directory = abs_path.parent_path();
 
-        if (!parent_directory.empty()) {
+        if (!parent_directory.empty() && !std::filesystem::exists(parent_directory)) {
             std::filesystem::create_directories(parent_directory);
         }
 
-        std::ofstream output_file(file.getFilepath().string());
-    
+        std::ofstream output_file(abs_path.string());
         if (!output_file.is_open()) {
-            throw FileException("Unable to open file '" + file_path.string() + "'!");
+            throw FileException("Unable to open file "); //'" + abs_path.string() + "'! Error: " + strerror(errno));
         }
-
-        return output_file;
+        return output_file; // Should move correctly in C++20
     }
+    // std::ofstream openOutputFile(const TextFile& file) {
+
+    //     path file_path = file.getFilepath();
+    //     path parent_directory = file_path.parent_path();
+
+    //     if (!parent_directory.empty()) {
+    //         std::filesystem::create_directories(parent_directory);
+    //     }
+
+    //     std::ofstream output_file(file.getFilepath().string());
+    
+    //     if (!output_file.is_open()) {
+    //         throw FileException("Unable to open file '" + file_path.string() + "'!");
+    //     }
+
+    //     return output_file;
+    // }
 
     void writeToFile(std::ofstream& output_file, TextFile& file) {
         for (int i = 0; i < file.getNumberOfParagrahps(); i++) {
@@ -67,17 +83,19 @@ namespace {
 
 TextFile FileHandler::openFile(const string& file_path) {
     
-    if (!std::filesystem::exists(file_path)) {
-        return createFile(file_path);
+    std::filesystem::path absolute = std::filesystem::absolute(file_path);
+    if (!std::filesystem::exists(absolute)) {
+        return createFile(absolute);
     }
     
-    std::ifstream input_file(file_path);
+    std::ifstream input_file(absolute);
     if (!input_file.is_open()) {
         //MODO HANDLE THIS
+        throw FileException("Unable to open input file!");
         return {file_path, SaveState::SAVED};
     }
 
-    TextFile file = readFromFile(input_file, file_path);
+    TextFile file = readFromFile(input_file, absolute);
     input_file.close();
 
     return file;

@@ -102,11 +102,11 @@ void EditorController::mainLoop(std::string executable_path) {
             }
         );
 
-        ExecutionContext context = {m_state, m_UndoRedoManager};
+        ExecutionContext context = {m_state, m_undoRedoManager};
 
         if (action.has_value()) {
             (*action)->apply(context);
-            m_UndoRedoManager.add(*action);
+            m_undoRedoManager.add(*action);
         } 
     }
 }

@@ -14,7 +14,7 @@ class UndoRedoManager;
 
 struct ExecutionContext {
     EditorState& state;
-    UndoRedoManager& UndoRedoManager;
+    UndoRedoManager& undoRedoManager;
 };
 
 #endif //EXECUTION_CONTEXT_HPP

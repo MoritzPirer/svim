@@ -1,4 +1,5 @@
 #include <unordered_map>
+#include <stdexcept>
 
 #include "../../../inc/Controller/Parsing/SpanResolver.hpp"
 
@@ -106,6 +107,10 @@ Position startOfParagraph(EditorState& state, ScopeSettings settings) {
     case EndBehavior::STOP_BEFORE_END: {
         return {state.getCursor().getRow(), 0};
     }
+
+    default: {
+        throw std::invalid_argument("Unkown enum value");
+    }
     }
 }
 
@@ -131,6 +136,10 @@ Position startOfLine(EditorState& state, ScopeSettings settings) {
     //go to the first character of the current line
     case EndBehavior::STOP_BEFORE_END: {
         return {state.getCursor().getRow(), first_column_of_line};
+    }
+
+    default: {
+        throw std::invalid_argument("Unkown enum value");
     }
 
     }
@@ -177,6 +186,9 @@ Position startOfScope(EditorState& state, ScopeSettings settings) {
         );
     }
 
+    default: {
+        throw std::invalid_argument("Unkown enum value");
+    }
 
     }
 }
@@ -197,6 +209,10 @@ Position endOfParagraph(EditorState& state, ScopeSettings settings) {
     case EndBehavior::STOP_BEFORE_END: {
         int column = state.getParagraph(row).length();
         return {row, column};
+    }
+
+    default: {
+        throw std::invalid_argument("Unkown enum value");
     }
 
     }
@@ -230,6 +246,10 @@ Position endOfLine(EditorState& state, ScopeSettings settings) {
     case EndBehavior::STOP_BEFORE_END: {
 
         return {row, last_of_current_line};
+    }
+
+    default: {
+        throw std::invalid_argument("Unkown enum value");
     }
     }
 
@@ -277,6 +297,9 @@ Position endOfScope(EditorState& state, ScopeSettings settings) {
         );
     }
 
+    default: {
+        throw std::invalid_argument("Unkown enum value");
+    }
     }
 }
 
