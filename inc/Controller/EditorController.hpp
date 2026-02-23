@@ -29,7 +29,7 @@ private:
     ModeManager m_mode_manager;
     UiHandler m_ui_handler;
     Settings m_settings;
-    UndoRedoManager m_UndoRedoManager;
+    UndoRedoManager m_undoRedoManager;
 
     std::thread m_autosaver_thread;
     static const std::chrono::seconds c_autosave_frequency;

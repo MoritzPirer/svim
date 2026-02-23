@@ -75,8 +75,8 @@ ParseResult CommandCreator::generateActions(std::optional<CommandDetails> detail
     case Operator::PARAGRAPH_JOIN: {
         auto [start, end] = SpanResolver::fromScope(state, {
             .scope = Scope::PARAGRAPH,
-            .end_behavior = EndBehavior::STOP_BEFORE_END,
-            .size = context.text_area_size
+            .size = context.text_area_size,
+            .end_behavior = EndBehavior::STOP_BEFORE_END
         });
         return {ModeType::TOOL_MODE, make_shared<CompoundAction>(std::vector<std::shared_ptr<Action>>{
             make_shared<SpanMoveAction>(start, end, Direction::RIGHT),
