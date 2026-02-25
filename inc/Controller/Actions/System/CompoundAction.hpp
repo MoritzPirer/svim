@@ -24,9 +24,10 @@ public:
 
     void apply(ExecutionContext& context) override;
 
+    bool canBeUndone() const override;
+
     void undo(EditorState& state) override;
 
-    bool canBeUndone() const override;
 };
 
 #endif //COMPOUND_ACTION_HPP

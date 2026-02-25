@@ -19,9 +19,9 @@ void CompoundAction::undo(EditorState& state) {
 bool CompoundAction::canBeUndone() const {
     for (auto action : m_actions) {
         if (!action->canBeUndone()) {
-            return false;
+            return true;
         }
     }
-
-    return true;
+    
+    return false;
 }

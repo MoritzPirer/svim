@@ -105,7 +105,7 @@ ParseResult CommandCreator::generateActions(std::optional<CommandDetails> detail
         return {ModeType::TOOL_MODE, make_shared<CompoundAction>(ActionList{
             make_shared<DeleteAction>(cursor, cursor, cursor),
             make_shared<InsertAction>(std::vector<std::string>{std::string(1, *(details->argument))}, cursor),
-            // make_shared<CharwiseMoveAction>(context.text_area_size, Direction::LEFT)
+            make_shared<CharwiseMoveAction>(context.text_area_size, Direction::LEFT)
         })};
     }
 
