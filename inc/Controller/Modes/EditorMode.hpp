@@ -23,9 +23,11 @@ class EditorMode {
 private:
     bool isClickPositionValid(Position click_position,
         int aside_width, ScreenSize text_area_size);
+
+    Position convertToLogicPosition(Position click_position, ParsingContext context);
+
 protected:
-    ParseResult parseMouseMovement(Position click_position,
-        ScreenSize actual_size, ScreenSize text_area_size);
+    ParseResult parseMouseMovement(Position click_position, ParsingContext context);
 public:
     EditorMode() = default;
     EditorMode(const EditorMode&) = default;

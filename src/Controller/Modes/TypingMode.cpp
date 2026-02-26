@@ -4,7 +4,6 @@
 #include "../../../inc/Controller/Actions/Editing/DeleteAction.hpp"
 #include "../../../inc/Controller/Actions/Structure/ParagraphSplittingAction.hpp"
 #include "../../../inc/Controller/Actions/Movement/CharwiseMoveAction.hpp"
-#include "../../../inc/Controller/Actions/Movement/FixedPositionMoveAction.hpp"
 #include "../../../inc/Controller/Actions/Editing/IndentAction.hpp"
 #include "../../../inc/Controller/Actions/Editing/UnindentAction.hpp"
 
@@ -12,8 +11,7 @@
 
 using std::make_shared;
 
-ParseResult TypingMode::parseSpecialKey(SpecialKey key,
-    ParsingContext context) {
+ParseResult TypingMode::parseSpecialKey(SpecialKey key, ParsingContext context) {
     
     EditorState& state = context.state;
     Position cursor = state.getCursor().getPosition();
@@ -90,11 +88,10 @@ ParseResult TypingMode::parseSpecialKey(SpecialKey key,
     }
 }
 
-ParseResult TypingMode::parseInput(
-    Input input, ParsingContext context) {
+ParseResult TypingMode::parseInput(Input input, ParsingContext context) {
 
     if (input.mouse_position.has_value()) {
-        return parseMouseMovement(*input.mouse_position, context.actual_size, context.text_area_size);
+        return parseMouseMovement(*input.mouse_position, context);
     }
 
     if (input.special_key.has_value()) {

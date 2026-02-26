@@ -3,7 +3,6 @@
 #include "../../../inc/Controller/Actions/Editing/IndentAction.hpp"
 #include "../../../inc/Controller/Actions/Editing/UnindentAction.hpp"
 #include "../../../inc/Controller/Actions/Movement/CharwiseMoveAction.hpp"
-#include "../../../inc/Controller/Actions/Movement/FixedPositionMoveAction.hpp"
 
 #include "../../../inc/Controller/Services/Settings/Settings.hpp"
 #include "../../../inc/Shared/Types/SpecialKey.hpp"
@@ -62,7 +61,7 @@ ParseResult ToolMode::parseStandardInput(int input, ParsingContext context) {
 ParseResult ToolMode::parseInput(Input input, ParsingContext context) {
     
     if (input.mouse_position.has_value()) {
-        return parseMouseMovement(*input.mouse_position, context.actual_size, context.text_area_size);
+        return parseMouseMovement(*input.mouse_position, context);
     }
 
     if (input.special_key.has_value()) {

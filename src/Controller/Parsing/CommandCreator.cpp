@@ -387,7 +387,31 @@ ParseResult CommandCreator::gerneratePasteCommand(CommandDetails details, Parsin
     }
     
     //paste full line above / below cursor
-    return emptyParse();
+    auto [start, end] = SpanResolver::fromScope(context.state, {
+        .scope = Scope::PARAGRAPH,
+        .end_behavior = EndBehavior::STOP_BEFORE_END
+    });
+
+    if (*details.direction == Direction::LEFT) {
+        Position insert_position = {cursor.row, 0};
+
+        return {details.next_mode, make_shared<CompoundAction>(ActionList{
+            make_shared<SpanMoveAction>(start, end, *details.direction),
+            make_shared<ParagraphSplittingAction>(start),
+            make_shared<InsertAction>(clipboard->content, insert_position, true),
+            make_shared<FixedPositionMoveAction>(insert_position)
+        })};
+    }
+    
+    Position insert_position = {cursor.row + 1, 0};
+    
+    return {details.next_mode, make_shared<CompoundAction>(ActionList{
+        make_shared<SpanMoveAction>(start, end, *details.direction),
+        make_shared<ParagraphSplittingAction>(end),
+        make_shared<CharwiseMoveAction>(context.text_area_size, Direction::RIGHT),
+        make_shared<InsertAction>(clipboard->content, insert_position, true),
+        make_shared<FixedPositionMoveAction>(insert_position)
+    })};
 }
 
 

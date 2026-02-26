@@ -14,10 +14,10 @@
 
 class FixedPositionMoveAction: public Action {
 private:
-    ScreenSize m_text_area_size;
     Position m_target_position;
+
 public:
-    FixedPositionMoveAction(ScreenSize text_area_size, Position target_position);
+    FixedPositionMoveAction(Position target_position);
     FixedPositionMoveAction(const FixedPositionMoveAction&) = default;
     ~FixedPositionMoveAction() = default;
 
