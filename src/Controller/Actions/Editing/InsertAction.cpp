@@ -10,11 +10,16 @@ InsertAction::InsertAction(std::vector<std::string> content, Position start, boo
 void InsertAction::apply(ExecutionContext& context) {
     context.state.insertLines(m_content, m_start);
 
-    Position first_after_insert = {
-        static_cast<int>(m_start.row + m_content.size() - 1),
-        static_cast<int>(m_content.back().length() + (m_content.size() == 1? m_start.column : 0))
-    };
-
+    Position first_after_insert;
+    if (m_content.empty()) {
+        first_after_insert = m_start;
+    }
+    else {
+        first_after_insert = {
+            static_cast<int>(m_start.row + m_content.size() - 1),
+            static_cast<int>(m_content.back().length() + (m_content.size() == 1? m_start.column : 0))
+        };
+    }
     context.state.moveCursorTo(first_after_insert);
 
     context.state.requestBackup();
@@ -25,17 +30,23 @@ bool InsertAction::canBeUndone() const {
 }
 
 void InsertAction::undo(EditorState& state) {
+    if (m_content.empty()) {
+        return;
+    }
 
-    int last_inserted_row = m_start.row + m_content.size() - 1;
-    int last_inserted_column = std::max(static_cast<int>(m_content.back().length()) - 1, 0);
+    Position last_inserted = {
+        static_cast<int>(m_start.row + m_content.size() - 1),
+        std::max(static_cast<int>(m_content.back().length()) - 1, 0)
+    };
+
     if (m_content.size() == 1) {
-        last_inserted_column += m_start.column;
+        last_inserted.column += m_start.column;
     }
-    if (m_content.back().empty()) {
-        last_inserted_row--;
+    else if (m_content.back().empty()) {
+        last_inserted.row--;
     }
 
-    state.deleteRange(m_start, {last_inserted_row, last_inserted_column});
+    state.deleteRange(m_start, last_inserted);
     state.moveCursorTo(m_start);
 
     state.requestBackup();

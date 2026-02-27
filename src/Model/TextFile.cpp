@@ -121,15 +121,15 @@ void TextFile::setCharacterAt(char character_to_set, Position position) {
 std::vector<std::string> TextFile::copySingleLine(Position start, Position end) {
     const std::string& row = m_file_content.at(start.row);
     
+    if (m_file_content.at(start.row).empty()) {
+        return {};
+    }
+
     if (isOverhangPosition(end)) {
-        return {
-            row.substr(start.column),
-            ""
-        };
+        return {row.substr(start.column), ""};
     }
-    else {
-        return {row.substr(start.column, end.column - start.column + 1)};
-    }
+    
+    return {row.substr(start.column, end.column - start.column + 1)};
 }
 
 std::vector<std::string> TextFile::copyMultipleLines(Position start, Position end) {
@@ -162,7 +162,10 @@ std::vector<std::string> TextFile::copyRange(Position start, Position end) {
 
     if (start.row > end.row
         || (start.row == end.row && start.column > end.column)) {
-        throw std::invalid_argument("End before Start!");
+        std::string e_f = end.format();
+        std::string s_f = start.format();
+        std::string msg = "End " + e_f + "is before start " + s_f;
+        throw std::invalid_argument(msg);
     }
 
     if (start.row == end.row) {
@@ -180,7 +183,8 @@ void TextFile::deleteRange(Position start, Position end) {
 
     if (start.row > end.row
         || (start.row == end.row && start.column > end.column)) {
-        throw std::invalid_argument("End before Start!");
+        std::string msg = "End " + end.format() + "is before start " + start.format();
+        throw std::invalid_argument(msg);
     }
 
     std::string suffix = "";
@@ -259,7 +263,6 @@ int TextFile::getParagraphLength(size_t index) const {
 }
 
 const std::string& TextFile::getParagraph(size_t index) const {
-    //MODO bounds checking?
     return m_file_content.at(index); 
 }
 
@@ -274,7 +277,9 @@ void TextFile::calculateMetadata() {
 }
 
 int TextFile::visualLinesNeeded(int line_length, int screen_width) {
-    if (line_length == 0) return 1;
+    if (line_length == 0) {
+        return 1;
+    }
                 
     bool has_partial_line = line_length % screen_width != 0;
 

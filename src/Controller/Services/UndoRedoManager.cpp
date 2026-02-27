@@ -33,6 +33,7 @@ void UndoRedoManager::undo(EditorState& state) {
         return;
     }
 
+    
     shared_ptr<Action> action = m_undoable_actions.back();
     m_undoable_actions.pop_back(); 
     
