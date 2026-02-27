@@ -21,6 +21,8 @@ private:
     std::string m_expression_delimiters = " \t";
     std::string m_word_delimiters = " \t!\"$%&/()=?[]|{}`+*#'-_.:,;<>";
 
+    std::optional<CommandDetails> m_previous_details;
+
     ParseResult emptyParse();
 
     ParseResult generateCharacterwiseMove(CommandDetails details, ScreenSize text_area_size);

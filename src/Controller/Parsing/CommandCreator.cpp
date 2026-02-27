@@ -41,40 +41,55 @@ ParseResult CommandCreator::generateActions(std::optional<CommandDetails> detail
         return generateHint(*details);
     }
 
-    std::unordered_map<Operator, std::function<ParseResult(void)>> generators = {
-        {Operator::SWITCH_MODE, [&]() { return ParseResult{ModeType::TYPING_MODE, std::nullopt}; }},
-        {Operator::MOVE_BY_CHARACTER, [&]() { return generateCharacterwiseMove(*details, context.text_area_size); }},
-        {Operator::MOVE_TO_FIND, [&]() { return generateSpanMove(*details, context, EndBehavior::STOP_ON_END); }},
-        {Operator::MOVE_TO_END, [&]() { return generateSpanMove(*details, context, EndBehavior::STOP_BEFORE_END); }},
-        {Operator::MOVE_TO_NEXT, [&]() { return generateSpanMove(*details, context, EndBehavior::STOP_AFTER_END); }},
+    std::unordered_map<Operator, std::function<ParseResult(CommandDetails command_details)>> generators = {
+        {Operator::SWITCH_MODE, [&](CommandDetails command_details) { return ParseResult{ModeType::TYPING_MODE, std::nullopt}; }},
+        {Operator::MOVE_BY_CHARACTER, [&](CommandDetails command_details) { return generateCharacterwiseMove(command_details, context.text_area_size); }},
+        {Operator::MOVE_TO_FIND, [&](CommandDetails command_details) { return generateSpanMove(command_details, context, EndBehavior::STOP_ON_END); }},
+        {Operator::MOVE_TO_END, [&](CommandDetails command_details) { return generateSpanMove(command_details, context, EndBehavior::STOP_BEFORE_END); }},
+        {Operator::MOVE_TO_NEXT, [&](CommandDetails command_details) { return generateSpanMove(command_details, context, EndBehavior::STOP_AFTER_END); }},
 
-        {Operator::CASE_SET_LOWER, [&]() { return generateCaseSetCommand(*details, context, Case::LOWER_CASE); }},
-        {Operator::CASE_SET_UPPER, [&]() { return generateCaseSetCommand(*details, context, Case::UPPER_CASE); }},
+        {Operator::CASE_SET_LOWER, [&](CommandDetails command_details) { return generateCaseSetCommand(command_details, context, Case::LOWER_CASE); }},
+        {Operator::CASE_SET_UPPER, [&](CommandDetails command_details) { return generateCaseSetCommand(command_details, context, Case::UPPER_CASE); }},
 
-        {Operator::FILE_ACTION, [&]() { return generateFileCommand(*details, context.settings); }},
+        {Operator::FILE_ACTION, [&](CommandDetails command_details) { return generateFileCommand(command_details, context.settings); }},
 
-        {Operator::PARAGRAPH_CREATE, [&]() { return generateParagraphCreationCommand(*details, context); }},
-        {Operator::PARAGRAPH_JOIN, [&]() { return generateParagraphJoinCommand(context); }},
-        {Operator::PARAGRAPH_SPLIT, [&]() { return generateParagraphSplitCommand(context); }},
+        {Operator::PARAGRAPH_CREATE, [&](CommandDetails command_details) { return generateParagraphCreationCommand(command_details, context); }},
+        {Operator::PARAGRAPH_JOIN, [&](CommandDetails command_details) { return generateParagraphJoinCommand(context); }},
+        {Operator::PARAGRAPH_SPLIT, [&](CommandDetails command_details) { return generateParagraphSplitCommand(context); }},
 
-        {Operator::DELETE_SINGLE, [&]() { return generateDeleteSingleCommand(*details, context); }},
-        {Operator::DELETE_WITHIN, [&]() { return generateDeleteWithinCommand(*details, context); }},
-        {Operator::DELETE_UNTIL, [&]() { return generateDeleteUntilCommand(*details, context); }},
-        {Operator::REPLACE, [&]() { return generateReplaceCommand(*details, context); }},
+        {Operator::DELETE_SINGLE, [&](CommandDetails command_details) { return generateDeleteSingleCommand(command_details, context); }},
+        {Operator::DELETE_WITHIN, [&](CommandDetails command_details) { return generateDeleteWithinCommand(command_details, context); }},
+        {Operator::DELETE_UNTIL, [&](CommandDetails command_details) { return generateDeleteUntilCommand(command_details, context); }},
+        {Operator::REPLACE, [&](CommandDetails command_details) { return generateReplaceCommand(command_details, context); }},
         
-        {Operator::COPY_WITHIN, [&]() { return generateCopyWithinCommand(*details, context); }},
-        {Operator::COPY_UNTIL, [&]() { return generateCopyUntilCommand(*details, context); }},
-        {Operator::PASTE, [&]() { return gerneratePasteCommand(*details, context); }},
+        {Operator::COPY_WITHIN, [&](CommandDetails command_details) { return generateCopyWithinCommand(command_details, context); }},
+        {Operator::COPY_UNTIL, [&](CommandDetails command_details) { return generateCopyUntilCommand(command_details, context); }},
+        {Operator::PASTE, [&](CommandDetails command_details) { return gerneratePasteCommand(command_details, context); }},
 
-        {Operator::INDENT, [&]() { return generateIndentCommand(context); }},
-        {Operator::UNINDENT, [&]() { return generateUnindentCommand(context); }},
+        {Operator::INDENT, [&](CommandDetails command_details) { return generateIndentCommand(context); }},
+        {Operator::UNINDENT, [&](CommandDetails command_details) { return generateUnindentCommand(context); }},
 
-        {Operator::UNDO, [&]() { return ParseResult{ModeType::TOOL_MODE, make_shared<UndoAction>()}; }},
-        {Operator::REDO, [&]() { return ParseResult{ModeType::TOOL_MODE, make_shared<RedoAction>()}; }},
+        {Operator::UNDO, [&](CommandDetails command_details) { return ParseResult{ModeType::TOOL_MODE, make_shared<UndoAction>()}; }},
+        {Operator::REDO, [&](CommandDetails command_details) { return ParseResult{ModeType::TOOL_MODE, make_shared<RedoAction>()}; }},
     };
 
+    if (details->operator_type == Operator::REPEAT) {
+        if (m_previous_details.has_value()) {
+            return generators.at(m_previous_details->operator_type)(*m_previous_details);
+        }
+        else {
+            return {std::nullopt, make_shared<NotifyAction>("Nothing to repeat!")};
+        }
+    }
+
+
     if (generators.contains(details->operator_type)) {
-        return generators.at(details->operator_type)();
+        ParseResult result = generators.at(details->operator_type)(*details);
+        if (result.action.has_value() && (*result.action)->canBeUndone()) {
+            m_previous_details = *details; 
+        }
+
+        return result;
     }
 
     return emptyParse();

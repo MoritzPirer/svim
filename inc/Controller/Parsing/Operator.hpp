@@ -36,7 +36,8 @@ enum class Operator {
     REDO,
     COPY_WITHIN,
     COPY_UNTIL,
-    PASTE
+    PASTE,
+    REPEAT
 };
 
 #endif //OPERATOR_TYPE_HPP

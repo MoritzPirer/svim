@@ -17,12 +17,14 @@
 #include "../../Shared/DataFlow/ParseResult.hpp"
 #include "../../Shared/Types/Scope.hpp"
 #include "CommandDetails.hpp"
+#include "CommandCreator.hpp"
 #include "Operator.hpp"
 #include "ParsingContext.hpp"
 
 class CommandParser {
 private:
     std::optional<CommandDetails> m_details;
+    CommandCreator m_creator;
 
     void parseAsOperator(char input);
     void parseAsParameter(char input);

@@ -10,6 +10,7 @@
 #define MODE_MANAGER_HPP
 
 #include <memory>
+#include <unordered_map>
 
 #include "../Actions/Action.hpp"
 #include "EditorMode.hpp"
@@ -18,7 +19,8 @@
 
 class ModeManager {
 private:
-    std::unique_ptr<EditorMode> m_current_mode;
+    std::shared_ptr<EditorMode> m_current_mode;
+    std::unordered_map<ModeType, std::shared_ptr<EditorMode>> m_all_modes;
     
     void changeMode(ModeType new_mode);
 

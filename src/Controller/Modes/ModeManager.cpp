@@ -3,26 +3,16 @@
 #include "../../../inc/Controller/Modes/TypingMode.hpp"
 
 ModeManager::ModeManager(ModeType initial_mode) {
+    m_all_modes = {
+        {ModeType::TOOL_MODE, std::make_shared<ToolMode>()},
+        {ModeType::TYPING_MODE, std::make_shared<TypingMode>()},
+    };
+
     changeMode(initial_mode);
 }
 
 void ModeManager::changeMode(ModeType new_mode) {
-    switch (new_mode) {
-    case ModeType::TOOL_MODE: {
-        m_current_mode = std::make_unique<ToolMode>();
-        break;
-    }
-    
-    case ModeType::TYPING_MODE: {
-        m_current_mode = std::make_unique<TypingMode>();
-        break;
-    }
-    
-    default: {
-        break;
-    }
-
-    }
+    m_current_mode = m_all_modes.at(new_mode);
 }
 
 std::optional<std::shared_ptr<Action>> ModeManager::convertToAction(

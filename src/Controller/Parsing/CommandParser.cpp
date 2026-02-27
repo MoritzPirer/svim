@@ -9,8 +9,7 @@
 ParseResult CommandParser::parseInput(char input, ParsingContext context) {
     m_details.has_value()? parseAsParameter(input) : parseAsOperator(input);
     
-    CommandCreator creator;
-    ParseResult result = creator.generateActions(m_details, context);
+    ParseResult result = m_creator.generateActions(m_details, context);
     if (m_details.has_value() && m_details->is_complete) {
         m_details = std::nullopt;
     }
@@ -88,6 +87,9 @@ void CommandParser::parseAsOperator(char input) {
         {'P', {
             .operator_type = Operator::PASTE,
             .direction = Direction::LEFT
+        }},
+        {'.', {
+            .operator_type = Operator::REPEAT
         }}
     };
 
