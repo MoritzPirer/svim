@@ -42,7 +42,7 @@ ParseResult CommandCreator::generateActions(std::optional<CommandDetails> detail
     }
 
     std::unordered_map<Operator, std::function<ParseResult(CommandDetails command_details)>> generators = {
-        {Operator::SWITCH_MODE, [&](CommandDetails command_details) { return ParseResult{ModeType::TYPING_MODE, std::nullopt}; }},
+        {Operator::SWITCH_MODE, [&](CommandDetails) { return ParseResult{ModeType::TYPING_MODE, std::nullopt}; }},
         {Operator::MOVE_BY_CHARACTER, [&](CommandDetails command_details) { return generateCharacterwiseMove(command_details, context.text_area_size); }},
         {Operator::MOVE_TO_FIND, [&](CommandDetails command_details) { return generateSpanMove(command_details, context, EndBehavior::STOP_ON_END); }},
         {Operator::MOVE_TO_END, [&](CommandDetails command_details) { return generateSpanMove(command_details, context, EndBehavior::STOP_BEFORE_END); }},
@@ -54,8 +54,8 @@ ParseResult CommandCreator::generateActions(std::optional<CommandDetails> detail
         {Operator::FILE_ACTION, [&](CommandDetails command_details) { return generateFileCommand(command_details, context.settings); }},
 
         {Operator::PARAGRAPH_CREATE, [&](CommandDetails command_details) { return generateParagraphCreationCommand(command_details, context); }},
-        {Operator::PARAGRAPH_JOIN, [&](CommandDetails command_details) { return generateParagraphJoinCommand(context); }},
-        {Operator::PARAGRAPH_SPLIT, [&](CommandDetails command_details) { return generateParagraphSplitCommand(context); }},
+        {Operator::PARAGRAPH_JOIN, [&](CommandDetails) { return generateParagraphJoinCommand(context); }},
+        {Operator::PARAGRAPH_SPLIT, [&](CommandDetails) { return generateParagraphSplitCommand(context); }},
 
         {Operator::DELETE_SINGLE, [&](CommandDetails command_details) { return generateDeleteSingleCommand(command_details, context); }},
         {Operator::DELETE_WITHIN, [&](CommandDetails command_details) { return generateDeleteWithinCommand(command_details, context); }},
@@ -66,11 +66,11 @@ ParseResult CommandCreator::generateActions(std::optional<CommandDetails> detail
         {Operator::COPY_UNTIL, [&](CommandDetails command_details) { return generateCopyUntilCommand(command_details, context); }},
         {Operator::PASTE, [&](CommandDetails command_details) { return gerneratePasteCommand(command_details, context); }},
 
-        {Operator::INDENT, [&](CommandDetails command_details) { return generateIndentCommand(context); }},
-        {Operator::UNINDENT, [&](CommandDetails command_details) { return generateUnindentCommand(context); }},
+        {Operator::INDENT, [&](CommandDetails) { return generateIndentCommand(context); }},
+        {Operator::UNINDENT, [&](CommandDetails) { return generateUnindentCommand(context); }},
 
-        {Operator::UNDO, [&](CommandDetails command_details) { return ParseResult{ModeType::TOOL_MODE, make_shared<UndoAction>()}; }},
-        {Operator::REDO, [&](CommandDetails command_details) { return ParseResult{ModeType::TOOL_MODE, make_shared<RedoAction>()}; }},
+        {Operator::UNDO, [&](CommandDetails) { return ParseResult{ModeType::TOOL_MODE, make_shared<UndoAction>()}; }},
+        {Operator::REDO, [&](CommandDetails) { return ParseResult{ModeType::TOOL_MODE, make_shared<RedoAction>()}; }},
     };
 
     if (details->operator_type == Operator::REPEAT) {
