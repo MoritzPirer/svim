@@ -89,17 +89,15 @@ YANK operators (y & Y): y (lowercase) accepts a scope or range. That area is cop
 
 PASTE operator (p & P): p (lowercase) pastes the contents of the internal clipboard after the cursor, P (uppercase) pastess the contents of the internal clipboard before the cursor.
 
+REPEAT operator (.): Repeats the last editing command (specifics to be determined)
+
 ### UPCOMING OPERATORS
 
 HELP operator (?): Accepts an argument. If that argument is an operator, usage tips for that operator are displayed as a temporary message. If that argument is also a scope or range indicator, that scope or range is explained as well.
 
-REPEAT operator (.): Repeats the last editing command (specifics to be determined)
-
 SYSTEM operator (!): In addition to the already existing options, these will be added:
 - r: rename the file
 - c: configure settings
-
-BOOKMARK operator (b & B): Accepts an argument. b (lowercase) creates a bookmark at the current cursor position, named with the argument. B (uppercase) moves to the bookmark associated with the argument. (specifics to be determined, especially with regards to bookmark positions being deleted
 
 ## Technical Stack
 

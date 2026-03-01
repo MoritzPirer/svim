@@ -23,7 +23,12 @@ bool DeleteAction::canBeUndone() const {
 }
 
 void DeleteAction::undo(EditorState& state) {
-    state.insertLines(m_deleted_content, m_start);
+    if (m_deleted_content.empty()) {
+        state.splitAt(m_start);
+    }
+    else {
+        state.insertLines(m_deleted_content, m_start);
+    }
     state.moveCursorTo(m_cursor);
 
     state.requestBackup();
