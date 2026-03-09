@@ -66,14 +66,16 @@ void TextFile::markAsChanged() {
 }
 
 
-void TextFile::writeToEnd(const std::string& line) {
+void TextFile::writeToEnd(const std::string& line, bool update_metadata) {
     m_file_content.emplace_back(line);
     
     if (m_save_state != SaveState::NEW_FILE) {
         m_save_state = SaveState::UNSAVED_CHANGES;
     }
     
-    calculateMetadata();
+    if (update_metadata) {
+        calculateMetadata();
+    }
 }
 
 void TextFile::insertCharacterAt(char character_to_add, Position position) {

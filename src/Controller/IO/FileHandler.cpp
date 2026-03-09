@@ -71,9 +71,10 @@ namespace {
         string line;
 
         while (getline(input_file, line)) {
-            file.writeToEnd(line);
+            file.writeToEnd(line, false);
         }
 
+        file.calculateMetadata();
         file.markAsSaved();
         return file;
     }
@@ -90,9 +91,7 @@ TextFile FileHandler::openFile(const string& file_path) {
     
     std::ifstream input_file(absolute);
     if (!input_file.is_open()) {
-        //MODO HANDLE THIS
         throw FileException("Unable to open input file!");
-        return {file_path, SaveState::SAVED};
     }
 
     TextFile file = readFromFile(input_file, absolute);

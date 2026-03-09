@@ -21,7 +21,7 @@ namespace StringHelpers {
     /// @param total_width how wide the new string should be, including the padding 
     /// @param pad_with the char to fill the space with
     /// @return a string with str on the left 
-    std::string leftAlign(const std::string& str, unsigned int total_width, const char& pad_with = ' ');
+    std::string leftAlign(const std::string& str, unsigned int total_width, char pad_with = ' ');
 
     /// @brief return a string of length total_width with str on the right, filled with pad_with. If str is
     ///     longer than total_width, str will be truncated
@@ -29,7 +29,9 @@ namespace StringHelpers {
     /// @param total_width how wide the new string should be, including the padding 
     /// @param pad_with the char to fill the space with
     /// @return a string with str on the right
-    std::string rightAlign(const std::string& str, unsigned int total_width, const char& pad_with = ' ');
+    std::string rightAlign(const std::string& str, unsigned int total_width, char pad_with = ' ');
+
+    std::string addSeperators(int number, int group_size, char seperator = ' ');
 
     /// @brief splits the given paragraph into a vector of chunks that are at
     ///     most as long as the text area is wide (i.e that don't need to wrap)

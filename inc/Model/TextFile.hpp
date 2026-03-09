@@ -29,8 +29,6 @@ private:
     size_t m_word_count;
     size_t m_character_count;
 
-    /// @brief updates m_word_count and m_character_count
-    void calculateMetadata();
 
     bool isOverhangPosition(Position position);
 
@@ -51,11 +49,14 @@ public:
     ///     accordingly 
     void markAsChanged();
     
+    /// @brief updates m_word_count and m_character_count
+    void calculateMetadata();
+
     SaveState getSaveState() const { return m_save_state; }
 
     /// @brief add a new line at the end of the file
     /// @param line the line to add
-    void writeToEnd(const std::string& line);
+    void writeToEnd(const std::string& line, bool update_metadata = true);
 
     void insertCharacterAt(char character_to_add, Position position);
 

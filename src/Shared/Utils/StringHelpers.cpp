@@ -2,8 +2,7 @@
 
 using std::string, std::vector;
 
-string StringHelpers::leftAlign(const string& str,
-    unsigned int total_width, const char& pad_with) {
+string StringHelpers::leftAlign(const string& str, unsigned int total_width, char pad_with) {
 
     if (str.length() >= total_width) {
         return str.substr(0, total_width);
@@ -16,8 +15,7 @@ string StringHelpers::leftAlign(const string& str,
     return output; 
 }
 
-string StringHelpers::rightAlign(const string& str,
-    unsigned int total_width, const char& pad_with) {
+string StringHelpers::rightAlign(const string& str, unsigned int total_width, char pad_with) {
 
     if (str.length() >= total_width) {
         return str.substr(0, total_width);
@@ -28,6 +26,16 @@ string StringHelpers::rightAlign(const string& str,
     output += str;
 
     return output; 
+}
+
+string StringHelpers::addSeperators(int number, int group_size, char seperator) {
+    string str = std::to_string(number);
+
+    for (int i = static_cast<int>(str.size()) - group_size; i > 0; i -= group_size) {
+        str.insert(str.begin() + i, seperator);
+    }
+
+    return str;
 }
 
 vector<string> StringHelpers::splitIntoRows(const string& paragraph,

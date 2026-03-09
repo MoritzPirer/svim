@@ -125,10 +125,11 @@ vector<VisualSegment> Renderer::getCharacterCountChunks() {
     }
 
     int character_count = m_state.getNumberOfCharacters();
+    std::string count_string = StringHelpers::addSeperators(character_count, 3);
 
     return {
         {"Character(s): ", TextRole::TEXT_NORMAL},
-        {std::to_string(character_count), TextRole::TEXT_HIGHLIGHT}
+        {count_string, TextRole::TEXT_HIGHLIGHT}
     };
 }
 
@@ -138,10 +139,11 @@ vector<VisualSegment> Renderer::getWordCountChunks() {
     }
 
     int word_count = m_state.getNumberOfWords();
+    std::string count_string = StringHelpers::addSeperators(word_count, 3);
 
     return {
         {"Word(s): ", TextRole::TEXT_NORMAL},
-        {std::to_string(word_count), TextRole::TEXT_HIGHLIGHT}
+        {count_string, TextRole::TEXT_HIGHLIGHT}
     };
 }
 
@@ -151,10 +153,11 @@ vector<VisualSegment> Renderer::getParagraphCountChunks() {
     }
 
     int paragraph_count = m_state.getNumberOfParagrahps();
+    std::string count_string = StringHelpers::addSeperators(paragraph_count, 3);
 
     return {
         {"Paragraph(s): ", TextRole::TEXT_NORMAL},
-        {std::to_string(paragraph_count), TextRole::TEXT_HIGHLIGHT}
+        {count_string, TextRole::TEXT_HIGHLIGHT}
     };
 }
 
@@ -375,6 +378,8 @@ vector<vector<VisualSegment>> Renderer::calculateVisibleRows(ScreenSize text_are
     vector<vector<VisualSegment>> visible_rows;    
     visible_rows.reserve(text_area_size.height);
 
+    bool do_syntax_highlighting = (m_state.getFileName().ends_with(".md"));
+
     bool is_first_paragraph = true;
     for (int visual_row = 0; visual_row < text_area_size.height;) {
 
@@ -396,16 +401,22 @@ vector<vector<VisualSegment>> Renderer::calculateVisibleRows(ScreenSize text_are
         
         is_first_paragraph = false;
 
-        auto temp = renderFullLineHighlight(split,
-            text_area_size.width,
-            current_paragraph,
-            text_area_size.height - visual_row
-        );
+        vector<vector<VisualSegment>> temp;
+        if (do_syntax_highlighting) {
+            temp = renderFullLineHighlight(split,
+                text_area_size.width,
+                current_paragraph,
+                text_area_size.height - visual_row
+            );
+        }
+        else {
+            temp = renderTextNormal(split,
+                text_area_size.height - visual_row
+            );
+        }
 
         visible_rows.insert(visible_rows.end(), temp.begin(), temp.end());
-
         visual_row += split.size();
-
         current_paragraph++;
     }
     

@@ -20,6 +20,7 @@ void UiHandler::setStyle(TextRole role) {
         break;
     }
 
+    case TextRole::TEXT_HEADING:
     case TextRole::TEXT_HIGHLIGHT: {
         attron(COLOR_PAIR(2));
         break;
@@ -40,7 +41,6 @@ void UiHandler::setStyle(TextRole role) {
         break;
     }
     
-    case TextRole::TEXT_HEADING:
     case TextRole::UI_ELEMENT: {
         attron(COLOR_PAIR(6));
         break;

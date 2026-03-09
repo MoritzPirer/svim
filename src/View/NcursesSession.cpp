@@ -7,6 +7,7 @@ NcursesSession::NcursesSession() {
     if (!stdscr) {
         return;
     } 
+
     initialized = true;
 
     cbreak();
@@ -26,7 +27,7 @@ NcursesSession::NcursesSession() {
     init_pair(4, COLOR_RED,     -1); // new file
     init_pair(5, COLOR_GREEN,   -1); // saved file
     init_pair(6, COLOR_BLUE,    -1); // ui element
-    init_pair(7, COLOR_BLACK, COLOR_BLUE); // strong highlight
+    init_pair(7, COLOR_WHITE, COLOR_BLUE); // strong highlight
 }
 
 NcursesSession::~NcursesSession() {
