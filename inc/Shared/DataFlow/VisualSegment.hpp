@@ -12,10 +12,12 @@
 #include <string>
 
 #include "TextRole.hpp"
+#include "TextStyle.hpp"
 
 struct VisualSegment {
     std::string content;
     TextRole role;
+    TextStyle style;
 };
 
 #endif //VISUAL_SEGMENT_HPP

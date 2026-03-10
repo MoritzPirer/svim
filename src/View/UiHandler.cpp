@@ -11,17 +11,27 @@ void UiHandler::writeString(const std::string& content) {
     addstr(content.c_str());
 }
 
-void UiHandler::setStyle(TextRole role) {
+void UiHandler::setStyle(TextStyle style) {
+    // don't reset to keep textrole
+    if (style.is_bold) {
+        attrset(A_BOLD);
+    }
+    
+    if (style.is_italic) {
+        attrset(A_ITALIC);
+    }
+}
+
+void UiHandler::setRole(TextRole role) {
     attrset(A_NORMAL);
     
     switch (role) {
-    case TextRole::TEXT_NORMAL: {
+    case TextRole::TEXT_COLOR: {
         attron(COLOR_PAIR(1));
         break;
     }
 
-    case TextRole::TEXT_HEADING:
-    case TextRole::TEXT_HIGHLIGHT: {
+    case TextRole::ACCENT_COLOR: {
         attron(COLOR_PAIR(2));
         break;
     }
@@ -41,12 +51,12 @@ void UiHandler::setStyle(TextRole role) {
         break;
     }
     
-    case TextRole::UI_ELEMENT: {
+    case TextRole::PRIMARY_COLOR: {
         attron(COLOR_PAIR(6));
         break;
     }
 
-    case TextRole::TEXT_QUOTE: {
+    case TextRole::BACKGROUND_HIGHLIGHT: {
         attron(COLOR_PAIR(7));
         break;
     }
@@ -58,13 +68,14 @@ void UiHandler::renderTextArea(const RenderInfo& render_info) {
     for (int i = 0; i < render_info.getTextAreaRowCount(); i++) {
         move(i, render_info.getAsideWidth());
 
-        for (auto& [content, role] : render_info.getTextAreaRow(i)) {
+        for (auto& [content, role, style] : render_info.getTextAreaRow(i)) {
             if (render_info.shouldRenderColors()) {
-                setStyle(role);
+                setRole(role);
             }
             else {
-                setStyle(TextRole::TEXT_NORMAL);
+                setRole(TextRole::TEXT_COLOR);
             }
+            setStyle(style);
             
             writeString(content);
         }  
@@ -78,14 +89,16 @@ void UiHandler::renderOverlay(const RenderInfo& render_info) {
     for (int i = 0; i < render_info.getOverlayRowCount(); i++) {
         move(overlay_offset + i, 0);
         
-        const auto& [content, role] = render_info.getOverlayRow(i);
+        const auto& [content, role, style] = render_info.getOverlayRow(i);
 
         if (render_info.shouldRenderColors()) {
-            setStyle(role);
+            setRole(role);
         }
         else {
-            setStyle(TextRole::TEXT_NORMAL);
+            setRole(TextRole::TEXT_COLOR);
         }
+
+        setStyle(style);
 
         writeString(content);
     }
@@ -105,13 +118,15 @@ void UiHandler::renderPanel(const RenderInfo& render_info) {
 
     for (int i = 0; i < render_info.getPanelRowCount(); i++) {
         move(panel_offset, 0);
-        for (auto& [content, role] : render_info.getPanelRow(i)) {
+        for (auto& [content, role, style] : render_info.getPanelRow(i)) {
             if (render_info.shouldRenderColors()) {
-                setStyle(role);
+                setRole(role);
             }
             else {
-                setStyle(TextRole::TEXT_NORMAL);
+                setRole(TextRole::TEXT_COLOR);
             }
+
+            setStyle(style);
             
             writeString(content);
         }  
@@ -122,14 +137,16 @@ void UiHandler::renderPanel(const RenderInfo& render_info) {
 void UiHandler::renderAside(const RenderInfo& render_info) {
     for (int i = 0; i < render_info.getAsideRowCount(); i++) {
         move(i, 0);
-        const auto& [content, role] = render_info.getAsideRow(i);
+        const auto& [content, role, style] = render_info.getAsideRow(i);
 
         if (render_info.shouldRenderColors()) {
-            setStyle(role);
+            setRole(role);
         }
         else {
-            setStyle(TextRole::TEXT_NORMAL);
+            setRole(TextRole::TEXT_COLOR);
         }
+
+        setStyle(style);
 
         writeString(content);
     }

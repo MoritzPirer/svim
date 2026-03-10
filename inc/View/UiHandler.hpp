@@ -26,7 +26,8 @@ private:
 
     void writeString(const std::string& content);
 
-    void setStyle(TextRole role);
+    void setRole(TextRole role);
+    void setStyle(TextStyle style);
 
     void renderTextArea(const RenderInfo& render_info);
     void renderPanel(const RenderInfo& render_info);
