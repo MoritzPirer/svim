@@ -1,0 +1,124 @@
+{
+    "show_character_count";
+    true;
+    "Show character count";
+    [
+        "Displays the number of characters the file has in the metadata panel."
+    ]
+}
+{
+    "show_word_count";
+    true;
+    "Show word count";
+    [
+        "Displays the number of words the file has in the metadata panel."
+    ]
+}
+{
+    "show_paragraph_count";
+    true;
+    "Show paragraph count";
+    [
+        "Displays the number of paragraphs the file has in the metadata panel."
+    ]
+}
+{
+    "show_cursor_position";
+    true;
+    "Show cursor position";
+    [
+        "Displays the the current position of the cursor in the metadata panel."
+    ]
+}
+{
+    "show_editor_mode";
+    true;
+    "Show current mode";
+    [
+        "Display the current editor mode in the metadata panel.";
+    ]
+}
+{
+    "show_seperator";
+    true;
+    "Show metadata panel seperator";
+    [
+        "Display a line visually seperating the text area from the metadata panel."
+    ]
+}
+{
+    "show_file_name";
+    true;
+    "Show file name";
+    [
+        "Display the name of the current file in the metadata panel."
+    ]
+}
+{
+    "show_save_icon";
+    true;
+    "Show save state icon";
+    [
+        "Display the current save state of the file as an icon in the metadata panel.",
+        "- [!] means that the file has never been saved",
+        "- [*] means that there are unsaved changes",
+        "- [=] means that all changes are saved"
+    ]
+}
+{
+    "how_save_text";
+    true;
+    "Show save state text";
+    [
+        "Display the current save state of the file as a text in the metadata panel."
+    ]
+}
+{
+    "show_version";
+    true;
+    "Show editor version";
+    [
+        "Display the current version of the editor in the metadata panel."
+    ]
+}
+{
+    "render_color";
+    true;
+    "Render color";
+    [
+        "Render the user interface in color."
+    ]
+}
+{
+    "confirm_save";
+    true;
+    "Confirm save";
+    [
+        "Display a confirmation message when changes were saved successfully."
+    ]
+}
+{
+    "do_numbering";
+    true;
+    "Display paragraph numbers";
+    [
+        "Display the numbers of the paragraphs along the left edge of the text area."
+    ]
+}
+{
+    "do_relative_numbers";
+    false;
+    "Relative Numbers";
+    [
+        "Use the distance to the cursor as the paragraph number for all paragraphs except the one containing the cursor.",
+        "Only has an effect if 'Display paragraph numbers' is enabled."
+    ]
+}
+{
+    "do_skinny_tabs";
+    false;
+    "Reduce tab width";
+    [
+        "Indent and unindent with 2 spaces instead of 4."
+    ]
+}
