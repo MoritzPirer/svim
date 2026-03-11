@@ -5,7 +5,6 @@
 
 namespace {
 
-// find gets "" as antidelim and arg as delim
 Position findStopPosition(EditorState& state, RangeSettings settings, Direction direction) {
     Position original_cursor_position = state.getCursor().getPosition();
 
@@ -101,7 +100,8 @@ Position startOfParagraph(EditorState& state, ScopeSettings settings) {
         }
 
         row--;
-        return {row, static_cast<int>(state.getParagraph(row).length() - 1)};
+        int column = std::max(static_cast<int>(state.getParagraph(row).length() - 1), 0);
+        return {row, column};
     }
 
     case EndBehavior::STOP_BEFORE_END: {
