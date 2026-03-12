@@ -1,5 +1,5 @@
 # Name of your executable
-TARGET = svim
+TARGET = strato
 
 # Detect OS
 UNAME_S := $(shell uname -s)

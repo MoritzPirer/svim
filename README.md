@@ -1,19 +1,19 @@
-# svim
-svim stands for simplified vim. The core goal was to create a commandline text editor that makes it easier to get started than other CLI editors, without sacrificing too much editing power. As the name implies, svim draws heavy inspiration from the vi editor and the vim command grammar.
+# strato
 
-This readme is written for version 0.5.2.
+Strato is a commandline text editor, named after the stratosphere because it is the first step into the endless universe of commandline editors. It is intended as a stepping stone - the aim is:
+- being easy to get started for folks new to commandline editors
+- making it easy to get familiar with stratos command grammer to go from novice to experienced
+- making users familiar enough with modal editing to provide a smooth transition to editors with more complex grammars, such as vim or helix
 
-## DESIGN PHILOSOPHY
-
-svims aims to lower the skill floor for users new to the world of cli editors, while keeping the skill ceiling high for those who know what they are doing. A minimal amount of shortcuts is needed to get started, and the command grammar is designed to be consistent, intuitive and easy to master. Additionally, multiple planned features will encourage discovering commands to add to your toolbox, rather than having a memorization overhead.
+This readme is written for version 0.6.3.
 
 ## ARCHITECTURE
 
-The under-the-hood architecture is built around a Model-View-Controller architecture, with a state pattern for modal editing and mode-specific shortcuts. User Actions are processed using a command pattern, allowing for a low-cost undo/redo history via delta tracking.
+The under-the-hood architecture is built around a Model-View-Controller architecture, with a state machine for modal editing and mode-specific shortcuts. User Actions are processed using a command pattern, allowing for a low-cost undo/redo history via delta tracking.
 
 ## KEY FEATURES
 
-svim displays useful meta information about the file currently being edited:
+strato displays useful meta information about the file currently being edited:
 - the current mode
 - The file currently being edited
 - the save state of the file
@@ -22,13 +22,15 @@ svim displays useful meta information about the file currently being edited:
 - the current version of the editor
 - paragraph numbers along the left edge
 
-There are also several quality-of-life features to make using svim as smooth as possible. The text history system groups text into words when undoing them to make deleting larger sections of text or undoing large deletions faster. Additionally files are periodically backed up to a fixed location relative to the location of the executable. That way, you never lose more than five minuts of progress.
+There are also several quality-of-life features to make using strato as smooth as possible. The text history system groups text into words when undoing them to make deleting larger sections of text or undoing large deletions faster. Additionally files are periodically backed up to a fixed location relative to the location of the executable. That way, you never lose more than five minuts of progress.
+
+> As of version 0.6.3, strato supports highlighting for headings, quote blocks, bold and italic in markdown files
 
 ## GETTING STARTED
 
 ### MINIMUM REQUIRED KNOWLEDGE
 
-To get started with svim, you will need to understand the two core modes: TYPING MODE is used for writing and deleting text, whereas TOOL MODE is used for all of svims commands. When in TOOL MODE, press 'i' to enter TYPING MODE. When in TYPING MODE, press the escape key to enter TOOL MODE. Move the cursor with the arrow keys in either mode or, if you are in TOOL MODE, using h (left), j (down), k (up) and l (right). When in TOOL MODE, you can save with !s and quit with !q.
+To get started with strato, you will need to understand the two core modes: TYPING MODE is used for writing and deleting text, whereas TOOL MODE is used for all of stratos commands. When in TOOL MODE, press 'i' to enter TYPING MODE. When in TYPING MODE, press the escape key to enter TOOL MODE. Move the cursor with the arrow keys in either mode or, if you are in TOOL MODE, using h (left), j (down), k (up) and l (right). When in TOOL MODE, you can save with !s and quit with !q.
 
 ### EXISTING COMMANDS
 Unless otherwise specified, all commands stay in TOOL MODE.
@@ -39,7 +41,7 @@ The following commands require only a single input:
 - u & U: the UNDO & REDO operator. u (lowercase) undoes the most recent editing action, U (uppercase) redoes the most recently undone action.
 - o & O: the paragraph creation operator. o (lowercase) creates a paragraph below the current one, O (uppercase) creates a paragraph above the current one
 - + & -: the Split & Join operators. + (plus) joins the next paragraph to the current one, - (minus) splits the current paragraph from the cursor onwards into its own paragraph
-- \> & <: the INDENTATION operator. > (greater than) indents the current paragraph to the next multiple of four spaces, < (less than) unindents the current paragraph to the previous multiple of four spaces. TAB and SHIFT-TAB do the same thing, both in TYPING MODE and in TOOL MODE. Currently, tab width is locked to four spaces, but it will be possible to configure this in a future update.
+- < & >: the INDENTATION operator. > (greater than) indents the current paragraph to the next multiple of four spaces, < (less than) unindents the current paragraph to the previous multiple of four spaces. TAB and SHIFT-TAB do the same thing, both in TYPING MODE and in TOOL MODE. Currently, tab width is locked to four spaces, but it will be possible to configure this in a future update.
 
 The next section describes 'compound commands', which are commands where a secondary input is needed. There are three types of input: Scopes, ranges and arguments.
 
@@ -63,13 +65,13 @@ Arguments are a general-purpose type of input that will be processed individuall
 
 MOVE operator (m & M): Accepts either a scope or a range. m (lowercase) moves the cursor forward to the end of the given scope or range. M (uppercase) moves the cursor backward to the start of the given scope or range.
 
-NEXT operator (n & N): Accepts either a scope or a range. n (lowercase) moves the cursor to the start of the next scope or range. N (uppercase) moves the cursor backwards to the end of the previous scope or range.
+NEXT operator (n & N): Accepts either a scope or a range. n (lowercase) moves the cursor to the start of the next scope or range. N (uppercase) moves the cursor backwards to the end of the previous scope or range. There are also some aliases for this operator, as it is essential for fast movement: H and L alias 'Nw' and 'nw', and J and K alias 'Np' and 'np'.
 
 FIND operator (f & F): Accepts an argument. f (lowercase) moves the cursor to the next occurrence of that argument. F (uppercase) moves the cursor backwards to the previous occurrence of that argument. As opposed to vim, this is not limited to the current paragraph.
 
 AT operator (a & A): Accepts either a scope or a range. Moves the cursor just like the move operator, but also enters TYPING MODE.
 
-NOTE: In case the target position is not reachable (e.g. f; without a semicolon to find, nf,...), all movement operations described above move as far as possible.
+> NOTE: In case the target position is not reachable (e.g. f; without a semicolon to find, nf,...), all movement operations described above move as far as possible.
 
 REPLACE operator (r): Accepts an argument. The character under the cursor is replaced by the argument.
 
@@ -101,26 +103,29 @@ SYSTEM operator (!): In addition to the already existing options, these will be 
 
 ## Technical Stack
 
-Svim is written in C++ 20 using the ncurses library for rendering and input handeling. Everything else was built from scratch or uses the C++ standard library.
+Strato is written in C++ 20 using the ncurses library for rendering and input handeling. Everything else was built from scratch or uses the C++ standard library.
 
 ## ROADMAP & LIMITATIONS
 What can it do, what can't it do, what will it be able to do soon
 
-In addition to the planned commands described above, the following features are planned:
-1. Changing settings at runtime (e.g. disabling UI color, relative vs absolute vs no line numbering, What meta information to display).
-2. Simple spell checking / typo detection
-3. Selection mode similar to vim's visual mode
+**PLANNED FEATURES**
+1. Simple spell checking system
+2. auto-inserting bullet points / numberings / checkboxes
+3. a built-in help menu for easy learing of shortcuts
+4. basic syntax highlighting in markdown code blocks and code files for some languages (e.g. python, C, C++, Java)
+5. selection mode similar to vim's visual mode
+6. changing settings (e.g. line numbering, meta information display, UI color) at runtime
+7. Some level of ascii table support (details tbd)
+8. switching between multiple files
+9. hot loading if an opened file is changed by an external source (details tbd)
+10. Find and Search / Replace commands
 
-Some additional features are being considered, but are not guaranteed to be implemented
+**POTENTIAL FEATURES**
 1. vim-like macros
-2. Rendering bold / italics / headings in markdown files
-3. syntax highlighting in code files using an LSP
-4. find and search replace commands
-5. hotloading if the file is changed by an external source while opened in svim
-6. switching between multiple opened files
-7. auto-inserting bullet points / numberings of numbered lists
-8. prefixing some commands with a number to repeat them 
+2. prefixing some commands with a number to repeat them 
+3. split screen with multiple files
 
-Limitations svim has and will have for at least the near future:
+**LIMITATIONS THAT WILL EXIST FOR THE FORSEEABLE FUTURE**
 - no unicode support (ascii only)
 - no interaction with system clipboard 
+- no rendering of images (on account of this being a command line editor)
