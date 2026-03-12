@@ -333,8 +333,43 @@ TextRole Renderer::getTextRole(int current_paragraph) {
     return TextRole::NORMAL_TEXT;
 }
 
+// vector<vector<VisualSegment>> Renderer::renderHighlights(vector<string> split_paragraph, int max_width,
+//     int current_paragraph, int visual_rows_available, int first_visible) {
+
+//     TextRole text_role = TextRole::NORMAL_TEXT;
+//     if (m_state.getFileName().ends_with(".md")) {
+//         text_role = getTextRole(current_paragraph);
+//     }
+
+//     if (text_role == TextRole::STRONG_HIGHLIGHT) {
+//         for (string& line : split_paragraph) {
+//             line = StringHelpers::leftAlign(line, max_width);
+//         }
+//     }
+
+//     vector<vector<VisualSegment>> segments;
+
+//     for (const string& line : split_paragraph) {
+//         if (visual_rows_available == 0) {
+//             break;
+//         }
+
+//         if (visual_rows_available > 0) {
+//             segments.push_back({VisualSegment{
+//                 line,
+//                 text_role,
+//                 TextStyle::makeNormal() 
+//             }});
+//         }
+        
+//         visual_rows_available--;
+//     }
+
+//     return segments;
+// }
+
 vector<vector<VisualSegment>> Renderer::renderHighlights(vector<string> split_paragraph, int max_width,
-    int current_paragraph, int visual_rows_available) {
+    int current_paragraph, int visual_rows_available, int first_visible) {
 
     TextRole text_role = TextRole::NORMAL_TEXT;
     if (m_state.getFileName().ends_with(".md")) {
@@ -348,19 +383,60 @@ vector<vector<VisualSegment>> Renderer::renderHighlights(vector<string> split_pa
     }
 
     vector<vector<VisualSegment>> segments;
+
+    bool is_bold = false;
+    bool is_italic = false;
+
+    const std::string& paragraph = m_state.getParagraph(current_paragraph);
+
+    for (int i = 0; i < first_visible && static_cast<size_t>(i) < paragraph.length(); i++) {
+        if (static_cast<size_t>(i) + 1 < paragraph.length() && paragraph.at(i + 1) == '*' && paragraph.at(i) == '*') {
+            is_bold = !is_bold; 
+            i++;
+        }
+        else if (paragraph.at(i) == '*') {
+            is_italic = !is_italic;
+        }
+    }
+
     for (const string& line : split_paragraph) {
-        if (visual_rows_available == 0) {
+        if (visual_rows_available <= 0) {
             break;
         }
 
-        if (visual_rows_available > 0) {
-            segments.push_back({VisualSegment{
-                line,
-                text_role,
-                TextStyle::makeNormal() // change this for bold and italics
-            }});
+        vector<VisualSegment> line_segments;
+        string current_chunk;
+        bool processing_asterisks = false;
+
+        for (size_t i = 0; i < line.length(); ++i) {
+            char c = line[i];
+            bool is_asterisk = (c == '*');
+
+            // If we switch from text to asterisks or vice versa, flush the chunk
+            if (!current_chunk.empty() && is_asterisk != processing_asterisks) {
+                line_segments.push_back(VisualSegment{current_chunk, text_role, TextStyle{is_bold, is_italic}});
+                current_chunk.clear();
+            }
+
+            processing_asterisks = is_asterisk;
+            current_chunk += c;
+            
+            if (i + 1 < line.length() && line.at(i + 1) == '*' && is_asterisk) {
+               is_bold = !is_bold; 
+               i++;
+               current_chunk += line.at(i);
+            }
+            else if (is_asterisk) {
+                is_italic = !is_italic;
+            }
         }
-        
+
+        // Push the final chunk of the line
+        if (!current_chunk.empty()) {
+            line_segments.push_back(VisualSegment{current_chunk, text_role, TextStyle{is_bold, is_italic}});
+        }
+
+        segments.push_back(line_segments);
         visual_rows_available--;
     }
 
@@ -401,7 +477,8 @@ vector<vector<VisualSegment>> Renderer::calculateVisibleRows(ScreenSize text_are
         temp = renderHighlights(split,
             text_area_size.width,
             current_paragraph,
-            text_area_size.height - visual_row
+            text_area_size.height - visual_row,
+            first_visible.column
         );
 
         visible_rows.insert(visible_rows.end(), temp.begin(), temp.end());

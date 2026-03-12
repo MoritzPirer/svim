@@ -17,6 +17,10 @@ private:
     int m_max_indent_width;
     int m_spaces_removed;
 
+    void setSpacesRemoved(const EditorState& state);
+    void deleteSpaces(EditorState& state);
+    void adjustCursor(EditorState& state);
+
 public:
     UnindentAction(int row, int indent_width);
     UnindentAction(const UnindentAction&) = default;

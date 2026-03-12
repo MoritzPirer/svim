@@ -54,8 +54,8 @@ private:
 
     TextRole getTextRole(int current_paragraph);
 
-    std::vector<std::vector<VisualSegment>> renderHighlights(std::vector<std::string> split_paragraph,
-        int current_paragraph, int max_width, int visual_rows_available);
+    std::vector<std::vector<VisualSegment>> renderHighlights(std::vector<std::string> split_paragraph, int max_width,
+    int current_paragraph, int visual_rows_available, int first_visible);
 
 public:
     Renderer(const EditorState& state, const Settings& settings, const ModeManager& mode_manager);

@@ -14,11 +14,11 @@ void UiHandler::writeString(const std::string& content) {
 void UiHandler::setStyle(TextStyle style) {
     // don't reset to keep textrole
     if (style.is_bold) {
-        attrset(A_BOLD);
+        attron(A_BOLD);
     }
     
     if (style.is_italic) {
-        attrset(A_ITALIC);
+        attron(A_ITALIC);
     }
 }
 
