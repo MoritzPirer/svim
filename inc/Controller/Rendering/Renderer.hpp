@@ -25,6 +25,7 @@ private:
     const char c_min_underline_count = 2;
     const char c_heading_indicator = '#';
     const char c_quote_indicator = '>';
+    const char c_textstyle_modifier = '*';
 
     std::vector<VisualSegment> getSeperatorChunks(ScreenSize actual_size);
     std::vector<VisualSegment> getCharacterCountChunks();
@@ -53,6 +54,8 @@ private:
     bool isQuote(int paragraph_index);
 
     TextRole getTextRole(int current_paragraph);
+
+    std::vector<VisualSegment> renderScreenRow(const std::string& line, TextStyle& style, TextRole text_role);
 
     std::vector<std::vector<VisualSegment>> renderHighlights(std::vector<std::string> split_paragraph, int max_width,
     int current_paragraph, int visual_rows_available, int first_visible);

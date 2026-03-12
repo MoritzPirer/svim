@@ -25,6 +25,9 @@ struct TextStyle {
     static TextStyle makeItalic() { return TextStyle{false, true}; }
     
     static TextStyle makeBoldItalic() { return TextStyle{true, true}; }
+
+    void toggleBold() { is_bold = !is_bold; }
+    void toggleItalic() { is_italic = !is_italic; }
 };
 
 #endif //TEXT_STYLE_HPP

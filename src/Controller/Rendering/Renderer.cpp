@@ -333,40 +333,40 @@ TextRole Renderer::getTextRole(int current_paragraph) {
     return TextRole::NORMAL_TEXT;
 }
 
-// vector<vector<VisualSegment>> Renderer::renderHighlights(vector<string> split_paragraph, int max_width,
-//     int current_paragraph, int visual_rows_available, int first_visible) {
+vector<VisualSegment> Renderer::renderScreenRow(const string& line, TextStyle& style, TextRole text_role) {
+    vector<VisualSegment> line_segments;
+    string current_chunk;
+    bool processing_asterisks = false;
 
-//     TextRole text_role = TextRole::NORMAL_TEXT;
-//     if (m_state.getFileName().ends_with(".md")) {
-//         text_role = getTextRole(current_paragraph);
-//     }
+    for (size_t i = 0; i < line.length(); ++i) {
+        char c = line.at(i);
+        bool is_asterisk = (c == c_textstyle_modifier);
 
-//     if (text_role == TextRole::STRONG_HIGHLIGHT) {
-//         for (string& line : split_paragraph) {
-//             line = StringHelpers::leftAlign(line, max_width);
-//         }
-//     }
+        if (!current_chunk.empty() && is_asterisk != processing_asterisks) {
+            line_segments.push_back(VisualSegment{current_chunk, text_role, style});
+            current_chunk.clear();
+        }
 
-//     vector<vector<VisualSegment>> segments;
-
-//     for (const string& line : split_paragraph) {
-//         if (visual_rows_available == 0) {
-//             break;
-//         }
-
-//         if (visual_rows_available > 0) {
-//             segments.push_back({VisualSegment{
-//                 line,
-//                 text_role,
-//                 TextStyle::makeNormal() 
-//             }});
-//         }
+        processing_asterisks = is_asterisk;
+        current_chunk += c;
         
-//         visual_rows_available--;
-//     }
+        if (is_asterisk) {
+            if (i + 1 < line.length() && line.at(i + 1) == c_textstyle_modifier) {
+                style.toggleBold();
+                current_chunk += line.at(++i);
+            }
+            else {
+                style.toggleItalic();
+            }
+        }
+    }
 
-//     return segments;
-// }
+    if (!current_chunk.empty()) {
+        line_segments.push_back(VisualSegment{current_chunk, text_role, style});
+    }
+
+    return line_segments;
+}
 
 vector<vector<VisualSegment>> Renderer::renderHighlights(vector<string> split_paragraph, int max_width,
     int current_paragraph, int visual_rows_available, int first_visible) {
@@ -383,19 +383,18 @@ vector<vector<VisualSegment>> Renderer::renderHighlights(vector<string> split_pa
     }
 
     vector<vector<VisualSegment>> segments;
-
-    bool is_bold = false;
-    bool is_italic = false;
-
+    TextStyle style = TextStyle::makeNormal();
     const std::string& paragraph = m_state.getParagraph(current_paragraph);
 
     for (int i = 0; i < first_visible && static_cast<size_t>(i) < paragraph.length(); i++) {
-        if (static_cast<size_t>(i) + 1 < paragraph.length() && paragraph.at(i + 1) == '*' && paragraph.at(i) == '*') {
-            is_bold = !is_bold; 
-            i++;
-        }
-        else if (paragraph.at(i) == '*') {
-            is_italic = !is_italic;
+        if (paragraph.at(i) == c_textstyle_modifier) {
+            if (static_cast<size_t>(i) + 1 < paragraph.length() && paragraph.at(i + 1) == c_textstyle_modifier) {
+                style.toggleBold();
+                i++; //consume second modifier
+            }
+            else {
+                style.toggleItalic();
+            }
         }
     }
 
@@ -404,39 +403,7 @@ vector<vector<VisualSegment>> Renderer::renderHighlights(vector<string> split_pa
             break;
         }
 
-        vector<VisualSegment> line_segments;
-        string current_chunk;
-        bool processing_asterisks = false;
-
-        for (size_t i = 0; i < line.length(); ++i) {
-            char c = line[i];
-            bool is_asterisk = (c == '*');
-
-            // If we switch from text to asterisks or vice versa, flush the chunk
-            if (!current_chunk.empty() && is_asterisk != processing_asterisks) {
-                line_segments.push_back(VisualSegment{current_chunk, text_role, TextStyle{is_bold, is_italic}});
-                current_chunk.clear();
-            }
-
-            processing_asterisks = is_asterisk;
-            current_chunk += c;
-            
-            if (i + 1 < line.length() && line.at(i + 1) == '*' && is_asterisk) {
-               is_bold = !is_bold; 
-               i++;
-               current_chunk += line.at(i);
-            }
-            else if (is_asterisk) {
-                is_italic = !is_italic;
-            }
-        }
-
-        // Push the final chunk of the line
-        if (!current_chunk.empty()) {
-            line_segments.push_back(VisualSegment{current_chunk, text_role, TextStyle{is_bold, is_italic}});
-        }
-
-        segments.push_back(line_segments);
+        segments.push_back(renderScreenRow(line, style, text_role));
         visual_rows_available--;
     }
 
