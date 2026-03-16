@@ -4,7 +4,7 @@ Strato is a commandline text editor, named after the stratosphere because it is 
 - making it easy to get familiar with stratos command grammer to go from novice to experienced
 - making users familiar enough with modal editing to provide a smooth transition to editors with more complex grammars, such as vim or helix
 
-aThis readme is written for version 0.6.3. aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa** normal *
+This readme is written for version 0.6.3.
 
 ## ARCHITECTURE
 

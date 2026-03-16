@@ -17,38 +17,22 @@
 
 class Renderer {
 private:
-    const EditorState& m_state;
-    const Settings& m_settings;
-    const ModeManager& m_mode_manager;
-
-    const char c_line_number_seperator = '|';
-
-    std::vector<VisualSegment> getSeperatorChunks(ScreenSize actual_size);
-    std::vector<VisualSegment> getCharacterCountChunks();
-    std::vector<VisualSegment> getWordCountChunks();
-    std::vector<VisualSegment> getParagraphCountChunks();
-    std::vector<VisualSegment> getCursorPositionChunks();
-    std::vector<VisualSegment> getEditorModeChunks();
-    std::vector<VisualSegment> getFileNameChunks();
-    std::vector<VisualSegment> getSaveIconChunks();
-    std::vector<VisualSegment> getVersionChunks();
-
-    /// @brief organize the metadata chunks into rows
-    /// @return a vector where each element is a set of Chunks to be rendered in that row
-    std::vector<std::vector<VisualSegment>> reorganizeMetadataRows(
-        std::vector<VisualSegment> ordered_chunks, ScreenSize actual_size);
-
-    VisualSegment formatCurrentParagraphNumber(int current_paragraph, int line_number_width);
-
-    VisualSegment formatNonCurrentParagraphNumber(int current_paragraph, int line_number_width);
-    
-    /// @brief formats the paragraph number with the proper padding and absolute or relative number
-    VisualSegment formatParagraphNumber(int current_paragraph, int line_number_width);
+    const EditorState& c_state;
+    const Settings& c_settings;
+    const ModeManager& c_mode_manager;
 
 public:
     Renderer(const EditorState& state, const Settings& settings, const ModeManager& mode_manager);
     Renderer(const Renderer&) = default;
     ~Renderer() = default;
+
+    /// @brief calculates what lines are visible based on the position of the cursor and the size
+    ///     of the text area
+    /// @param text_area_size the size of the text area (i.e. the screen size without the metadata
+    ///     panel and the line numbers)
+    /// @return a vector where each line is a set of VisualSegments that should
+    ///     be rendered in a line of the screen
+    std::vector<std::vector<VisualSegment>> renderVisibleText(ScreenSize text_area_size);
 
     /// @brief calculate how much horizontal space the line numbers need
     int calculateLineNumberWidth();
@@ -62,21 +46,12 @@ public:
     /// @return a vector where each element is a set of VisualSegments
     /// that should be rendered in the same row of the screen 
     std::vector<std::vector<VisualSegment>> calculateMetadataRows(ScreenSize actual_size);
+
+    std::vector<VisualSegment> calculateTemporaryRows(ScreenSize actual_size);
     
     /// @brief calculates where on the screen the cursor should be rendered
     /// @param text_area_size the size of the text area
     Position calculateScreenPositionOfCursor(ScreenSize text_area_size);
-
-    /// @brief calculates what lines are visible based on the position of the cursor and the size
-    ///     of the text area
-    /// @param text_area_size the size of the text area (i.e. the screen size without the metadata
-    ///     panel and the line numbers)
-    /// @return a vector where each line is a set of VisualSegments that should
-    ///     be rendered in a line of the screen
-    std::vector<std::vector<VisualSegment>> renderVisibleText(ScreenSize text_area_size);
-
-    std::vector<VisualSegment> calculateTemporaryRows(ScreenSize actual_size);
-
 };
 
 #endif //RENDERER_HPP
