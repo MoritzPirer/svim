@@ -17,8 +17,10 @@ class TypingMode: public EditorMode {
 private:
     ParseResult parseSpecialKey(SpecialKey key, ParsingContext context);
 
-    bool shouldTrySmartList(ParsingContext context);
     ParseResult trySmartListInsertion(ParsingContext context);
+    bool shouldTrySmartList(ParsingContext context);
+    ParseResult basicParagraphSplit(Position cursor);
+    std::optional<ParseResult> getStaticSmartlistInsertion(ParsingContext context);
 public:
     TypingMode() = default;
     TypingMode(const TypingMode&) = default;

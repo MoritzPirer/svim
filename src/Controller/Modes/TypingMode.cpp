@@ -87,6 +87,22 @@ ParseResult TypingMode::parseSpecialKey(SpecialKey key, ParsingContext context) 
     }
 }
 
+ParseResult TypingMode::trySmartListInsertion(ParsingContext context) {
+    Position cursor = context.state.getCursor().getPosition();
+    if (!shouldTrySmartList(context)) {
+        return basicParagraphSplit(cursor);
+    }
+
+    std::optional<ParseResult> result = getStaticSmartlistInsertion(context);
+    if (result.has_value()) {
+        return *result;
+    }
+    
+    // number smart list goes here
+
+    return basicParagraphSplit(cursor);
+}
+
 bool TypingMode::shouldTrySmartList(ParsingContext context) {
     const std::string& file_name = context.state.getFileName();
     return (
@@ -95,14 +111,13 @@ bool TypingMode::shouldTrySmartList(ParsingContext context) {
     );
 }
 
-ParseResult TypingMode::trySmartListInsertion(ParsingContext context) {
-    if (!shouldTrySmartList(context)) {
-        return {
-            ModeType::TYPING_MODE,
-            {std::make_shared<ParagraphSplittingAction>(context.state.getCursor().getPosition())}
-        }; 
-    }
+ParseResult TypingMode::basicParagraphSplit(Position cursor) {
+    return {ModeType::TYPING_MODE, {std::make_shared<ParagraphSplittingAction>(cursor)}
+    }; 
+}
 
+
+std::optional<ParseResult> TypingMode::getStaticSmartlistInsertion(ParsingContext context) {
     Position cursor = context.state.getCursor().getPosition();
     std::string current = context.state.getParagraph(cursor.row).substr(0, cursor.column);
 
@@ -114,24 +129,23 @@ ParseResult TypingMode::trySmartListInsertion(ParsingContext context) {
     };
 
     for (const auto& [prefix, continuation] : list_types) {
+        //TODO maybe extract this 
         if (!StringHelpers::startsWithIgnoringWhitespace(current, prefix)) {
             continue;
         }
         
-        //TODO account for leading spaces!!!!!
         size_t leading_spaces = StringHelpers::countLeadingSpaces(current);
         std::string new_paragraph_prefix = std::string(leading_spaces, ' ') + continuation;
 
-        return {
+        ParseResult result = {
             ModeType::TYPING_MODE,
             {std::make_shared<ParagraphSplittingAction>(context.state.getCursor().getPosition(), new_paragraph_prefix)}
-        }; 
+        };
+
+        return result; 
     }
 
-    return {
-        ModeType::TYPING_MODE,
-        {std::make_shared<ParagraphSplittingAction>(context.state.getCursor().getPosition())}
-    }; 
+    return std::nullopt;
 }
 
 ParseResult TypingMode::parseInput(Input input, ParsingContext context) {
