@@ -17,6 +17,7 @@ class TypingMode: public EditorMode {
 private:
     ParseResult parseSpecialKey(SpecialKey key, ParsingContext context);
 
+    ParseResult trySmartListInsertion(ParsingContext context);
 public:
     TypingMode() = default;
     TypingMode(const TypingMode&) = default;

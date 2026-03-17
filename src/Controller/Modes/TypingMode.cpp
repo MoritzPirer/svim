@@ -1,6 +1,7 @@
+#include <unordered_map>
+
 #include "../../../inc/Controller/Modes/TypingMode.hpp"
 #include "../../../inc/Controller/Actions/Editing/InsertAction.hpp"
-#include "../../../inc/Controller/Actions/System/CompoundAction.hpp"
 #include "../../../inc/Controller/Actions/Editing/DeleteAction.hpp"
 #include "../../../inc/Controller/Actions/Structure/ParagraphSplittingAction.hpp"
 #include "../../../inc/Controller/Actions/Movement/CharwiseMoveAction.hpp"
@@ -8,6 +9,8 @@
 #include "../../../inc/Controller/Actions/Editing/UnindentAction.hpp"
 
 #include "../../../inc/Shared/Types/SpecialKey.hpp"
+#include "../../../inc/Shared/Utils/StringHelpers.hpp"
+
 
 using std::make_shared;
 
@@ -38,11 +41,7 @@ ParseResult TypingMode::parseSpecialKey(SpecialKey key, ParsingContext context) 
     }
 
     case SpecialKey::ENTER: {
-        return {ModeType::TYPING_MODE, {std::make_shared<CompoundAction>(std::vector<std::shared_ptr<Action>>{
-            std::make_shared<ParagraphSplittingAction>(context.state.getCursor().getPosition()),
-            std::make_shared<CharwiseMoveAction>(context.text_area_size, Direction::RIGHT)
-        })}};
-
+        return trySmartListInsertion(context);
     }
 
     case SpecialKey::ARROW_LEFT: {
@@ -86,6 +85,51 @@ ParseResult TypingMode::parseSpecialKey(SpecialKey key, ParsingContext context) 
     }
 
     }
+}
+
+bool shouldTrySmartList(ParsingContext context) {
+    const std::string& file_name = context.state.getFileName();
+    return (
+        file_name.ends_with(".md")
+        || file_name.ends_with(".txt")
+    );
+}
+
+ParseResult TypingMode::trySmartListInsertion(ParsingContext context) {
+    if (!shouldTrySmartList(context)) {
+        return {
+            ModeType::TYPING_MODE,
+            {std::make_shared<ParagraphSplittingAction>(context.state.getCursor().getPosition())}
+        }; 
+    }
+
+    Position cursor = context.state.getCursor().getPosition();
+    std::string current = context.state.getParagraph(cursor.row).substr(0, cursor.column);
+
+    std::unordered_map<std::string, std::string> list_types = {
+        {"- ", "- "},
+        {"+ ", "+ "},
+        {"- [ ] ", "- [ ] "},
+        {"- [x] ", "- [ ] "},
+    };
+
+
+    for (const auto& [prefix, continuation] : list_types) {
+        if (!StringHelpers::startsWithIgnoringWhitespace(current, prefix)) {
+            continue;
+        }
+        
+        //TODO account for leading spaces!!!!!
+        return {
+            ModeType::TYPING_MODE,
+            {std::make_shared<ParagraphSplittingAction>(context.state.getCursor().getPosition(), continuation)}
+        }; 
+    }
+
+    return {
+        ModeType::TYPING_MODE,
+        {std::make_shared<ParagraphSplittingAction>(context.state.getCursor().getPosition())}
+    }; 
 }
 
 ParseResult TypingMode::parseInput(Input input, ParsingContext context) {

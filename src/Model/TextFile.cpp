@@ -100,8 +100,6 @@ void TextFile::insertLines(std::vector<std::string> content, Position start) {
     first_line.erase(start.column);
 
     m_file_content.at(start.row).append(content.at(0));
-
-    m_file_content.insert(m_file_content.begin() + start.row + 1, content.begin() + 1, content.end());
     m_file_content.at(start.row + content.size() - 1).append(rest_of_line);
 
     

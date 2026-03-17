@@ -118,6 +118,17 @@ bool StringHelpers::startsWithIgnoringWhitespace(const std::string& str, char fi
     return str.at(index) == first;
 }
 
+bool StringHelpers::startsWithIgnoringWhitespace(const std::string& str, const std::string& start) {
+    size_t index = str.find_first_not_of(' ');
+
+    if (index == std::string::npos) {
+        return false;
+    }
+
+    auto after_whitespace = str.substr(index);
+    return after_whitespace.starts_with(start);
+}
+
 bool StringHelpers::consistsOnlyOfIgnoringWhitespace(const std::string& str, char comparison) {
     for (char c : str) {
         if (c != comparison && c != ' ') {

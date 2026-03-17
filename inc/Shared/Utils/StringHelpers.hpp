@@ -55,6 +55,7 @@ namespace StringHelpers {
 
     bool startsWith(const std::string& str, char first);
     bool startsWithIgnoringWhitespace(const std::string& str, char first);
+    bool startsWithIgnoringWhitespace(const std::string& str, const std::string& start);
     bool consistsOnlyOfIgnoringWhitespace(const std::string& str, char comparison);
 
 }; //namespace StringHelpers

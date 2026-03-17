@@ -149,6 +149,7 @@ void EditorState::moveCursorTo(Position position) {
     if (!m_file.isValidCursorPosition(position)) {
         throw new std::invalid_argument("Invalid move destination " + position.format() + "!");
     }
+    addTemporaryMessage("moveCursorTo: " + position.format());
 
     m_cursor.setColumn(position.column);
     m_cursor.setRow(position.row);
