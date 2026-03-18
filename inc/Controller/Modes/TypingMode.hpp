@@ -17,15 +17,6 @@ class TypingMode: public EditorMode {
 private:
     ParseResult parseSpecialKey(SpecialKey key, ParsingContext context);
 
-    ParseResult trySmartListInsertion(ParsingContext context);
-    bool shouldTrySmartList(ParsingContext context);
-    ParseResult basicParagraphSplit(Position cursor);
-    std::optional<ParseResult> getStaticSmartlistInsertion(ParsingContext context);
-    std::optional<ParseResult> getDynamicSmartListInsertion(ParsingContext context);
-    bool canBeNumberList(const std::string& paragraph);
-    ParseResult getNumberListInsertion(const std::string& paragraph, Position cursor);
-    int getNumberingValue(const std::string& paragraph);
-    char getNumberingEnder(const std::string& paragraph);
 public:
     TypingMode() = default;
     TypingMode(const TypingMode&) = default;

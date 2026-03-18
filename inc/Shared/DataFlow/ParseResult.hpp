@@ -2,7 +2,7 @@
 /// @file: ParseResult.hpp
 /// @description: the result of parsing an input
 ///
-/// @date: 2026-02-06
+/// @date: 2026-02-06x
 /// @author: Moritz Pirer
 ///
 
@@ -18,6 +18,8 @@
 struct ParseResult {
     std::optional<ModeType> mode;
     std::optional<std::shared_ptr<Action>> action;    
+
+    static ParseResult nullObject() { return {std::nullopt, std::nullopt}; }
 };
 
 #endif //PARSE_RESULT_HPP

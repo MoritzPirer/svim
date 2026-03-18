@@ -23,8 +23,6 @@ private:
 
     std::optional<CommandDetails> m_previous_details;
 
-    ParseResult emptyParse();
-
     ParseResult generateCharacterwiseMove(CommandDetails details, ScreenSize text_area_size);
     ParseResult generateSpanMove(CommandDetails details, ParsingContext context, EndBehavior end_behavior);
 

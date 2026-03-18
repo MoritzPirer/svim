@@ -34,7 +34,7 @@ typedef std::vector<std::shared_ptr<Action>> ActionList;
 
 ParseResult CommandCreator::generateActions(std::optional<CommandDetails> details, ParsingContext context) {
     if (!details.has_value() ) {
-        return emptyParse();
+        return ParseResult::nullObject();
     }
 
     if (!details->is_complete) {
@@ -92,11 +92,7 @@ ParseResult CommandCreator::generateActions(std::optional<CommandDetails> detail
         return result;
     }
 
-    return emptyParse();
-}
-
-ParseResult CommandCreator::emptyParse() {
-    return {std::nullopt, std::nullopt};
+    return ParseResult::nullObject();
 }
 
 ParseResult CommandCreator::generateHint(CommandDetails details) {
@@ -120,7 +116,7 @@ ParseResult CommandCreator::generateHint(CommandDetails details) {
         return {std::nullopt, make_shared<NotifyAction>(hints.at(details.operator_type))};
     }
     
-    return emptyParse();
+    return ParseResult::nullObject();
 }
 
 ParseResult CommandCreator::generateCharacterwiseMove(CommandDetails details, ScreenSize text_area_size) {
